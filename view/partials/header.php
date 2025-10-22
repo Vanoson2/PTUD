@@ -10,7 +10,7 @@
   <script defer src="./public/js/date-format.js"></script>
 </head>
 <body>
-  <header class="site-header">
+  <header class="site-header sticky-top">
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
       <div class="container">
         <a class="navbar-brand" href="#" style="display: flex; align-items: center; gap: 8px; font-size: 1.5rem; font-weight: 700; color: #6366f1;">

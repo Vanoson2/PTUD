@@ -13,6 +13,25 @@ body {
   font-size: 1.25rem;
 }
 
+/* Sticky header styles */
+.site-header.sticky-top {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  z-index: 1030;
+  background: white;
+  transition: box-shadow 0.2s ease;
+}
+
+.site-header.sticky-top .navbar {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Add padding to main content so it doesn't hide under sticky header */
+main.site-main {
+  padding-top: 20px;
+}
+
 .container { 
   max-width: 1200px; 
   margin: 0 auto;
