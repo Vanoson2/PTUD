@@ -22,13 +22,12 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  /* Cover the hero area without letterboxing */
-  width: 177.78vh;   /* 100 * 16/9 of viewport height */
-  height: 56.25vw;   /* 100 * 9/16 of viewport width */
+  width: 177.78vh;   
+  height: 56.25vw;   
   min-width: 100%;
   min-height: 100%;
   transform: translate(-50%, -50%);
-  pointer-events: none; /* allow interactions with overlays */
+  pointer-events: none; 
 }
 
 .hero-section .overlay {
@@ -184,30 +183,7 @@
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
-/* Carousel Indicators */
-.carousel-indicators-custom {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 8px;
-}
-
-.carousel-indicators-custom span {
-  width: 8px;
-  height: 8px;
-  background: white;
-  border-radius: 50%;
-  display: block;
-  opacity: 0.5;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-.carousel-indicators-custom span.active {
-  opacity: 1;
-}
+/* (removed) carousel indicators */
 
 /* Places Grid */
 .places-grid {

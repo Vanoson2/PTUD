@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="./view/css/style.css">
   <link rel="stylesheet" href="./view/css/home.css">
+  <script defer src="./public/js/guestscounter.js"></script>
 </head>
 <body>
   <header class="site-header sticky-top">

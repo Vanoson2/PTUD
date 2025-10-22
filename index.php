@@ -68,11 +68,11 @@ $dayAfterTomorrow = date('Y-m-d', strtotime('+2 days'));
         <!-- Số khách -->
         <div class="search-field guests">
           <label>Số khách</label>
-          <div class="guest-counter">
+          <div class="guest-counter" id="guestCounter">
             <?php $g = (int)($_SESSION['guests'] ?? 1); ?>
-            <button type="submit" name="guests_action" value="dec" class="btn-guest minus" aria-label="Giảm" <?php echo $g <= 1 ? 'disabled' : ''; ?>>−</button>
-            <input type="number" name="guests" class="guest-input" value="<?php echo $g; ?>" min="1" max="10" readonly />
-            <button type="submit" name="guests_action" value="inc" class="btn-guest plus" aria-label="Tăng" <?php echo $g >= 10 ? 'disabled' : ''; ?>>+</button>
+            <button type="button" class="btn-guest minus" aria-label="Giảm" <?php echo $g <= 1 ? 'disabled' : ''; ?>>−</button>
+            <input type="number" name="guests" id="guestsInput" class="guest-input" value="<?php echo $g; ?>" min="1" max="10" readonly />
+            <button type="button" class="btn-guest plus" aria-label="Tăng" <?php echo $g >= 10 ? 'disabled' : ''; ?>>+</button>
           </div>
         </div>
         <!-- Search Button -->
@@ -89,12 +89,6 @@ $dayAfterTomorrow = date('Y-m-d', strtotime('+2 days'));
       <h1>ĐI KHẮP MUÔN NƠI<br>CHƠI KHÔNG LO PHÍ</h1>
     </div>
     
-    <!-- Carousel Indicators -->
-    <div class="carousel-indicators-custom">
-      <span class="active"></span>
-      <span></span>
-      <span></span>
-    </div>
   </div>
 
   <!-- Places Section -->
