@@ -1,21 +1,55 @@
 <?php
+// Start session for server-side state (PHP only)
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();
+}
+
+// Initialize guests in session
+if (!isset($_SESSION['guests'])) {
+  $_SESSION['guests'] = 1; // default
+}
+
+// Handle plus/minus actions for guests without JavaScript
+if (isset($_GET['guests_action'])) {
+  $action = $_GET['guests_action'];
+  $val = (int)($_SESSION['guests'] ?? 1);
+  if ($action === 'inc') {
+    $val = min(10, $val + 1);
+  } elseif ($action === 'dec') {
+    $val = max(1, $val - 1);
+  }
+  $_SESSION['guests'] = $val;
+  // PRG pattern to avoid resubmission and keep UI clean
+  header('Location: index.php');
+  exit;
+}
+
 // Calculate default dates
+$today = date('Y-m-d');
 $tomorrow = date('Y-m-d', strtotime('+1 day'));
 $dayAfterTomorrow = date('Y-m-d', strtotime('+2 days'));
-$tomorrowDisplay = date('d/m/Y', strtotime('+1 day'));
-$dayAfterDisplay = date('d/m/Y', strtotime('+2 days'));
 ?>
 
 <?php include __DIR__ . '/view/partials/header.php'; ?>
 
 <section class="container mt-4">
   <!-- Hero Section with Search -->
-  <div class="hero-section" style="background-image: url('./public/img/home/DaNang.jpg');">
+  <div class="hero-section">
+    <!-- Background Video -->
+    <div class="hero-video">
+      <iframe 
+        src="https://www.youtube.com/embed/k8m0SaGQ_1c?autoplay=1&mute=1&controls=0&loop=1&playlist=k8m0SaGQ_1c&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&playsinline=1" 
+        title="Background Video"
+        frameborder="0"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </div>
     <div class="overlay"></div>
     
     <!-- Search Form -->
     <div class="search-form-wrapper">
-      <form action="#" method="GET" class="search-form">
+  <form action="index.php" method="GET" class="search-form">
         <!-- Địa điểm -->
         <div class="search-field location">
           <label>Địa điểm</label>
@@ -24,19 +58,22 @@ $dayAfterDisplay = date('d/m/Y', strtotime('+2 days'));
         <!-- Check in -->
         <div class="search-field date">
           <label>Check in</label>
-          <input type="text" name="checkin_display" id="checkin" class="date-display" placeholder="dd/mm/yyyy" value="<?php echo $tomorrowDisplay; ?>" autocomplete="off" />
-          <input type="hidden" name="checkin" id="checkin_iso" value="<?php echo $tomorrow; ?>" />
+          <input type="date" name="checkin" id="checkin" value="<?php echo $tomorrow; ?>" min="<?php echo $today; ?>" />
         </div>
         <!-- Check out -->
         <div class="search-field date">
           <label>Check out</label>
-          <input type="text" name="checkout_display" id="checkout" class="date-display" placeholder="dd/mm/yyyy" value="<?php echo $dayAfterDisplay; ?>" autocomplete="off" />
-          <input type="hidden" name="checkout" id="checkout_iso" value="<?php echo $dayAfterTomorrow; ?>" />
+          <input type="date" name="checkout" id="checkout" value="<?php echo $dayAfterTomorrow; ?>" min="<?php echo $today; ?>" />
         </div>
         <!-- Số khách -->
         <div class="search-field guests">
           <label>Số khách</label>
-          <input type="number" name="guests" placeholder="Thêm khách" min="1" value="1" />
+          <div class="guest-counter">
+            <?php $g = (int)($_SESSION['guests'] ?? 1); ?>
+            <button type="submit" name="guests_action" value="dec" class="btn-guest minus" aria-label="Giảm" <?php echo $g <= 1 ? 'disabled' : ''; ?>>−</button>
+            <input type="number" name="guests" class="guest-input" value="<?php echo $g; ?>" min="1" max="10" readonly />
+            <button type="submit" name="guests_action" value="inc" class="btn-guest plus" aria-label="Tăng" <?php echo $g >= 10 ? 'disabled' : ''; ?>>+</button>
+          </div>
         </div>
         <!-- Search Button -->
         <button type="submit" class="search-btn">
@@ -49,7 +86,7 @@ $dayAfterDisplay = date('d/m/Y', strtotime('+2 days'));
     
     <!-- Hero Title -->
     <div class="hero-content">
-      <h1>DI KHẮP MUÔN NƠI<br>CHƠI KHÔNG LO PHÍ</h1>
+      <h1>ĐI KHẮP MUÔN NƠI<br>CHƠI KHÔNG LO PHÍ</h1>
     </div>
     
     <!-- Carousel Indicators -->
