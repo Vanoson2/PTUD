@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Travel - Home</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/Project_PTUD_Again/view/css/style.css">
-  <link rel="stylesheet" href="/Project_PTUD_Again/view/css/home.css">
-  <script defer src="/Project_PTUD_Again/public/js/date-format.js"></script>
+  <link rel="stylesheet" href="./view/css/style.css">
+  <link rel="stylesheet" href="./view/css/home.css">
+  <script defer src="./public/js/date-format.js"></script>
 </head>
 <body>
   <header class="site-header">
