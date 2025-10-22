@@ -10,7 +10,7 @@ $dayAfterDisplay = date('d/m/Y', strtotime('+2 days'));
 
 <section class="container mt-4">
   <!-- Hero Section with Search -->
-  <div class="hero-section" style="background-image: url('/Project_PTUD_Again/public/img/home/DaNang.jpg');">
+  <div class="hero-section" style="background-image: url('./public/img/home/DaNang.jpg');">
     <div class="overlay"></div>
     
     <!-- Search Form -->
@@ -65,10 +65,10 @@ $dayAfterDisplay = date('d/m/Y', strtotime('+2 days'));
   <div class="places-grid">
     <?php
     $places = [
-      ['title'=>'ĐÀ NẴNG','img'=>'/Project_PTUD_Again/public/img/home/DaNang.jpg','count'=>'2,345 properties','dist'=>'7.6 miles away'],
-      ['title'=>'NHA TRANG','img'=>'/Project_PTUD_Again/public/img/home/NhaTrang.jpg','count'=>'4,158 properties','dist'=>'3.2 miles away'],
-      ['title'=>'HUẾ','img'=>'/Project_PTUD_Again/public/img/home/Hue.jpg','count'=>'4,567 properties','dist'=>'8.1 miles away'],
-      ['title'=>'HÀ NỘI','img'=>'/Project_PTUD_Again/public/img/home/Hanoi.jpg','count'=>'6,279 properties','dist'=>'6.0 miles away'],
+      ['title'=>'ĐÀ NẴNG','img'=>'./public/img/home/DaNang.jpg','count'=>'2,345 properties','dist'=>'7.6 miles away'],
+      ['title'=>'NHA TRANG','img'=>'./public/img/home/NhaTrang.jpg','count'=>'4,158 properties','dist'=>'3.2 miles away'],
+      ['title'=>'HUẾ','img'=>'./public/img/home/Hue.jpg','count'=>'4,567 properties','dist'=>'8.1 miles away'],
+      ['title'=>'HÀ NỘI','img'=>'./public/img/home/Hanoi.jpg','count'=>'6,279 properties','dist'=>'6.0 miles away'],
     ];
     foreach($places as $p){
       echo "<div class='place-card'>";
@@ -85,7 +85,7 @@ $dayAfterDisplay = date('d/m/Y', strtotime('+2 days'));
   <div class="feature-cards-grid">
     <!-- Card 1 -->
     <div class="feature-card">
-      <img src="/Project_PTUD_Again/public/img/home/NhaTrang.jpg" alt="f1">
+      <img src="./public/img/home/NhaTrang.jpg" alt="f1">
       <div class="overlay"></div>
       <div class="feature-content">
         <div class="feature-title">KỲ NGHỈ NGOÀI TRỜI</div>
@@ -94,7 +94,7 @@ $dayAfterDisplay = date('d/m/Y', strtotime('+2 days'));
     </div>
     <!-- Card 2 -->
     <div class="feature-card">
-      <img src="/Project_PTUD_Again/public/img/home/Hue.jpg" alt="f2">
+      <img src="./public/img/home/Hue.jpg" alt="f2">
       <div class="overlay"></div>
       <div class="feature-badge">ĐIỂM ĐẾN ĐỘC ĐÁO</div>
       <div class="feature-content">
@@ -104,7 +104,7 @@ $dayAfterDisplay = date('d/m/Y', strtotime('+2 days'));
     </div>
     <!-- Card 3 -->
     <div class="feature-card">
-      <img src="/Project_PTUD_Again/public/img/home/Hanoi.jpg" alt="f3">
+      <img src="./public/img/home/Hanoi.jpg" alt="f3">
       <div class="overlay"></div>
       <div class="feature-content">
         <div class="feature-title">CHỈ PHẢI THỎA CƯỜI</div>
@@ -118,7 +118,7 @@ $dayAfterDisplay = date('d/m/Y', strtotime('+2 days'));
   <div class="promo-cards-grid">
     <!-- Card 1 -->
     <div class="promo-card">
-      <img src="/Project_PTUD_Again/public/img/home/DaNang.jpg" alt="Promo 1">
+      <img src="./public/img/home/DaNang.jpg" alt="Promo 1">
       <div class="overlay"></div>
       <div class="promo-content">
         <h3 class="promo-title">NHIỀU KHÁCH BIẾT ĐẾN<br>CHỖ Ở BẠN HƠN?</h3>
@@ -127,7 +127,7 @@ $dayAfterDisplay = date('d/m/Y', strtotime('+2 days'));
     </div>
     <!-- Card 2 -->
     <div class="promo-card">
-      <img src="/Project_PTUD_Again/public/img/home/NhaTrang.jpg" alt="Promo 2">
+      <img src="./public/img/home/NhaTrang.jpg" alt="Promo 2">
       <div class="overlay"></div>
       <div class="promo-content">
         <h3 class="promo-title">GẶP KHÓ KHĂN KHI<br>SỬ DỤNG HỆ THỐNG?</h3>
