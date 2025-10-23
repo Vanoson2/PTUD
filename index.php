@@ -87,6 +87,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
 
 <?php include __DIR__ . '/view/partials/header.php'; ?>
 
+<!-- Page-specific CSS and JavaScript for Home page -->
+<link rel="stylesheet" href="./view/css/home.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10ns/vn.js"></script>
+<script defer src="./public/js/autocomplete.js"></script>
+<script defer src="./public/js/guestscounter.js"></script>
+<script defer src="./public/js/date-validation.js"></script>
+<script defer src="./public/js/date-picker.js?v=<?php echo time(); ?>"></script>
+
 <section class="container mt-4">
   <!-- Hero Section with Search -->
   <div class="hero-section">

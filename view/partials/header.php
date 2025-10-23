@@ -5,17 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Travel - Home</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Flatpickr datepicker -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
   <link rel="stylesheet" href="./view/css/style.css?v=<?php echo time(); ?>">
-  <link rel="stylesheet" href="./view/css/home.css?v=<?php echo time(); ?>">
-  <script defer src="./public/js/guestscounter.js"></script>
-  <script defer src="./public/js/autocomplete.js"></script>
-  <script defer src="./public/js/date-validation.js"></script>
-  <!-- Flatpickr scripts -->
-  <script defer src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10ns/vn.js"></script>
-  <script defer src="./public/js/date-picker.js?v=<?php echo time(); ?>"></script>
 </head>
 <body>
   <header class="site-header sticky-top">
