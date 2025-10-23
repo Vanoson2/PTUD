@@ -23,15 +23,31 @@ function getLocalSuggestions($query, $limit = 8) {
 
     $normQuery = vn_norm($query);
     $results = [];
+    $pickedCityNames = []; // track normalized city names returned
+
+    // Detect TP (thanh pho) mode and remainder
+    $tpRemainder = parse_tp_remainder($normQuery); // null if not TP query
 
     // 1. Search cities (priority)
     if (isset($data['cities'])) {
         foreach ($data['cities'] as $city) {
-            $label = $city['name'] . ', ' . $city['province'];
+            $label = 'Thành phố ' . $city['name'] . ', ' . $city['province'];
             $normName = vn_norm($city['name']);
-            if (strpos($normName, $normQuery) === 0) {
-                $results[] = $label;
-                if (count($results) >= $limit) return $results;
+
+            $match = false;
+            if ($tpRemainder !== null) {
+                // If user typed only "tp" -> list cities; otherwise match remainder prefix
+                $match = ($tpRemainder === '' || strpos($normName, $tpRemainder) === 0);
+            } else {
+                $match = (strpos($normName, $normQuery) === 0);
+            }
+
+            if ($match) {
+                if (!in_array($label, $results)) {
+                    $results[] = $label;
+                    $pickedCityNames[] = $normName;
+                    if (count($results) >= $limit) return $results;
+                }
             }
         }
     }
@@ -86,7 +102,9 @@ function getLocalSuggestions($query, $limit = 8) {
     if (isset($data['provinces'])) {
         foreach ($data['provinces'] as $province) {
             $normProvince = vn_norm($province);
-            if (strpos($normProvince, $normQuery) === 0) {
+            // Skip province if a city with the same name is already suggested
+            $skipDueToCity = in_array($normProvince, $pickedCityNames, true);
+            if (!$skipDueToCity && strpos($normProvince, $normQuery) === 0) {
                 if (!in_array($province, $results)) {
                     $results[] = $province;
                     if (count($results) >= $limit) return $results;
@@ -100,6 +118,8 @@ function getLocalSuggestions($query, $limit = 8) {
 
 function vn_norm($str) {
     $str = mb_strtolower($str, 'UTF-8');
+    // normalize dots and punctuation
+    $str = preg_replace('/[\.;,:]+/', ' ', $str);
     $replacements = [
         'à'=>'a','á'=>'a','ạ'=>'a','ả'=>'a','ã'=>'a','â'=>'a','ầ'=>'a','ấ'=>'a','ậ'=>'a','ẩ'=>'a','ẫ'=>'a','ă'=>'a','ằ'=>'a','ắ'=>'a','ặ'=>'a','ẳ'=>'a','ẵ'=>'a',
         'è'=>'e','é'=>'e','ẹ'=>'e','ẻ'=>'e','ẽ'=>'e','ê'=>'e','ề'=>'e','ế'=>'e','ệ'=>'e','ể'=>'e','ễ'=>'e',
@@ -112,5 +132,14 @@ function vn_norm($str) {
     $str = strtr($str, $replacements);
     $str = preg_replace('/\s+/', ' ', $str);
     return trim($str);
+}
+
+function parse_tp_remainder($normQuery) {
+    // Accept: tp, tp., tp , tp-xxx, thanh pho xxx
+    if ($normQuery === 'tp') return '';
+    if (strpos($normQuery, 'tp ') === 0) return trim(substr($normQuery, 3));
+    if (strpos($normQuery, 'tp.') === 0) return trim(substr($normQuery, 3));
+    if (strpos($normQuery, 'thanh pho') === 0) return trim(substr($normQuery, strlen('thanh pho')));
+    return null;
 }
 
