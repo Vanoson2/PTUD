@@ -168,17 +168,31 @@
   background: #6366f1;
   color: #fff;
   border-radius: 12px 12px 0 0;
+  position: relative;
+  padding: 12px 0;
+  display: flex;
+  align-items: center;
 }
 .flatpickr-months .flatpickr-prev-month,
 .flatpickr-months .flatpickr-next-month {
-  fill: #e0e7ff;
-  color: #e0e7ff;
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  position: relative !important;
+  top: 0 !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px !important;
+}
+.flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-months .flatpickr-next-month svg {
+  fill: #ffffff !important;
 }
 .flatpickr-current-month input.cur-year {
-  color: #fff;
+  color: #fff !important;
 }
 .flatpickr-current-month .flatpickr-monthDropdown-months {
-  color: #111;
+  color: #fff !important;;
 }
 .flatpickr-weekdays {
   background: #f3f4f6;

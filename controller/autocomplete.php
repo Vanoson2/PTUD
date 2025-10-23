@@ -25,8 +25,21 @@ function getLocalSuggestions($query, $limit = 8) {
     $results = [];
     $pickedCityNames = []; // track normalized city names returned
 
+    // Define location aliases
+    $aliases = getLocationAliases();
+    
+    // Check if query matches any alias and replace with actual name
+    $actualQuery = $normQuery;
+    foreach ($aliases as $alias => $actual) {
+        $normAlias = vn_norm($alias);
+        if (strpos($normQuery, $normAlias) === 0) {
+            $actualQuery = vn_norm($actual) . substr($normQuery, strlen($normAlias));
+            break;
+        }
+    }
+
     // Detect TP (thanh pho) mode and remainder
-    $tpRemainder = parse_tp_remainder($normQuery); // null if not TP query
+    $tpRemainder = parse_tp_remainder($actualQuery); // null if not TP query
 
     // 1. Search cities (priority)
     if (isset($data['cities'])) {
@@ -39,7 +52,18 @@ function getLocalSuggestions($query, $limit = 8) {
                 // If user typed only "tp" -> list cities; otherwise match remainder prefix
                 $match = ($tpRemainder === '' || strpos($normName, $tpRemainder) === 0);
             } else {
-                $match = (strpos($normName, $normQuery) === 0);
+                // Check against both actual query and original query
+                $match = (strpos($normName, $actualQuery) === 0);
+                
+                // Also check alias matches
+                if (!$match && isset($aliases)) {
+                    foreach ($aliases as $alias => $actual) {
+                        if (vn_norm($actual) === $normName && strpos($normQuery, vn_norm($alias)) === 0) {
+                            $match = true;
+                            break;
+                        }
+                    }
+                }
             }
 
             if ($match) {
@@ -61,7 +85,11 @@ function getLocalSuggestions($query, $limit = 8) {
             }
             $label .= ', ' . $attraction['province'];
             $normName = vn_norm($attraction['name']);
-            if (strpos($normName, $normQuery) === 0) {
+            
+            // Check both actual query and original query for attractions
+            $match = (strpos($normName, $actualQuery) === 0 || strpos($normName, $normQuery) === 0);
+            
+            if ($match) {
                 if (!in_array($label, $results)) {
                     $results[] = $label;
                     if (count($results) >= $limit) return $results;
@@ -75,7 +103,11 @@ function getLocalSuggestions($query, $limit = 8) {
         foreach ($data['districts'] as $district) {
             $label = $district['name'] . ', thành phố ' . $district['city'] . ', ' . $district['province'];
             $normName = vn_norm($district['name']);
-            if (strpos($normName, $normQuery) === 0) {
+            
+            // Check both actual query and original query for districts
+            $match = (strpos($normName, $actualQuery) === 0 || strpos($normName, $normQuery) === 0);
+            
+            if ($match) {
                 if (!in_array($label, $results)) {
                     $results[] = $label;
                     if (count($results) >= $limit) return $results;
@@ -89,7 +121,11 @@ function getLocalSuggestions($query, $limit = 8) {
         foreach ($data['areas'] as $area) {
             $label = $area['name'] . ', thành phố ' . $area['city'] . ', ' . $area['province'];
             $normName = vn_norm($area['name']);
-            if (strpos($normName, $normQuery) === 0) {
+            
+            // Check both actual query and original query for areas
+            $match = (strpos($normName, $actualQuery) === 0 || strpos($normName, $normQuery) === 0);
+            
+            if ($match) {
                 if (!in_array($label, $results)) {
                     $results[] = $label;
                     if (count($results) >= $limit) return $results;
@@ -104,7 +140,11 @@ function getLocalSuggestions($query, $limit = 8) {
             $normProvince = vn_norm($province);
             // Skip province if a city with the same name is already suggested
             $skipDueToCity = in_array($normProvince, $pickedCityNames, true);
-            if (!$skipDueToCity && strpos($normProvince, $normQuery) === 0) {
+            
+            // Check both actual query and original query for provinces
+            $match = (strpos($normProvince, $actualQuery) === 0 || strpos($normProvince, $normQuery) === 0);
+            
+            if (!$skipDueToCity && $match) {
                 if (!in_array($province, $results)) {
                     $results[] = $province;
                     if (count($results) >= $limit) return $results;
@@ -141,5 +181,22 @@ function parse_tp_remainder($normQuery) {
     if (strpos($normQuery, 'tp.') === 0) return trim(substr($normQuery, 3));
     if (strpos($normQuery, 'thanh pho') === 0) return trim(substr($normQuery, strlen('thanh pho')));
     return null;
+}
+
+function getLocationAliases() {
+    return [
+        'Sài Gòn' => 'Hồ Chí Minh',
+        'Saigon' => 'Hồ Chí Minh',
+        'SG' => 'Hồ Chí Minh',
+        'SGN' => 'Hồ Chí Minh',
+        'Hà Thành' => 'Hà Nội',
+        'Thủ Đô' => 'Hà Nội',
+        'HN' => 'Hà Nội',
+        'Huế' => 'Thừa Thiên Huế',
+        'Cố Đô' => 'Huế',
+        'Đà Thành' => 'Đà Nẵng',
+        'DN' => 'Đà Nẵng',
+        'Kinh Kỳ' => 'Huế'
+    ];
 }
 
