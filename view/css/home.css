@@ -4,10 +4,12 @@
 .hero-section {
   background-size: cover;
   background-position: center;
-  height: 480px;
-  border-radius: 12px;
+  height: 55vh;
+  max-height: 520px;
+  border-radius: 16px;
   margin-bottom: 3rem;
   position: relative;
+  overflow: hidden;
 }
 
 /* Background YouTube video to fill hero */
@@ -33,15 +35,15 @@
 .hero-section .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
-  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6));
+  border-radius: 16px;
   z-index: 1;
 }
 
 /* Search Form */
 .search-form-wrapper {
   position: absolute;
-  top: 60px;
+  top: 30px;
   left: 50%;
   transform: translateX(-50%);
   width: 90%;
@@ -51,25 +53,76 @@
 
 .search-form {
   background: white;
-  border-radius: 50px;
-  padding: 8px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border-radius: 32px;
+  padding: 6px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
   display: flex;
   align-items: center;
   gap: 2px;
 }
 
 .search-field {
-  padding: 12px 20px;
+  padding: 6px 14px;
   border-right: 1px solid #e5e7eb;
-}
-
-.search-field:last-of-type {
+}.search-field:last-of-type {
   border-right: none;
 }
 
 .search-field.location {
   flex: 1;
+  position: relative;
+}
+
+/* Autocomplete Styles */
+.autocomplete-list {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+}
+
+.autocomplete-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #374151;
+  transition: background 0.15s ease;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.autocomplete-active {
+  background: #f9fafb;
+  color: #6366f1;
+}
+
+.autocomplete-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.autocomplete-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.autocomplete-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.autocomplete-list::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }
 
 .search-field.date,
@@ -78,7 +131,7 @@
 }
 
 .search-field label {
-  font-size: 0.75rem;
+  font-size: 1.0rem;
   font-weight: 600;
   color: #111;
   margin-bottom: 2px;
@@ -88,7 +141,7 @@
 .search-field input {
   border: none;
   outline: none;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   width: 100%;
   background: transparent;
 }
@@ -97,7 +150,6 @@
   color: #111;
 }
 
-.search-field input[type="date"],
 .search-field input[type="number"] {
   color: #6b7280;
 }
@@ -106,17 +158,73 @@
   color: #6b7280;
 }
 
+/* Flatpickr custom theme (purple) */
+.flatpickr-calendar {
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18), 0 4px 10px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb;
+}
+.flatpickr-months {
+  background: #6366f1;
+  color: #fff;
+  border-radius: 12px 12px 0 0;
+}
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  fill: #e0e7ff;
+  color: #e0e7ff;
+}
+.flatpickr-current-month input.cur-year {
+  color: #fff;
+}
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  color: #111;
+}
+.flatpickr-weekdays {
+  background: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+}
+.flatpickr-day {
+  border-radius: 8px;
+}
+.flatpickr-day:hover {
+  background: #eef2ff;
+}
+.flatpickr-day.today {
+  border-color: #6366f1;
+}
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: white;
+}
+.flatpickr-day.inRange {
+  background: #e0e7ff;
+  border-color: #e0e7ff;
+}
+.flatpickr-innerContainer {
+  border-radius: 0 0 12px 12px;
+}
+
+/* Hide native date icon if any UA keeps it for text inputs */
+input#checkin::-webkit-calendar-picker-indicator,
+input#checkout::-webkit-calendar-picker-indicator {
+  display: none !important;
+}
+
 .search-btn {
   background: #6366f1;
   border: none;
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-right: 4px;
+  margin-right: 3px;
   transition: background 0.2s ease;
 }
 
@@ -128,15 +236,16 @@
 .guest-counter {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
 }
 .guest-input {
-  width: 36px;
+  width: 28px;
   text-align: center;
   background: transparent;
   border: none;
   font-weight: 600;
   color: #111;
+  font-size: 0.813rem;
 }
 /* hide number input spinners */
 .guest-input::-webkit-outer-spin-button,
@@ -144,8 +253,8 @@
 .guest-input { appearance: textfield; -moz-appearance: textfield; }
 
 .btn-guest {
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   border: 1px solid #d1d5db;
   background: #fff;
@@ -153,12 +262,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: all 0.2s ease;
 }
-.btn-guest:hover { background: #f9fafb; }
+.btn-guest:hover { 
+  background: #6366f1;
+  color: white;
+  border-color: #6366f1;
+  transform: scale(1.1);
+}
 .btn-guest:disabled {
   cursor: not-allowed;
   opacity: 0.5;
@@ -167,7 +281,7 @@
 /* Hero Content */
 .hero-content {
   position: absolute;
-  top: 50%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
@@ -177,10 +291,12 @@
 }
 
 .hero-content h1 {
-  font-size: 2.8rem;
+  font-size: 3.5rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
 }
 
 /* (removed) carousel indicators */
@@ -390,6 +506,10 @@ input[type="date"] {
     border-right: none;
     border-bottom: 1px solid #e5e7eb;
   }
+  
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -400,7 +520,8 @@ input[type="date"] {
   }
   
   .hero-section {
-    height: 380px;
+    height: 50vh;
+    max-height: 450px;
   }
   
   .hero-content h1 {

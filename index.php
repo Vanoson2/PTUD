@@ -3,12 +3,10 @@
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
-
 // Initialize guests in session
 if (!isset($_SESSION['guests'])) {
   $_SESSION['guests'] = 1; // default
 }
-
 // Handle plus/minus actions for guests without JavaScript
 if (isset($_GET['guests_action'])) {
   $action = $_GET['guests_action'];
@@ -28,6 +26,63 @@ if (isset($_GET['guests_action'])) {
 $today = date('Y-m-d');
 $tomorrow = date('Y-m-d', strtotime('+1 day'));
 $dayAfterTomorrow = date('Y-m-d', strtotime('+2 days'));
+$maxDate = date('Y-m-d', strtotime('+3 months')); // Max 3 months from today
+
+// Validation errors
+$errors = [];
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_GET['checkout']))) {
+  $checkin = $_GET['checkin'] ?? '';
+  $checkout = $_GET['checkout'] ?? '';
+  $location = $_GET['location'] ?? '';
+  
+  // Validate check-in date
+  if (empty($checkin)) {
+    $errors[] = 'Vui lòng chọn ngày check-in';
+  } else {
+    $checkinDate = strtotime($checkin);
+    $todayTime = strtotime($today);
+    $maxDateTime = strtotime($maxDate);
+    
+    if ($checkinDate < $todayTime) {
+      $errors[] = 'Ngày check-in không được trước ngày hôm nay';
+    } elseif ($checkinDate > $maxDateTime) {
+      $errors[] = 'Ngày check-in chỉ được đặt trong vòng 3 tháng kể từ hôm nay';
+    }
+  }
+  
+  // Validate check-out date
+  if (empty($checkout)) {
+    $errors[] = 'Vui lòng chọn ngày check-out';
+  } else {
+    $checkoutDate = strtotime($checkout);
+    
+    if (!empty($checkin)) {
+      $checkinDate = strtotime($checkin);
+      
+      if ($checkoutDate <= $checkinDate) {
+        $errors[] = 'Ngày check-out phải sau ngày check-in';
+      } else {
+        // Calculate number of nights
+        $daysDiff = ($checkoutDate - $checkinDate) / (60 * 60 * 24);
+        
+        if ($daysDiff > 30) {
+          $errors[] = 'Tổng số ngày lưu trú tối đa là 30 ngày';
+        }
+      }
+    }
+  }
+  
+  // Validate location
+  if (empty($location)) {
+    $errors[] = 'Vui lòng chọn địa điểm';
+  }
+  
+  if (empty($errors)) {
+    $_SESSION['search_success'] = 'Tìm kiếm thành công!';
+  }
+}
 ?>
 
 <?php include __DIR__ . '/view/partials/header.php'; ?>
@@ -38,7 +93,7 @@ $dayAfterTomorrow = date('Y-m-d', strtotime('+2 days'));
     <!-- Background Video -->
     <div class="hero-video">
       <iframe 
-        src="https://www.youtube.com/embed/k8m0SaGQ_1c?autoplay=1&mute=1&controls=0&loop=1&playlist=k8m0SaGQ_1c&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&playsinline=1" 
+        src="https://www.youtube-nocookie.com/embed/k8m0SaGQ_1c?autoplay=1&mute=1&controls=0&loop=1&playlist=k8m0SaGQ_1c&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&playsinline=1" 
         title="Background Video"
         frameborder="0"
         allow="autoplay; encrypted-media; picture-in-picture"
@@ -49,21 +104,29 @@ $dayAfterTomorrow = date('Y-m-d', strtotime('+2 days'));
     
     <!-- Search Form -->
     <div class="search-form-wrapper">
-  <form action="index.php" method="GET" class="search-form">
+      <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger" style="margin-bottom: 10px; padding: 10px; background: #f8d7da; color: #721c24; border-radius: 8px;">
+          <?php foreach ($errors as $error): ?>
+            <div><?php echo htmlspecialchars($error); ?></div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+      
+      <form action="index.php" method="GET" class="search-form" id="searchForm">
         <!-- Địa điểm -->
         <div class="search-field location">
           <label>Địa điểm</label>
-          <input type="text" name="location" placeholder="Bạn muốn đi đâu?" value="" />
+          <input type="text" name="location" id="locationInput" placeholder="Bạn muốn đi đâu?" value="<?php echo htmlspecialchars($_GET['location'] ?? ''); ?>" autocomplete="off" required />
         </div>
         <!-- Check in -->
         <div class="search-field date">
           <label>Check in</label>
-          <input type="date" name="checkin" id="checkin" value="<?php echo $tomorrow; ?>" min="<?php echo $today; ?>" />
+          <input type="text" name="checkin" id="checkin" placeholder="dd/mm/yyyy" value="<?php echo $tomorrow; ?> readonly" required />
         </div>
         <!-- Check out -->
         <div class="search-field date">
           <label>Check out</label>
-          <input type="date" name="checkout" id="checkout" value="<?php echo $dayAfterTomorrow; ?>" min="<?php echo $today; ?>" />
+          <input type="text" name="checkout" id="checkout" placeholder="dd/mm/yyyy" value="<?php echo $dayAfterTomorrow; ?> readonly" required />
         </div>
         <!-- Số khách -->
         <div class="search-field guests">
@@ -153,7 +216,7 @@ $dayAfterTomorrow = date('Y-m-d', strtotime('+2 days'));
       <div class="overlay"></div>
       <div class="promo-content">
         <h3 class="promo-title">NHIỀU KHÁCH BIẾT ĐẾN<br>CHỖ Ở BẠN HƠN?</h3>
-        <button class="promo-btn">Đăng ký thành hoạt ngày!</button>
+        <button class="promo-btn">Trở thành đối tác với chúng tôi ngay!</button>
       </div>
     </div>
     <!-- Card 2 -->
