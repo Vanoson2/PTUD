@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/controller/cListing.php';
 // Start session for server-side state (PHP only)
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
@@ -21,22 +22,18 @@ if (isset($_GET['guests_action'])) {
   header('Location: index.php');
   exit;
 }
-
 // Calculate default dates
 $today = date('Y-m-d');
 $tomorrow = date('Y-m-d', strtotime('+1 day'));
 $dayAfterTomorrow = date('Y-m-d', strtotime('+2 days'));
 $maxDate = date('Y-m-d', strtotime('+3 months')); // Max 3 months from today
-
 // Validation errors
 $errors = [];
-
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_GET['checkout']))) {
   $checkin = $_GET['checkin'] ?? '';
   $checkout = $_GET['checkout'] ?? '';
   $location = $_GET['location'] ?? '';
-  
   // Validate check-in date
   if (empty($checkin)) {
     $errors[] = 'Vui lòng chọn ngày check-in';
@@ -44,7 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
     $checkinDate = strtotime($checkin);
     $todayTime = strtotime($today);
     $maxDateTime = strtotime($maxDate);
-    
     if ($checkinDate < $todayTime) {
       $errors[] = 'Ngày check-in không được trước ngày hôm nay';
     } elseif ($checkinDate > $maxDateTime) {
@@ -122,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
         </div>
       <?php endif; ?>
       
-      <form action="index.php" method="GET" class="search-form" id="searchForm">
+      <form action="listListing.php" method="GET" class="search-form" id="searchForm">
         <!-- Địa điểm -->
         <div class="search-field location">
           <label>Địa điểm</label>
@@ -168,18 +164,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
   <h2 class="section-title-home">CÁC ĐỊA ĐIỂM DU LỊCH NỔI TIẾNG</h2>
   <div class="places-grid">
     <?php
+    // Sử dụng controller để đếm số lượng listing thực tế từ database
+    $cListing = new cListing();
+    
     $places = [
-      ['title'=>'ĐÀ NẴNG','img'=>'./public/img/home/DaNang.jpg','count'=>'2,345 properties','dist'=>'7.6 miles away'],
-      ['title'=>'NHA TRANG','img'=>'./public/img/home/NhaTrang.jpg','count'=>'4,158 properties','dist'=>'3.2 miles away'],
-      ['title'=>'HUẾ','img'=>'./public/img/home/Hue.jpg','count'=>'4,567 properties','dist'=>'8.1 miles away'],
-      ['title'=>'HÀ NỘI','img'=>'./public/img/home/Hanoi.jpg','count'=>'6,279 properties','dist'=>'6.0 miles away'],
+      [
+        'title' => 'ĐÀ NẴNG',
+        'img' => './public/img/home/DaNang.jpg',
+        'province' => 'Đà Nẵng'
+      ],
+      [
+        'title' => 'NHA TRANG',
+        'img' => './public/img/home/NhaTrang.jpg',
+        'province' => 'Khánh Hòa'
+      ],
+      [
+        'title' => 'HUẾ',
+        'img' => './public/img/home/Hue.jpg',
+        'province' => 'Huế'
+      ],
+      [
+        'title' => 'HÀ NỘI',
+        'img' => './public/img/home/Hanoi.jpg',
+        'province' => 'Hà Nội'
+      ],
     ];
+    
     foreach($places as $p){
+      $count = $cListing->cCountListingByProvince($p['province']);
+      $countText = number_format($count) . ' chỗ ở';
+      
       echo "<div class='place-card'>";
       echo "<img src='{$p['img']}' alt='{$p['title']}'>";
       echo "<div class='place-card-content'>";
       echo "<div class='place-card-title'>{$p['title']}</div>";
-      echo "<div class='place-card-info'>{$p['count']} · {$p['dist']}</div>";
+      echo "<div class='place-card-info'>{$countText}</div>";
       echo "</div>";
       echo "</div>";
     }
