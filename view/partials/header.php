@@ -8,17 +8,23 @@
   <link rel="stylesheet" href="./view/css/style.css?v=<?php echo time(); ?>">
 </head>
 <body>
+  <?php
+  // Tính đường dẫn tương đối về root dựa trên vị trí file hiện tại
+  $currentPath = $_SERVER['PHP_SELF'];
+  $depth = substr_count(dirname($currentPath), '/');
+  $rootPath = str_repeat('../', $depth);
+  ?>
   <header class="site-header sticky-top">
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
       <div class="container">
-        <a class="navbar-brand" href="#" style="display: flex; align-items: center; gap: 8px; font-size: 1.5rem; font-weight: 700; color: #6366f1;">
+        <a class="navbar-brand" href="<?php echo $rootPath; ?>index.php" style="display: flex; align-items: center; gap: 8px; font-size: 1.5rem; font-weight: 700; color: #6366f1; text-decoration: none;">
           <span style="font-size: 1.8rem;">🏠</span> WEGO
         </a>
         
-        <div class="ms-auto d-flex align-items-center gap-3">
+        <div class="ms-auto d-flex align-items: center gap-3">
           <a href="#" class="btn btn-outline-primary" style="padding: 8px 24px; border-radius: 8px; font-weight: 600; border: 2px solid #6366f1; color: #6366f1;">Đăng nhập</a>
           <a href="#" class="btn btn-primary" style="padding: 8px 24px; border-radius: 8px; font-weight: 600; background: #6366f1; border: none;">Đăng ký</a>
-        </div>
+        </div>  
       </div>
     </nav>
   </header>

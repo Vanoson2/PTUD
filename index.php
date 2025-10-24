@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
         </div>
       <?php endif; ?>
       
-      <form action="listListing.php" method="GET" class="search-form" id="searchForm">
+      <form action="./view/user/traveller/listListings.php" method="GET" class="search-form" id="searchForm">
         <!-- Địa điểm -->
         <div class="search-field location">
           <label>Địa điểm</label>
