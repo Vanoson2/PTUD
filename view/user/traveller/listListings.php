@@ -58,8 +58,15 @@ $totalResults = count($listings);
 
 <?php include __DIR__ . '/../../partials/header.php'; ?>
 
-<!-- Page-specific CSS -->
+<!-- Page-specific CSS and JavaScript -->
+<link rel="stylesheet" href="../../../view/css/search-form.css?v=<?php echo time(); ?>">
 <link rel="stylesheet" href="../../../view/css/listListing.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10ns/vn.js"></script>
+<script defer src="../../../public/js/autocomplete.js"></script>
+<script defer src="../../../public/js/guestscounter.js"></script>
+<script defer src="../../../public/js/date-picker.js?v=<?php echo time(); ?>"></script>
 
 <div class="list-container">
   <!-- Sidebar Filters -->
@@ -77,7 +84,7 @@ $totalResults = count($listings);
             echo '</label>';
           }
         } else {
-          echo '<p style="color: #6b7280; font-size: 0.9rem;">Không có loại chỗ ở</p>';
+          echo '<p class="filter-empty-message">Không có loại chỗ ở</p>';
         }
         ?>
       </div>
@@ -150,7 +157,7 @@ $totalResults = count($listings);
             echo '</label>';
           }
         } else {
-          echo '<p style="color: #6b7280; font-size: 0.9rem;">Không có tiện nghi</p>';
+          echo '<p class="filter-empty-message">Không có tiện nghi</p>';
         }
         ?>
       </div>
@@ -159,20 +166,29 @@ $totalResults = count($listings);
 
   <!-- Main Content -->
   <main class="main-content">
-    <!-- Search Header -->
-    <div class="search-header">
+    <!-- Search Form - Collapsible -->
+    <div class="search-header-with-form">
       <div class="search-info">
         <h1 class="search-title"><?php echo $totalResults; ?>+ chỗ ở tại <?php echo htmlspecialchars($location); ?></h1>
         <div class="search-params">
           <span><?php echo date('d/m', strtotime($checkin)); ?> - <?php echo date('d/m', strtotime($checkout)); ?></span>
           <span>•</span>
           <span><?php echo $guests; ?> khách</span>
-          <button class="btn-search-modify">
+          <button class="btn-search-modify" id="toggleSearchForm" type="button">
             <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
             </svg>
           </button>
         </div>
+      </div>
+      
+      <!-- Collapsible Search Form -->
+      <div class="search-form-container" id="searchFormContainer" style="display: none; margin-top: 1rem;">
+        <?php 
+        $formAction = ''; // Submit to same page
+        $formWrapperClass = 'search-form-wrapper-inline';
+        include __DIR__ . '/../../partials/search-form.php'; 
+        ?>
       </div>
     </div>
 
@@ -185,12 +201,14 @@ $totalResults = count($listings);
           $amenities = $cListing->cGetListingAmenities($listing['listing_id']);
           $amenitiesStr = implode(',', $amenities);
           ?>
-          <article class="listing-card" 
-                   data-place-type-id="<?php echo $listing['place_type_id'] ?? ''; ?>"
-                   data-price="<?php echo $listing['price']; ?>"
-                   data-rating="<?php echo $listing['avg_rating']; ?>"
-                   data-amenities="<?php echo $amenitiesStr; ?>">
-            <div class="listing-image">
+          <a href="./detailListing.php?id=<?php echo $listing['listing_id']; ?>&checkin=<?php echo urlencode($checkin); ?>&checkout=<?php echo urlencode($checkout); ?>&guests=<?php echo urlencode($guests); ?>" 
+             class="listing-card-link">
+            <article class="listing-card" 
+                     data-place-type-id="<?php echo $listing['place_type_id'] ?? ''; ?>"
+                     data-price="<?php echo $listing['price']; ?>"
+                     data-rating="<?php echo $listing['avg_rating']; ?>"
+                     data-amenities="<?php echo $amenitiesStr; ?>">
+              <div class="listing-image">
               <!-- Dùng ảnh mặc định tạm thời nhé Sơn nào đăng chỗ ở thì xóa comment -->
               <?php 
               // Tạm thời dùng ảnh mặc định vì file_url trong DB chỉ là example
@@ -226,30 +244,30 @@ $totalResults = count($listings);
               </div>
               
               <!-- Capacity -->
-              <div class="listing-capacity" style="display: flex; align-items: center; gap: 0.25rem; color: #6b7280; font-size: 0.875rem; margin: 0.5rem 0;">
-                <i class="fa-solid fa-users" style="font-size: 14px;"></i>
+              <div class="listing-capacity">
+                <i class="fa-solid fa-users"></i>
                 <span>Tối đa <?php echo $listing['capacity']; ?> khách</span>
               </div>
               
               <?php if (!empty($listing['description'])): ?>
-                <div class="listing-description" style="color: #6b7280; font-size: 0.875rem; margin: 0.5rem 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                <div class="listing-description">
                   <?php echo htmlspecialchars(substr($listing['description'], 0, 100)) . '...'; ?>
                 </div>
               <?php endif; ?>
               
               <!-- Rating and Review Count -->
               <?php if ($listing['review_count'] > 0): ?>
-                <div class="listing-rating" style="display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0;">
-                  <div style="display: flex; align-items: center; gap: 0.25rem;">
-                    <i class="fa-solid fa-star" style="color: #FFC107; font-size: 16px;"></i>
-                    <span style="font-weight: 600; color: #1f2937;"><?php echo number_format($listing['avg_rating'], 1); ?></span>
+                <div class="listing-rating">
+                  <div class="rating-wrapper">
+                    <i class="fa-solid fa-star rating-star"></i>
+                    <span class="rating-value"><?php echo number_format($listing['avg_rating'], 1); ?></span>
                   </div>
-                  <span style="color: #6b7280; font-size: 0.875rem;">
+                  <span class="rating-count">
                     (<?php echo $listing['review_count']; ?> đánh giá)
                   </span>
                 </div>
               <?php else: ?>
-                <div class="listing-rating" style="color: #9ca3af; font-size: 0.875rem; margin: 0.5rem 0;">
+                <div class="listing-rating no-rating">
                   Chưa có đánh giá
                 </div>
               <?php endif; ?>
@@ -260,13 +278,13 @@ $totalResults = count($listings);
                   <span class="price-unit">/đêm</span>
                 </div>
               </div>
-            </div>
-          </article>
+            </article>
+          </a>
         <?php endforeach; ?>
       <?php else: ?>
-        <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
-          <p style="font-size: 1.25rem; color: #6b7280;">Không tìm thấy chỗ ở phù hợp với tìm kiếm của bạn</p>
-          <p style="color: #9ca3af; margin-top: 0.5rem;">Thử tìm kiếm với địa điểm khác</p>
+        <div class="no-results-container">
+          <p class="no-results-title">Không tìm thấy chỗ ở phù hợp với tìm kiếm của bạn</p>
+          <p class="no-results-subtitle">Thử tìm kiếm với địa điểm khác</p>
         </div>
       <?php endif; ?>
     </div>
@@ -298,5 +316,6 @@ $totalResults = count($listings);
 
 <!-- Filter JavaScript -->
 <script src="../../../public/js/listing-filter.js?v=<?php echo time(); ?>"></script>
+<script src="../../../public/js/toggle-search-form.js?v=<?php echo time(); ?>"></script>
 
 <?php include __DIR__ . '/../../partials/footer.php'; ?>

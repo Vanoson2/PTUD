@@ -114,6 +114,20 @@
   border: 1px solid #e5e7eb;
 }
 
+.search-header-with-form {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.search-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .search-title {
   font-size: 1.5rem;
   font-weight: 700;
@@ -140,13 +154,47 @@
   justify-content: center;
   cursor: pointer;
   margin-left: auto;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
   color: white;
 }
 
 .btn-search-modify:hover {
   background: #4f46e5;
+  transform: scale(1.05);
 }
+
+.btn-search-modify.active {
+  background: #4f46e5;
+  transform: rotate(90deg);
+}
+
+/* Search Form Container - Inline version for list page */
+.search-form-container {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-form-wrapper-inline {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.search-form-wrapper-inline .search-form {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
 
 /* Listings Grid */
 .listings-grid {
@@ -154,6 +202,13 @@
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
   margin-bottom: 3rem;
+}
+
+/* Listing Card Link Wrapper */
+.listing-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
 .listing-card {
@@ -389,4 +444,87 @@
   .search-title {
     font-size: 1.25rem;
   }
+}
+
+/* Empty State Messages */
+.filter-empty-message {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.no-results-container {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 3rem;
+}
+
+.no-results-title {
+  font-size: 1.25rem;
+  color: #6b7280;
+}
+
+.no-results-subtitle {
+  color: #9ca3af;
+  margin-top: 0.5rem;
+}
+
+/* Listing Capacity */
+.listing-capacity {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+}
+
+.listing-capacity i {
+  font-size: 14px;
+}
+
+/* Listing Description */
+.listing-description {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 2;
+}
+
+/* Rating Styles */
+.listing-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.rating-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.rating-star {
+  color: #FFC107;
+  font-size: 16px;
+}
+
+.rating-value {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.rating-count {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.listing-rating.no-rating {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
 }
