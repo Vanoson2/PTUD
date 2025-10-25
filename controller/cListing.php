@@ -20,5 +20,25 @@ include_once(__DIR__ . "/../model/mListing.php");
         $mListing = new mListing();
         return $mListing->mGetListingAmenities($listingId);
     }
+    
+    public function cGetListingDetail($listingId){
+        $mListing = new mListing();
+        return $mListing->mGetListingDetail($listingId);
+    }
+    
+    public function cGetListingImages($listingId){
+        $mListing = new mListing();
+        return $mListing->mGetListingImages($listingId);
+    }
+    
+    public function cGetListingReviews($listingId, $limit = 10){
+        $mListing = new mListing();
+        return $mListing->mGetListingReviews($listingId, $limit);
+    }
+    
+    public function cGetBookedDates($listingId){
+        $mListing = new mListing();
+        return $mListing->mGetBookedDates($listingId);
+    }
  }
 ?>

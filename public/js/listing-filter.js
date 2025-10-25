@@ -2,8 +2,8 @@
 (function() {
   'use strict';
 
-  // Lấy tất cả listing cards
-  const listingCards = document.querySelectorAll('.listing-card');
+  // Lấy tất cả listing card wrappers
+  const listingCardWrappers = document.querySelectorAll('.listing-card-link');
   
   // Hàm lọc listings
   function filterListings() {
@@ -20,9 +20,16 @@
       .map(input => input.value);
     
     let visibleCount = 0;
+    const grid = document.querySelector('.listings-grid');
+    const wrappersArray = Array.from(listingCardWrappers);
+    const visibleWrappers = [];
+    const hiddenWrappers = [];
     
-    // Lọc từng listing
-    listingCards.forEach(card => {
+    // Phân loại các wrapper thành visible và hidden
+    wrappersArray.forEach(wrapper => {
+      const card = wrapper.querySelector('.listing-card');
+      if (!card) return;
+      
       let shouldShow = true;
       
       // Lấy thông tin từ data attributes
@@ -70,13 +77,25 @@
         }
       }
       
-      // Hiển thị hoặc ẩn card
+      // Phân loại wrapper
       if (shouldShow) {
-        card.style.display = '';
+        visibleWrappers.push(wrapper);
         visibleCount++;
       } else {
-        card.style.display = 'none';
+        hiddenWrappers.push(wrapper);
       }
+    });
+    
+    // Sắp xếp lại: visible wrappers trước, hidden wrappers sau
+    visibleWrappers.forEach(wrapper => {
+      wrapper.style.display = '';
+      wrapper.style.order = '0';
+      grid.appendChild(wrapper);
+    });
+    
+    hiddenWrappers.forEach(wrapper => {
+      wrapper.style.display = 'none';
+      wrapper.style.order = '999';
     });
     
     // Cập nhật số lượng kết quả

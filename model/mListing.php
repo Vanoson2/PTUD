@@ -28,7 +28,7 @@ class mListing{
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
         if($conn){
-            // Tách location thành các từ khóa (ví dụ: "Bà Nà Hills, Đà Nẵng" -> ["Bà Nà Hills", "Đà Nẵng"])
+            // Tách location thành các từ khóa 
             $keywords = array_map('trim', explode(',', $location));
             
             // Xây dựng WHERE clause linh hoạt
@@ -107,7 +107,7 @@ class mListing{
             
             // Lọc theo sức chứa (capacity >= số khách)
             $guests = intval($guests);
-            $capacityFilter = "AND l.capacity >= $guests";
+            $capacityFilter = "AND l.capacity = $guests";
             
             // Lọc theo ngày checkin/checkout (loại bỏ chỗ ở đã được đặt)
             $dateFilter = "";
@@ -184,6 +184,118 @@ class mListing{
                 }
             }
             return $amenities;
+        }else{
+            return [];
+        }
+    }
+    
+    // Lấy chi tiết một listing theo ID
+    public function mGetListingDetail($listingId){
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if($conn){
+            $listingId = intval($listingId);
+            $strSelect = "SELECT 
+                            l.*,
+                            pt.name as place_type_name,
+                            p.name as province_name,
+                            p.full_name as province_full_name,
+                            w.name as ward_name,
+                            w.full_name as ward_full_name,
+                            COALESCE(AVG(r.rating), 0) as avg_rating,
+                            COUNT(DISTINCT r.review_id) as review_count,
+                            h.legal_name as host_name
+                         FROM listing l
+                         LEFT JOIN place_type pt ON l.place_type_id = pt.place_type_id
+                         LEFT JOIN wards w ON l.ward_code = w.code
+                         LEFT JOIN provinces p ON w.province_code = p.code
+                         LEFT JOIN review r ON l.listing_id = r.listing_id
+                         LEFT JOIN host h ON l.host_id = h.host_id
+                         WHERE l.listing_id = $listingId
+                         GROUP BY l.listing_id";
+            
+            $result = $conn->query($strSelect);
+            if($result && $result->num_rows > 0){
+                return $result->fetch_assoc();
+            }
+            return null;
+        }else{
+            return null;
+        }
+    }
+    
+    // Lấy tất cả ảnh của một listing
+    public function mGetListingImages($listingId){
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if($conn){
+            $listingId = intval($listingId);
+            $strSelect = "SELECT * FROM listing_image 
+                         WHERE listing_id = $listingId 
+                         ORDER BY is_cover DESC, sort_order ASC";
+            
+            $result = $conn->query($strSelect);
+            $images = [];
+            if($result){
+                while($row = $result->fetch_assoc()){
+                    $images[] = $row;
+                }
+            }
+            return $images;
+        }else{
+            return [];
+        }
+    }
+    
+    // Lấy reviews của một listing
+    public function mGetListingReviews($listingId, $limit = 10){
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if($conn){
+            $listingId = intval($listingId);
+            $limit = intval($limit);
+            $strSelect = "SELECT r.*, u.full_name as user_name
+                         FROM review r
+                         LEFT JOIN user u ON r.user_id = u.user_id
+                         WHERE r.listing_id = $listingId
+                         ORDER BY r.created_at DESC
+                         LIMIT $limit";
+            
+            $result = $conn->query($strSelect);
+            $reviews = [];
+            if($result){
+                while($row = $result->fetch_assoc()){
+                    $reviews[] = $row;
+                }
+            }
+            return $reviews;
+        }else{
+            return [];
+        }
+    }
+    
+    // Lấy các ngày đã được đặt của một listing
+    public function mGetBookedDates($listingId) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if($conn){
+            $listingId = intval($listingId);
+            // Chỉ lấy booking đang active (confirmed) và chưa hoàn thành
+            $strSelect = "SELECT check_in, check_out 
+                         FROM bookings 
+                         WHERE listing_id = $listingId 
+                         AND status = 'confirmed'
+                         AND check_out >= CURDATE()
+                         ORDER BY check_in ASC";
+            
+            $result = $conn->query($strSelect);
+            $bookings = [];
+            if($result){
+                while($row = $result->fetch_assoc()){
+                    $bookings[] = $row;
+                }
+            }
+            return $bookings;
         }else{
             return [];
         }
