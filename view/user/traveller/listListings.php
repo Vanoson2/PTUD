@@ -3,7 +3,6 @@
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
-
 // Get search parameters
 $location = $_GET['location'] ?? '';
 $checkin = $_GET['checkin'] ?? '';
@@ -18,85 +17,41 @@ if ($checkin && $checkout) {
   $nights = round(($checkoutDate - $checkinDate) / (60 * 60 * 24));
 }
 
-// TODO: Fetch listings from database based on search criteria
-// For now, using sample data
-$listings = [
-  [
-    'id' => 1,
-    'title' => 'Superior Family Room',
-    'type' => 'Hotel room',
-    'location' => 'Đà Nẵng',
-    'image' => '../../../public/img/home/DaNang.jpg',
-    'guests' => 6,
-    'bedrooms' => 4,
-    'beds' => 1,
-    'bathrooms' => 1,
-    'amenities' => ['Kitchen', 'Wifi', 'Air conditioning'],
-    'rating' => 4.84,
-    'reviews' => 534,
-    'price' => 150000
-  ],
-  [
-    'id' => 2,
-    'title' => 'Rainbow Plantation',
-    'type' => 'Apartment',
-    'location' => 'Đà Nẵng',
-    'image' => '../../../public/img/home/NhaTrang.jpg',
-    'guests' => 3,
-    'bedrooms' => 1,
-    'beds' => 1,
-    'bathrooms' => 1,
-    'amenities' => ['Kitchen', 'Wifi', 'Air conditioning'],
-    'rating' => 4.77,
-    'reviews' => 838,
-    'price' => 328000
-  ],
-  [
-    'id' => 3,
-    'title' => 'Junior Suite',
-    'type' => 'Hotel room',
-    'location' => 'Đà Nẵng',
-    'image' => '../../../public/img/home/Hue.jpg',
-    'guests' => 3,
-    'bedrooms' => 1,
-    'beds' => 1,
-    'bathrooms' => 1,
-    'amenities' => ['Wifi', 'Air conditioning'],
-    'rating' => 4.75,
-    'reviews' => 463,
-    'price' => 356000
-  ],
-  [
-    'id' => 4,
-    'title' => 'Solitude Pointe',
-    'type' => 'Hotel room',
-    'location' => 'Đà Nẵng',
-    'image' => '../../../public/img/home/Hanoi.jpg',
-    'guests' => 2,
-    'bedrooms' => 2,
-    'beds' => 1,
-    'bathrooms' => 1,
-    'amenities' => ['Kitchen', 'Wifi', 'Washer', 'Air conditioning'],
-    'rating' => 4.88,
-    'reviews' => 147,
-    'price' => 466000
-  ],
-  [
-    'id' => 5,
-    'title' => 'Harley Connection',
-    'type' => 'Apartment',
-    'location' => 'Đà Nẵng',
-    'image' => '../../../public/img/home/DaNang.jpg',
-    'guests' => 4,
-    'bedrooms' => 2,
-    'beds' => 1,
-    'bathrooms' => 1,
-    'amenities' => ['Kitchen', 'Wifi', 'Washer', 'Air conditioning'],
-    'rating' => 4.84,
-    'reviews' => 534,
-    'price' => 250000
-  ],
-];
+// Include controllers
+include_once(__DIR__ . '/../../../controller/cType&Amenties.php');
+include_once(__DIR__ . '/../../../controller/cListing.php');
+
+// Get place types from database
+$cType = new cTypeAndAmenties();
+$placeTypesResult = $cType->cGetAllTypes();
+$placeTypes = [];
+if ($placeTypesResult) {
+  while ($row = $placeTypesResult->fetch_assoc()) {
+    $placeTypes[] = $row;
+  }
+}
+
+// Get amenities from database
+$amenitiesResult = $cType->cGetAllAmenities();
+$amenities = [];
+if ($amenitiesResult) {
+  while ($row = $amenitiesResult->fetch_assoc()) {
+    $amenities[] = $row;
+  }
+}
+
+// Fetch listings from database based on search location
+$listings = [];
+$cListing = new cListing();
+if (!empty($location)) {
+  // Sử dụng search với filters: location, checkin, checkout, guests
+  $listingsResult = $cListing->cSearchListingsWithFilters($location, $checkin, $checkout, $guests);
+  if ($listingsResult) {
+    while ($row = $listingsResult->fetch_assoc()) {
+      $listings[] = $row;
+    }
+  }
+}
 
 $totalResults = count($listings);
 ?>
@@ -109,34 +64,22 @@ $totalResults = count($listings);
 <div class="list-container">
   <!-- Sidebar Filters -->
   <aside class="sidebar">
-    <div class="filter-header">
-      <button class="filter-toggle">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-          <path d="M3 6a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/>
-        </svg>
-      </button>
-    </div>
-
     <!-- Loại chỗ ở -->
     <div class="filter-section">
       <h3 class="filter-title">Loại chỗ ở</h3>
       <div class="filter-options">
-        <label class="checkbox-label">
-          <input type="checkbox" name="type[]" value="khachsan">
-          <span>Khách sạn</span>
-        </label>
-        <label class="checkbox-label">
-          <input type="checkbox" name="type[]" value="homestay">
-          <span>Homestay</span>
-        </label>
-        <label class="checkbox-label">
-          <input type="checkbox" name="type[]" value="villa">
-          <span>Villa</span>
-        </label>
-        <label class="checkbox-label">
-          <input type="checkbox" name="type[]" value="canho">
-          <span>Căn hộ</span>
-        </label>
+        <?php 
+        if (!empty($placeTypes)) {
+          foreach ($placeTypes as $type) {
+            echo '<label class="checkbox-label">';
+            echo '<input type="checkbox" name="type[]" value="' . $type['place_type_id'] . '">';
+            echo '<span>' . htmlspecialchars($type['name']) . '</span>';
+            echo '</label>';
+          }
+        } else {
+          echo '<p style="color: #6b7280; font-size: 0.9rem;">Không có loại chỗ ở</p>';
+        }
+        ?>
       </div>
     </div>
 
@@ -145,19 +88,23 @@ $totalResults = count($listings);
       <h3 class="filter-title">Khoảng giá</h3>
       <div class="filter-options">
         <label class="checkbox-label">
-          <input type="checkbox" name="price[]" value="0-500000">
+          <input type="radio" name="price" value="">
+          <span>Tất cả</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="radio" name="price" value="0-500000">
           <span>Dưới 500.000</span>
         </label>
         <label class="checkbox-label">
-          <input type="checkbox" name="price[]" value="500000-1000000">
+          <input type="radio" name="price" value="500000-1000000">
           <span>500.000 - 1.000.000</span>
         </label>
         <label class="checkbox-label">
-          <input type="checkbox" name="price[]" value="1000000-1500000">
+          <input type="radio" name="price" value="1000000-1500000">
           <span>1.000.000 - 1.500.000</span>
         </label>
         <label class="checkbox-label">
-          <input type="checkbox" name="price[]" value="1500000+">
+          <input type="radio" name="price" value="1500000+">
           <span>Trên 1.500.000</span>
         </label>
       </div>
@@ -194,34 +141,18 @@ $totalResults = count($listings);
     <div class="filter-section">
       <h3 class="filter-title">Tiện nghi</h3>
       <div class="filter-options">
-        <label class="checkbox-label">
-          <input type="checkbox" name="amenity[]" value="wifi">
-          <span>Wifi</span>
-        </label>
-        <label class="checkbox-label">
-          <input type="checkbox" name="amenity[]" value="pool">
-          <span>Bể bơi</span>
-        </label>
-        <label class="checkbox-label">
-          <input type="checkbox" name="amenity[]" value="ac">
-          <span>Hồ bơi</span>
-        </label>
-        <label class="checkbox-label">
-          <input type="checkbox" name="amenity[]" value="bbq">
-          <span>Lò nướng BBQ</span>
-        </label>
-        <label class="checkbox-label">
-          <input type="checkbox" name="amenity[]" value="hottub">
-          <span>Bồn tắm nước nóng</span>
-        </label>
-        <label class="checkbox-label">
-          <input type="checkbox" name="amenity[]" value="parking">
-          <span>Chỗ đậu xe cùng</span>
-        </label>
-        <label class="checkbox-label">
-          <input type="checkbox" name="amenity[]" value="breakfast">
-          <span>Sân ngoài trời</span>
-        </label>
+        <?php 
+        if (!empty($amenities)) {
+          foreach ($amenities as $amenity) {
+            echo '<label class="checkbox-label">';
+            echo '<input type="checkbox" name="amenities[]" value="' . $amenity['amenity_id'] . '">';
+            echo '<span>' . htmlspecialchars($amenity['name']) . '</span>';
+            echo '</label>';
+          }
+        } else {
+          echo '<p style="color: #6b7280; font-size: 0.9rem;">Không có tiện nghi</p>';
+        }
+        ?>
       </div>
     </div>
   </aside>
@@ -247,60 +178,101 @@ $totalResults = count($listings);
 
     <!-- Listings Grid -->
     <div class="listings-grid">
-      <?php foreach ($listings as $listing): ?>
-        <article class="listing-card">
-          <div class="listing-image">
-            <img src="<?php echo $listing['image']; ?>" alt="<?php echo htmlspecialchars($listing['title']); ?>">
-            <button class="btn-favorite">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
-              </svg>
-            </button>
-          </div>
-          
-          <div class="listing-content">
-            <div class="listing-header">
-              <span class="listing-type"><?php echo $listing['type']; ?> in <?php echo $listing['location']; ?></span>
-              <div class="listing-rating">
-                <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                </svg>
-                <span><?php echo $listing['rating']; ?></span>
-                <span class="rating-count">(<?php echo $listing['reviews']; ?> reviews)</span>
+      <?php if (!empty($listings)): ?>
+        <?php foreach ($listings as $listing): ?>
+          <?php
+          // Lấy amenities của listing
+          $amenities = $cListing->cGetListingAmenities($listing['listing_id']);
+          $amenitiesStr = implode(',', $amenities);
+          ?>
+          <article class="listing-card" 
+                   data-place-type-id="<?php echo $listing['place_type_id'] ?? ''; ?>"
+                   data-price="<?php echo $listing['price']; ?>"
+                   data-rating="<?php echo $listing['avg_rating']; ?>"
+                   data-amenities="<?php echo $amenitiesStr; ?>">
+            <div class="listing-image">
+              <!-- Dùng ảnh mặc định tạm thời nhé Sơn nào đăng chỗ ở thì xóa comment -->
+              <?php 
+              // Tạm thời dùng ảnh mặc định vì file_url trong DB chỉ là example
+              $imageUrl = '../../../public/img/placeholder_listing/demo.png';
+              
+              /* Sau khi có ảnh thật, bỏ comment code này
+              if (!empty($listing['file_url'])) {
+                if (strpos($listing['file_url'], 'http') === 0) {
+                  $imageUrl = $listing['file_url'];
+                } else {
+                  $imageUrl = '../../../' . $listing['file_url'];
+                }
+              } else {
+                $imageUrl = '../../../public/img/home/DaNang.jpg';
+              }
+              */
+              ?>
+              <img src="<?php echo $imageUrl; ?>" alt="<?php echo htmlspecialchars($listing['title']); ?>">
+            </div>
+            
+            <div class="listing-content">
+              <div class="listing-header">
+                <span class="listing-type">
+                  <?php echo htmlspecialchars($listing['place_type_name'] ?? 'Chỗ ở'); ?> 
+                  tại <?php echo htmlspecialchars($listing['province_name'] ?? $listing['ward_name']); ?>
+                </span>
+              </div>
+              
+              <h2 class="listing-title"><?php echo htmlspecialchars($listing['title']); ?></h2>
+              
+              <div class="listing-details">
+                <span><?php echo htmlspecialchars($listing['address']); ?></span>
+              </div>
+              
+              <!-- Capacity -->
+              <div class="listing-capacity" style="display: flex; align-items: center; gap: 0.25rem; color: #6b7280; font-size: 0.875rem; margin: 0.5rem 0;">
+                <i class="fa-solid fa-users" style="font-size: 14px;"></i>
+                <span>Tối đa <?php echo $listing['capacity']; ?> khách</span>
+              </div>
+              
+              <?php if (!empty($listing['description'])): ?>
+                <div class="listing-description" style="color: #6b7280; font-size: 0.875rem; margin: 0.5rem 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                  <?php echo htmlspecialchars(substr($listing['description'], 0, 100)) . '...'; ?>
+                </div>
+              <?php endif; ?>
+              
+              <!-- Rating and Review Count -->
+              <?php if ($listing['review_count'] > 0): ?>
+                <div class="listing-rating" style="display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0;">
+                  <div style="display: flex; align-items: center; gap: 0.25rem;">
+                    <i class="fa-solid fa-star" style="color: #FFC107; font-size: 16px;"></i>
+                    <span style="font-weight: 600; color: #1f2937;"><?php echo number_format($listing['avg_rating'], 1); ?></span>
+                  </div>
+                  <span style="color: #6b7280; font-size: 0.875rem;">
+                    (<?php echo $listing['review_count']; ?> đánh giá)
+                  </span>
+                </div>
+              <?php else: ?>
+                <div class="listing-rating" style="color: #9ca3af; font-size: 0.875rem; margin: 0.5rem 0;">
+                  Chưa có đánh giá
+                </div>
+              <?php endif; ?>
+              
+              <div class="listing-footer">
+                <div class="listing-price">
+                  <span class="price"><?php echo number_format($listing['price']); ?>₫</span>
+                  <span class="price-unit">/đêm</span>
+                </div>
               </div>
             </div>
-            
-            <h2 class="listing-title"><?php echo htmlspecialchars($listing['title']); ?></h2>
-            
-            <div class="listing-details">
-              <span><?php echo $listing['guests']; ?> guests</span>
-              <span>•</span>
-              <span><?php echo $listing['bedrooms']; ?> bedroom<?php echo $listing['bedrooms'] > 1 ? 's' : ''; ?></span>
-              <span>•</span>
-              <span><?php echo $listing['beds']; ?> bed<?php echo $listing['beds'] > 1 ? 's' : ''; ?></span>
-              <span>•</span>
-              <span><?php echo $listing['bathrooms']; ?> bath<?php echo $listing['bathrooms'] > 1 ? 's' : ''; ?></span>
-            </div>
-            
-            <div class="listing-amenities">
-              <?php foreach (array_slice($listing['amenities'], 0, 3) as $amenity): ?>
-                <span><?php echo $amenity; ?></span>
-              <?php endforeach; ?>
-            </div>
-            
-            <div class="listing-footer">
-              <div class="listing-price">
-                <span class="price"><?php echo number_format($listing['price']); ?>,000₫</span>
-                <span class="price-unit">/đêm</span>
-              </div>
-            </div>
-          </div>
-        </article>
-      <?php endforeach; ?>
+          </article>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+          <p style="font-size: 1.25rem; color: #6b7280;">Không tìm thấy chỗ ở phù hợp với tìm kiếm của bạn</p>
+          <p style="color: #9ca3af; margin-top: 0.5rem;">Thử tìm kiếm với địa điểm khác</p>
+        </div>
+      <?php endif; ?>
     </div>
 
     <!-- Pagination -->
-    <div class="pagination">
+    <!-- <div class="pagination">
       <button class="btn-page" disabled>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
@@ -320,8 +292,11 @@ $totalResults = count($listings);
           <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
         </svg>
       </button>
-    </div>
+    </div> -->
   </main>
 </div>
+
+<!-- Filter JavaScript -->
+<script src="../../../public/js/listing-filter.js?v=<?php echo time(); ?>"></script>
 
 <?php include __DIR__ . '/../../partials/footer.php'; ?>

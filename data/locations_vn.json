@@ -1,575 +1,2151 @@
 {
   "provinces": [
-    "An Giang","Bà Rịa - Vũng Tàu","Bạc Liêu","Bắc Giang","Bắc Kạn","Bắc Ninh","Bến Tre",
-    "Bình Dương","Bình Định","Bình Phước","Bình Thuận","Cà Mau","Cao Bằng","Cần Thơ","Đà Nẵng",
-    "Đắk Lắk","Đắk Nông","Điện Biên","Đồng Nai","Đồng Tháp","Gia Lai","Hà Giang","Hà Nam",
-    "Hà Nội","Hà Tĩnh","Hải Dương","Hải Phòng","Hậu Giang","Hòa Bình","Hưng Yên","Khánh Hòa",
-    "Kiên Giang","Kon Tum","Lai Châu","Lâm Đồng","Lạng Sơn","Lào Cai","Long An","Nam Định",
-    "Nghệ An","Ninh Bình","Ninh Thuận","Phú Thọ","Phú Yên","Quảng Bình","Quảng Nam","Quảng Ngãi",
-    "Quảng Ninh","Quảng Trị","Sóc Trăng","Sơn La","Tây Ninh","Thái Bình","Thái Nguyên",
-    "Thanh Hóa","Thừa Thiên Huế","Tiền Giang","TP. Hồ Chí Minh","Trà Vinh","Tuyên Quang",
-    "Vĩnh Long","Vĩnh Phúc","Yên Bái"
+    "Bà Rịa - Vũng Tàu",
+    "Bình Dương",
+    "Bình Định",
+    "Bình Thuận",
+    "Cần Thơ",
+    "Đà Nẵng",
+    "Đắk Lắk",
+    "Đắk Nông",
+    "Đồng Nai",
+    "Gia Lai",
+    "Hà Giang",
+    "Hà Nội",
+    "Hải Phòng",
+    "Khánh Hòa",
+    "Kiên Giang",
+    "Kon Tum",
+    "Lai Châu",
+    "Lâm Đồng",
+    "Lào Cai",
+    "Nghệ An",
+    "Ninh Bình",
+    "Ninh Thuận",
+    "Phú Thọ",
+    "Phú Yên",
+    "Quảng Bình",
+    "Quảng Nam",
+    "Quảng Ninh",
+    "Quảng Trị",
+    "Sơn La",
+    "Thanh Hóa",
+    "Thừa Thiên Huế",
+    "TP. Hồ Chí Minh",
+    "Vĩnh Phúc",
+    "Yên Bái"
   ],
   "cities": [
-    {"name":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"city"},
-    {"name":"Thủ Đức","province":"TP. Hồ Chí Minh","type":"city"},
-    {"name":"Hà Nội","province":"Hà Nội","type":"city"},
-    {"name":"Đà Nẵng","province":"Đà Nẵng","type":"city"},
-    {"name":"Hải Phòng","province":"Hải Phòng","type":"city"},
-    {"name":"Cần Thơ","province":"Cần Thơ","type":"city"},
-
-    {"name":"Vũng Tàu","province":"Bà Rịa - Vũng Tàu","type":"city"},
-    {"name":"Bà Rịa","province":"Bà Rịa - Vũng Tàu","type":"city"},
-
-    {"name":"Long Xuyên","province":"An Giang","type":"city"},
-    {"name":"Châu Đốc","province":"An Giang","type":"city"},
-
-    {"name":"Bắc Giang","province":"Bắc Giang","type":"city"},
-    {"name":"Bắc Kạn","province":"Bắc Kạn","type":"city"},
-    {"name":"Bạc Liêu","province":"Bạc Liêu","type":"city"},
-    {"name":"Bắc Ninh","province":"Bắc Ninh","type":"city"},
-    {"name":"Từ Sơn","province":"Bắc Ninh","type":"city"},
-
-    {"name":"Bến Tre","province":"Bến Tre","type":"city"},
-
-    {"name":"Quy Nhơn","province":"Bình Định","type":"city"},
-    {"name":"An Nhơn","province":"Bình Định","type":"city"},
-
-    {"name":"Thủ Dầu Một","province":"Bình Dương","type":"city"},
-    {"name":"Dĩ An","province":"Bình Dương","type":"city"},
-    {"name":"Thuận An","province":"Bình Dương","type":"city"},
-    {"name":"Tân Uyên","province":"Bình Dương","type":"city"},
-    {"name":"Bến Cát","province":"Bình Dương","type":"city"},
-
-    {"name":"Đồng Xoài","province":"Bình Phước","type":"city"},
-    {"name":"Phước Long","province":"Bình Phước","type":"city"},
-    {"name":"Bình Long","province":"Bình Phước","type":"city"},
-
-    {"name":"Phan Thiết","province":"Bình Thuận","type":"city"},
-
-    {"name":"Cà Mau","province":"Cà Mau","type":"city"},
-
-    {"name":"Cao Bằng","province":"Cao Bằng","type":"city"},
-
-    {"name":"Nha Trang","province":"Khánh Hòa","type":"city"},
-    {"name":"Cam Ranh","province":"Khánh Hòa","type":"city"},
-
-    {"name":"Rạch Giá","province":"Kiên Giang","type":"city"},
-    {"name":"Hà Tiên","province":"Kiên Giang","type":"city"},
-    {"name":"Phú Quốc","province":"Kiên Giang","type":"city"},
-
-    {"name":"Buôn Ma Thuột","province":"Đắk Lắk","type":"city"},
-
-    {"name":"Gia Nghĩa","province":"Đắk Nông","type":"city"},
-
-    {"name":"Điện Biên Phủ","province":"Điện Biên","type":"city"},
-
-    {"name":"Biên Hòa","province":"Đồng Nai","type":"city"},
-    {"name":"Long Khánh","province":"Đồng Nai","type":"city"},
-
-    {"name":"Cao Lãnh","province":"Đồng Tháp","type":"city"},
-    {"name":"Sa Đéc","province":"Đồng Tháp","type":"city"},
-    {"name":"Hồng Ngự","province":"Đồng Tháp","type":"city"},
-
-    {"name":"Pleiku","province":"Gia Lai","type":"city"},
-
-    {"name":"Hà Giang","province":"Hà Giang","type":"city"},
-
-    {"name":"Phủ Lý","province":"Hà Nam","type":"city"},
-
-    {"name":"Hà Tĩnh","province":"Hà Tĩnh","type":"city"},
-
-    {"name":"Hải Dương","province":"Hải Dương","type":"city"},
-    {"name":"Chí Linh","province":"Hải Dương","type":"city"},
-
-    {"name":"Vị Thanh","province":"Hậu Giang","type":"city"},
-    {"name":"Ngã Bảy","province":"Hậu Giang","type":"city"},
-
-    {"name":"Hòa Bình","province":"Hòa Bình","type":"city"},
-
-    {"name":"Hưng Yên","province":"Hưng Yên","type":"city"},
-
-    {"name":"Kon Tum","province":"Kon Tum","type":"city"},
-
-    {"name":"Lai Châu","province":"Lai Châu","type":"city"},
-
-    {"name":"Đà Lạt","province":"Lâm Đồng","type":"city"},
-    {"name":"Bảo Lộc","province":"Lâm Đồng","type":"city"},
-
-    {"name":"Lạng Sơn","province":"Lạng Sơn","type":"city"},
-
-    {"name":"Lào Cai","province":"Lào Cai","type":"city"},
-    {"name":"Sa Pa","province":"Lào Cai","type":"city"},
-
-    {"name":"Tân An","province":"Long An","type":"city"},
-
-    {"name":"Nam Định","province":"Nam Định","type":"city"},
-
-    {"name":"Vinh","province":"Nghệ An","type":"city"},
-    {"name":"Cửa Lò","province":"Nghệ An","type":"city"},
-
-    {"name":"Ninh Bình","province":"Ninh Bình","type":"city"},
-    {"name":"Tam Điệp","province":"Ninh Bình","type":"city"},
-
-    {"name":"Phan Rang - Tháp Chàm","province":"Ninh Thuận","type":"city"},
-
-    {"name":"Việt Trì","province":"Phú Thọ","type":"city"},
-
-    {"name":"Tuy Hòa","province":"Phú Yên","type":"city"},
-
-    {"name":"Đồng Hới","province":"Quảng Bình","type":"city"},
-
-    {"name":"Tam Kỳ","province":"Quảng Nam","type":"city"},
-    {"name":"Hội An","province":"Quảng Nam","type":"city"},
-
-    {"name":"Quảng Ngãi","province":"Quảng Ngãi","type":"city"},
-
-    {"name":"Hạ Long","province":"Quảng Ninh","type":"city"},
-    {"name":"Uông Bí","province":"Quảng Ninh","type":"city"},
-    {"name":"Cẩm Phả","province":"Quảng Ninh","type":"city"},
-    {"name":"Móng Cái","province":"Quảng Ninh","type":"city"},
-
-    {"name":"Đông Hà","province":"Quảng Trị","type":"city"},
-
-    {"name":"Sóc Trăng","province":"Sóc Trăng","type":"city"},
-
-    {"name":"Sơn La","province":"Sơn La","type":"city"},
-    {"name":"Mộc Châu","province":"Sơn La","type":"city"},
-
-    {"name":"Tây Ninh","province":"Tây Ninh","type":"city"},
-
-    {"name":"Thái Bình","province":"Thái Bình","type":"city"},
-
-    {"name":"Thái Nguyên","province":"Thái Nguyên","type":"city"},
-    {"name":"Sông Công","province":"Thái Nguyên","type":"city"},
-
-    {"name":"Thanh Hóa","province":"Thanh Hóa","type":"city"},
-    {"name":"Sầm Sơn","province":"Thanh Hóa","type":"city"},
-
-    {"name":"Huế","province":"Thừa Thiên Huế","type":"city"},
-
-    {"name":"Mỹ Tho","province":"Tiền Giang","type":"city"},
-    {"name":"Gò Công","province":"Tiền Giang","type":"city"},
-
-    {"name":"Trà Vinh","province":"Trà Vinh","type":"city"},
-
-    {"name":"Tuyên Quang","province":"Tuyên Quang","type":"city"},
-
-    {"name":"Vĩnh Long","province":"Vĩnh Long","type":"city"},
-
-    {"name":"Vĩnh Yên","province":"Vĩnh Phúc","type":"city"},
-    {"name":"Phúc Yên","province":"Vĩnh Phúc","type":"city"},
-
-    {"name":"Yên Bái","province":"Yên Bái","type":"city"},
-    {"name":"Nghĩa Lộ","province":"Yên Bái","type":"city"}
+    {
+      "name": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "city"
+    },
+    {
+      "name": "Thủ Đức",
+      "province": "TP. Hồ Chí Minh",
+      "type": "city"
+    },
+    {
+      "name": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "city"
+    },
+    {
+      "name": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "city"
+    },
+    {
+      "name": "Hải Phòng",
+      "province": "Hải Phòng",
+      "type": "city"
+    },
+    {
+      "name": "Cần Thơ",
+      "province": "Cần Thơ",
+      "type": "city"
+    },
+    {
+      "name": "Vũng Tàu",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "city"
+    },
+    {
+      "name": "Bà Rịa",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "city"
+    },
+    {
+      "name": "Quy Nhơn",
+      "province": "Bình Định",
+      "type": "city"
+    },
+    {
+      "name": "An Nhơn",
+      "province": "Bình Định",
+      "type": "city"
+    },
+    {
+      "name": "Thủ Dầu Một",
+      "province": "Bình Dương",
+      "type": "city"
+    },
+    {
+      "name": "Dĩ An",
+      "province": "Bình Dương",
+      "type": "city"
+    },
+    {
+      "name": "Thuận An",
+      "province": "Bình Dương",
+      "type": "city"
+    },
+    {
+      "name": "Tân Uyên",
+      "province": "Bình Dương",
+      "type": "city"
+    },
+    {
+      "name": "Bến Cát",
+      "province": "Bình Dương",
+      "type": "city"
+    },
+    {
+      "name": "Phan Thiết",
+      "province": "Bình Thuận",
+      "type": "city"
+    },
+    {
+      "name": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "city"
+    },
+    {
+      "name": "Cam Ranh",
+      "province": "Khánh Hòa",
+      "type": "city"
+    },
+    {
+      "name": "Rạch Giá",
+      "province": "Kiên Giang",
+      "type": "city"
+    },
+    {
+      "name": "Hà Tiên",
+      "province": "Kiên Giang",
+      "type": "city"
+    },
+    {
+      "name": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "city"
+    },
+    {
+      "name": "Buôn Ma Thuột",
+      "province": "Đắk Lắk",
+      "type": "city"
+    },
+    {
+      "name": "Gia Nghĩa",
+      "province": "Đắk Nông",
+      "type": "city"
+    },
+    {
+      "name": "Biên Hòa",
+      "province": "Đồng Nai",
+      "type": "city"
+    },
+    {
+      "name": "Long Khánh",
+      "province": "Đồng Nai",
+      "type": "city"
+    },
+    {
+      "name": "Pleiku",
+      "province": "Gia Lai",
+      "type": "city"
+    },
+    {
+      "name": "Hà Giang",
+      "province": "Hà Giang",
+      "type": "city"
+    },
+    {
+      "name": "Kon Tum",
+      "province": "Kon Tum",
+      "type": "city"
+    },
+    {
+      "name": "Lai Châu",
+      "province": "Lai Châu",
+      "type": "city"
+    },
+    {
+      "name": "Đà Lạt",
+      "province": "Lâm Đồng",
+      "type": "city"
+    },
+    {
+      "name": "Bảo Lộc",
+      "province": "Lâm Đồng",
+      "type": "city"
+    },
+    {
+      "name": "Lào Cai",
+      "province": "Lào Cai",
+      "type": "city"
+    },
+    {
+      "name": "Sa Pa",
+      "province": "Lào Cai",
+      "type": "city"
+    },
+    {
+      "name": "Vinh",
+      "province": "Nghệ An",
+      "type": "city"
+    },
+    {
+      "name": "Cửa Lò",
+      "province": "Nghệ An",
+      "type": "city"
+    },
+    {
+      "name": "Ninh Bình",
+      "province": "Ninh Bình",
+      "type": "city"
+    },
+    {
+      "name": "Tam Điệp",
+      "province": "Ninh Bình",
+      "type": "city"
+    },
+    {
+      "name": "Phan Rang - Tháp Chàm",
+      "province": "Ninh Thuận",
+      "type": "city"
+    },
+    {
+      "name": "Việt Trì",
+      "province": "Phú Thọ",
+      "type": "city"
+    },
+    {
+      "name": "Tuy Hòa",
+      "province": "Phú Yên",
+      "type": "city"
+    },
+    {
+      "name": "Đồng Hới",
+      "province": "Quảng Bình",
+      "type": "city"
+    },
+    {
+      "name": "Tam Kỳ",
+      "province": "Quảng Nam",
+      "type": "city"
+    },
+    {
+      "name": "Hội An",
+      "province": "Quảng Nam",
+      "type": "city"
+    },
+    {
+      "name": "Hạ Long",
+      "province": "Quảng Ninh",
+      "type": "city"
+    },
+    {
+      "name": "Uông Bí",
+      "province": "Quảng Ninh",
+      "type": "city"
+    },
+    {
+      "name": "Cẩm Phả",
+      "province": "Quảng Ninh",
+      "type": "city"
+    },
+    {
+      "name": "Móng Cái",
+      "province": "Quảng Ninh",
+      "type": "city"
+    },
+    {
+      "name": "Đông Hà",
+      "province": "Quảng Trị",
+      "type": "city"
+    },
+    {
+      "name": "Sơn La",
+      "province": "Sơn La",
+      "type": "city"
+    },
+    {
+      "name": "Mộc Châu",
+      "province": "Sơn La",
+      "type": "city"
+    },
+    {
+      "name": "Thanh Hóa",
+      "province": "Thanh Hóa",
+      "type": "city"
+    },
+    {
+      "name": "Sầm Sơn",
+      "province": "Thanh Hóa",
+      "type": "city"
+    },
+    {
+      "name": "Huế",
+      "province": "Thừa Thiên Huế",
+      "type": "city"
+    },
+    {
+      "name": "Vĩnh Yên",
+      "province": "Vĩnh Phúc",
+      "type": "city"
+    },
+    {
+      "name": "Phúc Yên",
+      "province": "Vĩnh Phúc",
+      "type": "city"
+    },
+    {
+      "name": "Yên Bái",
+      "province": "Yên Bái",
+      "type": "city"
+    },
+    {
+      "name": "Nghĩa Lộ",
+      "province": "Yên Bái",
+      "type": "city"
+    }
   ],
   "districts": [
-    {"name":"Quận 1","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận 3","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận 4","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận 5","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận 6","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận 7","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận 8","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận 10","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận 11","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận 12","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận Bình Thạnh","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận Gò Vấp","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận Phú Nhuận","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận Bình Tân","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận Tân Bình","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Quận Tân Phú","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Huyện Bình Chánh","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Huyện Hóc Môn","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Huyện Củ Chi","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Huyện Nhà Bè","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-    {"name":"Huyện Cần Giờ","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh"},
-
-    {"name":"Quận Ba Đình","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Quận Hoàn Kiếm","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Quận Hai Bà Trưng","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Quận Đống Đa","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Quận Tây Hồ","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Quận Cầu Giấy","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Quận Thanh Xuân","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Quận Hoàng Mai","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Quận Long Biên","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Quận Hà Đông","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Quận Bắc Từ Liêm","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Quận Nam Từ Liêm","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Thị xã Sơn Tây","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Sóc Sơn","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Đông Anh","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Gia Lâm","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Thanh Trì","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Thường Tín","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Thanh Oai","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Phú Xuyên","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Ứng Hòa","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Mỹ Đức","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Chương Mỹ","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Phúc Thọ","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Thạch Thất","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Quốc Oai","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Hoài Đức","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Đan Phượng","city":"Hà Nội","province":"Hà Nội"},
-    {"name":"Huyện Ba Vì","city":"Hà Nội","province":"Hà Nội"},
-
-    {"name":"Quận Hải Châu","city":"Đà Nẵng","province":"Đà Nẵng"},
-    {"name":"Quận Thanh Khê","city":"Đà Nẵng","province":"Đà Nẵng"},
-    {"name":"Quận Sơn Trà","city":"Đà Nẵng","province":"Đà Nẵng"},
-    {"name":"Quận Ngũ Hành Sơn","city":"Đà Nẵng","province":"Đà Nẵng"},
-    {"name":"Quận Liên Chiểu","city":"Đà Nẵng","province":"Đà Nẵng"},
-    {"name":"Quận Cẩm Lệ","city":"Đà Nẵng","province":"Đà Nẵng"},
-    {"name":"Huyện Hòa Vang","city":"Đà Nẵng","province":"Đà Nẵng"},
-    {"name":"Huyện Hoàng Sa","city":"Đà Nẵng","province":"Đà Nẵng"},
-
-    {"name":"Quận Hồng Bàng","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Quận Lê Chân","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Quận Ngô Quyền","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Quận Hải An","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Quận Kiến An","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Quận Dương Kinh","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Quận Đồ Sơn","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Huyện Thủy Nguyên","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Huyện An Dương","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Huyện An Lão","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Huyện Kiến Thụy","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Huyện Tiên Lãng","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Huyện Vĩnh Bảo","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Huyện Cát Hải","city":"Hải Phòng","province":"Hải Phòng"},
-    {"name":"Huyện Bạch Long Vĩ","city":"Hải Phòng","province":"Hải Phòng"},
-
-    {"name":"Quận Ninh Kiều","city":"Cần Thơ","province":"Cần Thơ"},
-    {"name":"Quận Bình Thủy","city":"Cần Thơ","province":"Cần Thơ"},
-    {"name":"Quận Cái Răng","city":"Cần Thơ","province":"Cần Thơ"},
-    {"name":"Quận Ô Môn","city":"Cần Thơ","province":"Cần Thơ"},
-    {"name":"Quận Thốt Nốt","city":"Cần Thơ","province":"Cần Thơ"},
-    {"name":"Huyện Cờ Đỏ","city":"Cần Thơ","province":"Cần Thơ"},
-    {"name":"Huyện Phong Điền","city":"Cần Thơ","province":"Cần Thơ"},
-    {"name":"Huyện Thới Lai","city":"Cần Thơ","province":"Cần Thơ"},
-    {"name":"Huyện Vĩnh Thạnh","city":"Cần Thơ","province":"Cần Thơ"}
+    {
+      "name": "Quận 1",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận 3",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận 4",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận 5",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận 6",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận 7",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận 8",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận 10",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận 11",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận 12",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận Bình Thạnh",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận Gò Vấp",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận Phú Nhuận",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận Bình Tân",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận Tân Bình",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận Tân Phú",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Huyện Bình Chánh",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Huyện Hóc Môn",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Huyện Củ Chi",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Huyện Nhà Bè",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Huyện Cần Giờ",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh"
+    },
+    {
+      "name": "Quận Ba Đình",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Quận Hoàn Kiếm",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Quận Hai Bà Trưng",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Quận Đống Đa",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Quận Tây Hồ",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Quận Cầu Giấy",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Quận Thanh Xuân",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Quận Hoàng Mai",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Quận Long Biên",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Quận Hà Đông",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Quận Bắc Từ Liêm",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Quận Nam Từ Liêm",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Thị xã Sơn Tây",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Sóc Sơn",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Đông Anh",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Gia Lâm",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Thanh Trì",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Thường Tín",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Thanh Oai",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Phú Xuyên",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Ứng Hòa",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Mỹ Đức",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Chương Mỹ",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Phúc Thọ",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Thạch Thất",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Quốc Oai",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Hoài Đức",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Đan Phượng",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Huyện Ba Vì",
+      "city": "Hà Nội",
+      "province": "Hà Nội"
+    },
+    {
+      "name": "Quận Hải Châu",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng"
+    },
+    {
+      "name": "Quận Thanh Khê",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng"
+    },
+    {
+      "name": "Quận Sơn Trà",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng"
+    },
+    {
+      "name": "Quận Ngũ Hành Sơn",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng"
+    },
+    {
+      "name": "Quận Liên Chiểu",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng"
+    },
+    {
+      "name": "Quận Cẩm Lệ",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng"
+    },
+    {
+      "name": "Huyện Hòa Vang",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng"
+    },
+    {
+      "name": "Huyện Hoàng Sa",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng"
+    },
+    {
+      "name": "Quận Hồng Bàng",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Quận Lê Chân",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Quận Ngô Quyền",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Quận Hải An",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Quận Kiến An",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Quận Dương Kinh",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Quận Đồ Sơn",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Huyện Thủy Nguyên",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Huyện An Dương",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Huyện An Lão",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Huyện Kiến Thụy",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Huyện Tiên Lãng",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Huyện Vĩnh Bảo",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Huyện Cát Hải",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Huyện Bạch Long Vĩ",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng"
+    },
+    {
+      "name": "Quận Ninh Kiều",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ"
+    },
+    {
+      "name": "Quận Bình Thủy",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ"
+    },
+    {
+      "name": "Quận Cái Răng",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ"
+    },
+    {
+      "name": "Quận Ô Môn",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ"
+    },
+    {
+      "name": "Quận Thốt Nốt",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ"
+    },
+    {
+      "name": "Huyện Cờ Đỏ",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ"
+    },
+    {
+      "name": "Huyện Phong Điền",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ"
+    },
+    {
+      "name": "Huyện Thới Lai",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ"
+    },
+    {
+      "name": "Huyện Vĩnh Thạnh",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ"
+    }
   ],
   "attractions": [
-    {"name":"Vịnh Hạ Long","city":"Hạ Long","province":"Quảng Ninh","type":"attraction"},
-    {"name":"Yên Tử","city":"Uông Bí","province":"Quảng Ninh","type":"attraction"},
-    {"name":"Bãi Cháy","city":"Hạ Long","province":"Quảng Ninh","type":"attraction"},
-    {"name":"Đảo Cô Tô","city":"Cô Tô","province":"Quảng Ninh","type":"attraction"},
-    {"name":"Đảo Quan Lạn","city":"Vân Đồn","province":"Quảng Ninh","type":"attraction"},
-
-    {"name":"Phố Cổ Hội An","city":"Hội An","province":"Quảng Nam","type":"attraction"},
-    {"name":"Thánh địa Mỹ Sơn","city":"Duy Xuyên","province":"Quảng Nam","type":"attraction"},
-
-    {"name":"Phong Nha - Kẻ Bàng","city":"Bố Trạch","province":"Quảng Bình","type":"attraction"},
-    {"name":"Động Phong Nha","city":"Bố Trạch","province":"Quảng Bình","type":"attraction"},
-    {"name":"Động Thiên Đường","city":"Bố Trạch","province":"Quảng Bình","type":"attraction"},
-    {"name":"Hang Sơn Đoòng","city":"Bố Trạch","province":"Quảng Bình","type":"attraction"},
-    {"name":"Sông Chày - Hang Tối","city":"Bố Trạch","province":"Quảng Bình","type":"attraction"},
-    {"name":"Suối Nước Moọc","city":"Bố Trạch","province":"Quảng Bình","type":"attraction"},
-
-    {"name":"Cố Đô Huế","city":"Huế","province":"Thừa Thiên Huế","type":"attraction"},
-    {"name":"Đại Nội Huế","city":"Huế","province":"Thừa Thiên Huế","type":"attraction"},
-    {"name":"Lăng Khải Định","city":"Huế","province":"Thừa Thiên Huế","type":"attraction"},
-    {"name":"Lăng Tự Đức","city":"Huế","province":"Thừa Thiên Huế","type":"attraction"},
-    {"name":"Lăng Minh Mạng","city":"Huế","province":"Thừa Thiên Huế","type":"attraction"},
-
-    {"name":"Chùa Linh Ứng","city":"Đà Nẵng","province":"Đà Nẵng","type":"attraction"},
-    {"name":"Cầu Vàng","city":"Đà Nẵng","province":"Đà Nẵng","type":"attraction"},
-    {"name":"Bà Nà Hills","city":"Đà Nẵng","province":"Đà Nẵng","type":"attraction"},
-    {"name":"Cầu Rồng","city":"Đà Nẵng","province":"Đà Nẵng","type":"attraction"},
-    {"name":"Bảo tàng Điêu khắc Chăm","city":"Đà Nẵng","province":"Đà Nẵng","type":"attraction"},
-    {"name":"Ngũ Hành Sơn","city":"Đà Nẵng","province":"Đà Nẵng","type":"attraction"},
-
-    {"name":"Vinpearl Nha Trang","city":"Nha Trang","province":"Khánh Hòa","type":"attraction"},
-    {"name":"Hòn Mun","city":"Nha Trang","province":"Khánh Hòa","type":"attraction"},
-    {"name":"Đảo Hòn Tằm","city":"Nha Trang","province":"Khánh Hòa","type":"attraction"},
-    {"name":"Tháp Bà Ponagar","city":"Nha Trang","province":"Khánh Hòa","type":"attraction"},
-    {"name":"Bãi Dài Cam Ranh","city":"Cam Ranh","province":"Khánh Hòa","type":"attraction"},
-    {"name":"Đảo Bình Ba","city":"Cam Ranh","province":"Khánh Hòa","type":"attraction"},
-    {"name":"Điệp Sơn","city":"Vạn Ninh","province":"Khánh Hòa","type":"attraction"},
-
-    {"name":"Thác Prenn","city":"Đà Lạt","province":"Lâm Đồng","type":"attraction"},
-    {"name":"Hồ Tuyền Lâm","city":"Đà Lạt","province":"Lâm Đồng","type":"attraction"},
-    {"name":"Thung Lũng Tình Yêu","city":"Đà Lạt","province":"Lâm Đồng","type":"attraction"},
-    {"name":"Langbiang","city":"Đà Lạt","province":"Lâm Đồng","type":"attraction"},
-    {"name":"Thác Datanla","city":"Đà Lạt","province":"Lâm Đồng","type":"attraction"},
-
-    {"name":"Bãi Sao","city":"Phú Quốc","province":"Kiên Giang","type":"attraction"},
-    {"name":"Dinh Cậu","city":"Phú Quốc","province":"Kiên Giang","type":"attraction"},
-    {"name":"Vinpearl Safari","city":"Phú Quốc","province":"Kiên Giang","type":"attraction"},
-    {"name":"Bãi Khem","city":"Phú Quốc","province":"Kiên Giang","type":"attraction"},
-    {"name":"Suối Tranh","city":"Phú Quốc","province":"Kiên Giang","type":"attraction"},
-
-    {"name":"Chùa Hương","city":"Mỹ Đức","province":"Hà Nội","type":"attraction"},
-    {"name":"Hoàng Thành Thăng Long","city":"Hà Nội","province":"Hà Nội","type":"attraction"},
-    {"name":"Hồ Hoàn Kiếm","city":"Hà Nội","province":"Hà Nội","type":"attraction"},
-    {"name":"Văn Miếu - Quốc Tử Giám","city":"Hà Nội","province":"Hà Nội","type":"attraction"},
-    {"name":"Chùa Một Cột","city":"Hà Nội","province":"Hà Nội","type":"attraction"},
-    {"name":"Nhà tù Hỏa Lò","city":"Hà Nội","province":"Hà Nội","type":"attraction"},
-    {"name":"Chùa Trấn Quốc","city":"Hà Nội","province":"Hà Nội","type":"attraction"},
-    {"name":"Cầu Long Biên","city":"Hà Nội","province":"Hà Nội","type":"attraction"},
-    {"name":"Nhà Hát Lớn Hà Nội","city":"Hà Nội","province":"Hà Nội","type":"attraction"},
-    {"name":"Lăng Chủ tịch Hồ Chí Minh","city":"Hà Nội","province":"Hà Nội","type":"attraction"},
-
-    {"name":"Nhà Thờ Đức Bà","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"attraction"},
-    {"name":"Dinh Độc Lập","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"attraction"},
-    {"name":"Chợ Bến Thành","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"attraction"},
-    {"name":"Địa đạo Củ Chi","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"attraction"},
-    {"name":"Bitexco Tower","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"attraction"},
-    {"name":"Bảo tàng Chứng tích Chiến tranh","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"attraction"},
-    {"name":"Bưu điện Trung tâm Sài Gòn","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"attraction"},
-    {"name":"Phố đi bộ Nguyễn Huệ","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"attraction"},
-    {"name":"Thảo Cầm Viên Sài Gòn","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"attraction"},
-    {"name":"Landmark 81 SkyView","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"attraction"},
-
-    {"name":"Núi Bà Đen","city":"Tây Ninh","province":"Tây Ninh","type":"attraction"},
-
-    {"name":"Mũi Né","city":"Phan Thiết","province":"Bình Thuận","type":"attraction"},
-    {"name":"Đồi Cát Bay Mũi Né","city":"Phan Thiết","province":"Bình Thuận","type":"attraction"},
-    {"name":"Suối Tiên (Mũi Né)","city":"Phan Thiết","province":"Bình Thuận","type":"attraction"},
-    {"name":"Hải đăng Kê Gà","city":"Hàm Thuận Nam","province":"Bình Thuận","type":"attraction"},
-
-    {"name":"Fansipan","city":"Sa Pa","province":"Lào Cai","type":"attraction"},
-    {"name":"Núi Hàm Rồng","city":"Sa Pa","province":"Lào Cai","type":"attraction"},
-    {"name":"Bản Cát Cát","city":"Sa Pa","province":"Lào Cai","type":"attraction"},
-
-    {"name":"Tràng An","city":"Ninh Bình","province":"Ninh Bình","type":"attraction"},
-    {"name":"Tam Cốc - Bích Động","city":"Hoa Lư","province":"Ninh Bình","type":"attraction"},
-    {"name":"Chùa Bái Đính","city":"Gia Viễn","province":"Ninh Bình","type":"attraction"},
-    {"name":"Hang Múa","city":"Hoa Lư","province":"Ninh Bình","type":"attraction"},
-    {"name":"Vườn Quốc gia Cúc Phương","city":"Nho Quan","province":"Ninh Bình","type":"attraction"},
-
-    {"name":"Đèo Mã Pí Lèng","city":"Mèo Vạc","province":"Hà Giang","type":"attraction"},
-    {"name":"Cột cờ Lũng Cú","city":"Đồng Văn","province":"Hà Giang","type":"attraction"},
-    {"name":"Phố cổ Đồng Văn","city":"Đồng Văn","province":"Hà Giang","type":"attraction"},
-
-    {"name":"Thác Bản Giốc","city":"Trùng Khánh","province":"Cao Bằng","type":"attraction"},
-    {"name":"Động Ngườm Ngao","city":"Trùng Khánh","province":"Cao Bằng","type":"attraction"},
-    {"name":"Khu di tích Pác Bó","city":"Hà Quảng","province":"Cao Bằng","type":"attraction"},
-
-    {"name":"Hồ Núi Cốc","city":"Phổ Yên","province":"Thái Nguyên","type":"attraction"},
-
-    {"name":"Ruộng bậc thang Mù Cang Chải","city":"Mù Cang Chải","province":"Yên Bái","type":"attraction"},
-
-    {"name":"Na Hang - Lâm Bình","city":"Na Hang","province":"Tuyên Quang","type":"attraction"},
-
-    {"name":"Hồ Ba Bể","city":"Ba Bể","province":"Bắc Kạn","type":"attraction"},
-
-    {"name":"Đền Hùng","city":"Việt Trì","province":"Phú Thọ","type":"attraction"},
-
-    {"name":"Gành Đá Đĩa","city":"Tuy An","province":"Phú Yên","type":"attraction"},
-    {"name":"Mũi Điện (Mũi Đại Lãnh)","city":"Đông Hòa","province":"Phú Yên","type":"attraction"},
-
-    {"name":"Eo Gió","city":"Quy Nhơn","province":"Bình Định","type":"attraction"},
-    {"name":"Kỳ Co","city":"Nhơn Lý","province":"Bình Định","type":"attraction"},
-    {"name":"Tháp Đôi Quy Nhơn","city":"Quy Nhơn","province":"Bình Định","type":"attraction"},
-
-    {"name":"Nhà thờ gỗ Kon Tum","city":"Kon Tum","province":"Kon Tum","type":"attraction"},
-
-    {"name":"Buôn Đôn","city":"Buôn Đôn","province":"Đắk Lắk","type":"attraction"},
-    {"name":"Thác Dray Nur","city":"Cư Kuin","province":"Đắk Lắk","type":"attraction"},
-
-    {"name":"Biển Hồ (Hồ T’Nưng)","city":"Pleiku","province":"Gia Lai","type":"attraction"},
-
-    {"name":"Bến Ninh Kiều","city":"Cần Thơ","province":"Cần Thơ","type":"attraction"},
-    {"name":"Chợ nổi Cái Răng","city":"Cần Thơ","province":"Cần Thơ","type":"attraction"},
-
-    {"name":"Mũi Cà Mau","city":"Ngọc Hiển","province":"Cà Mau","type":"attraction"},
-    {"name":"Vườn Quốc gia U Minh Hạ","city":"U Minh","province":"Cà Mau","type":"attraction"},
-
-    {"name":"Rừng tràm Trà Sư","city":"Tịnh Biên","province":"An Giang","type":"attraction"},
-    {"name":"Miếu Bà Chúa Xứ Núi Sam","city":"Châu Đốc","province":"An Giang","type":"attraction"},
-
-    {"name":"Thạch Động","city":"Hà Tiên","province":"Kiên Giang","type":"attraction"},
-
-    {"name":"Tượng Chúa Kitô Vua","city":"Vũng Tàu","province":"Bà Rịa - Vũng Tàu","type":"attraction"},
-    {"name":"Hải đăng Vũng Tàu","city":"Vũng Tàu","province":"Bà Rịa - Vũng Tàu","type":"attraction"},
-
-    {"name":"Đảo Lý Sơn","city":"Lý Sơn","province":"Quảng Ngãi","type":"attraction"},
-
-    {"name":"Thành cổ Quảng Trị","city":"Đông Hà","province":"Quảng Trị","type":"attraction"},
-    {"name":"Nghĩa trang Trường Sơn","city":"Gio Linh","province":"Quảng Trị","type":"attraction"},
-
-    {"name":"Chùa Dơi","city":"Sóc Trăng","province":"Sóc Trăng","type":"attraction"},
-
-    {"name":"Ao Bà Om","city":"Trà Vinh","province":"Trà Vinh","type":"attraction"},
-
-    {"name":"Nhà Công tử Bạc Liêu","city":"Bạc Liêu","province":"Bạc Liêu","type":"attraction"},
-    {"name":"Cánh đồng điện gió Bạc Liêu","city":"Giá Rai","province":"Bạc Liêu","type":"attraction"},
-
-    {"name":"Cồn Phụng","city":"Châu Thành","province":"Bến Tre","type":"attraction"},
-
-    {"name":"Chùa Vĩnh Tràng","city":"Mỹ Tho","province":"Tiền Giang","type":"attraction"},
-    {"name":"Cồn Thới Sơn","city":"Mỹ Tho","province":"Tiền Giang","type":"attraction"},
-
-    {"name":"Cù lao An Bình","city":"Long Hồ","province":"Vĩnh Long","type":"attraction"},
-
-    {"name":"Làng nổi Tân Lập","city":"Mộc Hóa","province":"Long An","type":"attraction"},
-
-    {"name":"Vườn Quốc gia Tràm Chim","city":"Tam Nông","province":"Đồng Tháp","type":"attraction"},
-    {"name":"Làng hoa Sa Đéc","city":"Sa Đéc","province":"Đồng Tháp","type":"attraction"},
-
-    {"name":"Khu du lịch Bửu Long","city":"Biên Hòa","province":"Đồng Nai","type":"attraction"},
-    {"name":"Thác Giang Điền","city":"Trảng Bom","province":"Đồng Nai","type":"attraction"},
-
-    {"name":"Chùa Bà Thiên Hậu","city":"Thủ Dầu Một","province":"Bình Dương","type":"attraction"},
-
-    {"name":"Vườn Quốc gia Bù Gia Mập","city":"Bù Gia Mập","province":"Bình Phước","type":"attraction"},
-
-    {"name":"Tràng Tiền - Phố Tây Huế","city":"Huế","province":"Thừa Thiên Huế","type":"attraction"},
-
-    {"name":"Bãi Trường","city":"Phú Quốc","province":"Kiên Giang","type":"beach"},
-    {"name":"Bãi Sao (Bãi Xếp)","city":"Phú Quốc","province":"Kiên Giang","type":"beach"},
-    {"name":"Bãi Ông Lang","city":"Phú Quốc","province":"Kiên Giang","type":"beach"},
-    {"name":"Bãi Dài Phú Quốc","city":"Phú Quốc","province":"Kiên Giang","type":"beach"},
-    {"name":"Bãi Mỹ Khê Đà Nẵng","city":"Đà Nẵng","province":"Đà Nẵng","type":"beach"},
-    {"name":"Bãi Non Nước","city":"Đà Nẵng","province":"Đà Nẵng","type":"beach"},
-    {"name":"Bãi Bắc Mỹ An","city":"Đà Nẵng","province":"Đà Nẵng","type":"beach"},
-    {"name":"Bãi An Bàng","city":"Hội An","province":"Quảng Nam","type":"beach"},
-    {"name":"Bãi Cửa Đại","city":"Hội An","province":"Quảng Nam","type":"beach"},
-    {"name":"Bãi Trần Phú","city":"Nha Trang","province":"Khánh Hòa","type":"beach"},
-    {"name":"Bãi Dài Nha Trang","city":"Nha Trang","province":"Khánh Hòa","type":"beach"},
-    {"name":"Bãi Dốc Lết","city":"Ninh Hòa","province":"Khánh Hòa","type":"beach"},
-    {"name":"Bãi Tiên Sa","city":"Đà Nẵng","province":"Đà Nẵng","type":"beach"},
-    {"name":"Bãi Trước Vũng Tàu","city":"Vũng Tàu","province":"Bà Rịa - Vũng Tàu","type":"beach"},
-    {"name":"Bãi Sau Vũng Tàu","city":"Vũng Tàu","province":"Bà Rịa - Vũng Tàu","type":"beach"},
-    {"name":"Bãi Dứa","city":"Vũng Tàu","province":"Bà Rịa - Vũng Tàu","type":"beach"},
-    {"name":"Bãi Dâu","city":"Vũng Tàu","province":"Bà Rịa - Vũng Tàu","type":"beach"},
-    {"name":"Bãi Hồ Cốc","city":"Xuyên Mộc","province":"Bà Rịa - Vũng Tàu","type":"beach"},
-    {"name":"Bãi Hồ Tràm","city":"Xuyên Mộc","province":"Bà Rịa - Vũng Tàu","type":"beach"},
-    {"name":"Bãi Mũi Né","city":"Phan Thiết","province":"Bình Thuận","type":"beach"},
-    {"name":"Bãi Hàm Tiến","city":"Phan Thiết","province":"Bình Thuận","type":"beach"},
-    {"name":"Bãi Kê Gà","city":"Hàm Thuận Nam","province":"Bình Thuận","type":"beach"},
-    {"name":"Bãi Cảnh Dương","city":"Quy Nhơn","province":"Bình Định","type":"beach"},
-    {"name":"Bãi Kỳ Co","city":"Quy Nhơn","province":"Bình Định","type":"beach"},
-    {"name":"Bãi Hoàng Hậu","city":"Quy Nhơn","province":"Bình Định","type":"beach"},
-    {"name":"Bãi Đại Lãnh","city":"Tuy An","province":"Phú Yên","type":"beach"},
-    {"name":"Bãi Tư Nham","city":"Tuy Hòa","province":"Phú Yên","type":"beach"},
-    {"name":"Bãi Cửa Lò","city":"Cửa Lò","province":"Nghệ An","type":"beach"},
-    {"name":"Bãi Sầm Sơn","city":"Sầm Sơn","province":"Thanh Hóa","type":"beach"},
-    {"name":"Bãi Cát Bà","city":"Cát Bà","province":"Hải Phòng","type":"beach"},
-    {"name":"Bãi Đồ Sơn","city":"Đồ Sơn","province":"Hải Phòng","type":"beach"},
-    {"name":"Bãi Minh Châu","city":"Cô Tô","province":"Quảng Ninh","type":"beach"},
-    {"name":"Bãi Vọng Nguyệt","city":"Vân Đồn","province":"Quảng Ninh","type":"beach"},
-    {"name":"Bãi Lăng Cô","city":"Phú Lộc","province":"Thừa Thiên Huế","type":"beach"},
-    {"name":"Bãi Thuận An","city":"Huế","province":"Thừa Thiên Huế","type":"beach"},
-
-    {"name":"Đảo Phú Quốc","city":"Phú Quốc","province":"Kiên Giang","type":"island"},
-    {"name":"Đảo Cát Bà","city":"Cát Bà","province":"Hải Phòng","type":"island"},
-    {"name":"Đảo Cô Tô","city":"Cô Tô","province":"Quảng Ninh","type":"island"},
-    {"name":"Đảo Quan Lạn","city":"Vân Đồn","province":"Quảng Ninh","type":"island"},
-    {"name":"Đảo Cồn Đảo","city":"Côn Đảo","province":"Bà Rịa - Vũng Tàu","type":"island"},
-    {"name":"Đảo Lý Sơn","city":"Lý Sơn","province":"Quảng Ngãi","type":"island"},
-    {"name":"Đảo Hòn Sơn","city":"Kiên Lương","province":"Kiên Giang","type":"island"},
-    {"name":"Đảo Nam Du","city":"Kiên Hải","province":"Kiên Giang","type":"island"},
-    {"name":"Đảo Cù Lao Chàm","city":"Hội An","province":"Quảng Nam","type":"island"},
-    {"name":"Đảo Bình Ba","city":"Cam Ranh","province":"Khánh Hòa","type":"island"},
-    {"name":"Đảo Bình Hưng","city":"Cam Ranh","province":"Khánh Hòa","type":"island"},
-    {"name":"Đảo Hòn Tre","city":"Nha Trang","province":"Khánh Hòa","type":"island"},
-    {"name":"Đảo Hòn Tằm","city":"Nha Trang","province":"Khánh Hòa","type":"island"},
-    {"name":"Đảo Điệp Sơn","city":"Vạn Ninh","province":"Khánh Hòa","type":"island"},
-    {"name":"Cù Lao Xanh","city":"Quy Nhơn","province":"Bình Định","type":"island"},
-
-    {"name":"Sân bay Tân Sơn Nhất","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"airport"},
-    {"name":"Sân bay Nội Bài","city":"Hà Nội","province":"Hà Nội","type":"airport"},
-    {"name":"Sân bay Đà Nẵng","city":"Đà Nẵng","province":"Đà Nẵng","type":"airport"},
-    {"name":"Sân bay Cam Ranh","city":"Cam Ranh","province":"Khánh Hòa","type":"airport"},
-    {"name":"Sân bay Phú Quốc","city":"Phú Quốc","province":"Kiên Giang","type":"airport"},
-    {"name":"Sân bay Liên Khương","city":"Đà Lạt","province":"Lâm Đồng","type":"airport"},
-    {"name":"Sân bay Cát Bi","city":"Hải Phòng","province":"Hải Phòng","type":"airport"},
-    {"name":"Sân bay Phù Cát","city":"Quy Nhơn","province":"Bình Định","type":"airport"},
-    {"name":"Sân bay Cần Thơ","city":"Cần Thơ","province":"Cần Thơ","type":"airport"},
-    {"name":"Sân bay Vinh","city":"Vinh","province":"Nghệ An","type":"airport"},
-    {"name":"Sân bay Pleiku","city":"Pleiku","province":"Gia Lai","type":"airport"},
-    {"name":"Sân bay Buôn Ma Thuột","city":"Buôn Ma Thuột","province":"Đắk Lắk","type":"airport"},
-    {"name":"Sân bay Phú Bài","city":"Huế","province":"Thừa Thiên Huế","type":"airport"},
-    {"name":"Sân bay Thọ Xuân","city":"Thọ Xuân","province":"Thanh Hóa","type":"airport"},
-    {"name":"Sân bay Vân Đồn","city":"Vân Đồn","province":"Quảng Ninh","type":"airport"},
-    {"name":"Sân bay Côn Đảo","city":"Côn Đảo","province":"Bà Rịa - Vũng Tàu","type":"airport"},
-    {"name":"Sân bay Rạch Giá","city":"Rạch Giá","province":"Kiên Giang","type":"airport"},
-    {"name":"Sân bay Cà Mau","city":"Cà Mau","province":"Cà Mau","type":"airport"},
-
-    {"name":"Bảo tàng Hồ Chí Minh","city":"Hà Nội","province":"Hà Nội","type":"museum"},
-    {"name":"Bảo tàng Lịch sử Quốc gia","city":"Hà Nội","province":"Hà Nội","type":"museum"},
-    {"name":"Bảo tàng Mỹ thuật Việt Nam","city":"Hà Nội","province":"Hà Nội","type":"museum"},
-    {"name":"Bảo tàng Dân tộc học Việt Nam","city":"Hà Nội","province":"Hà Nội","type":"museum"},
-    {"name":"Bảo tàng Phụ nữ Việt Nam","city":"Hà Nội","province":"Hà Nội","type":"museum"},
-    {"name":"Bảo tàng Hà Nội","city":"Hà Nội","province":"Hà Nội","type":"museum"},
-    {"name":"Bảo tàng Hồ Chí Minh - Chi nhánh TP.HCM","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"museum"},
-    {"name":"Bảo tàng Thành phố Hồ Chí Minh","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"museum"},
-    {"name":"Bảo tàng Chứng tích Chiến tranh","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"museum"},
-    {"name":"Bảo tàng Lịch sử Việt Nam TP.HCM","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"museum"},
-    {"name":"Bảo tàng Mỹ thuật TP.HCM","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"museum"},
-    {"name":"Bảo tàng Áo dài","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"museum"},
-    {"name":"Bảo tàng Điêu khắc Chăm Đà Nẵng","city":"Đà Nẵng","province":"Đà Nẵng","type":"museum"},
-    {"name":"Bảo tàng Mỹ thuật Đà Nẵng","city":"Đà Nẵng","province":"Đà Nẵng","type":"museum"},
-    {"name":"Bảo tàng Đà Nẵng","city":"Đà Nẵng","province":"Đà Nẵng","type":"museum"},
-    {"name":"Bảo tàng Cổ vật Cung đình Huế","city":"Huế","province":"Thừa Thiên Huế","type":"museum"},
-    {"name":"Bảo tàng Quảng Trị","city":"Đông Hà","province":"Quảng Trị","type":"museum"},
-    {"name":"Bảo tàng tỉnh Khánh Hòa","city":"Nha Trang","province":"Khánh Hòa","type":"museum"},
-    {"name":"Bảo tàng Hải Dương Học","city":"Nha Trang","province":"Khánh Hòa","type":"museum"},
-    {"name":"Bảo tàng Quảng Ninh","city":"Hạ Long","province":"Quảng Ninh","type":"museum"},
-
-    {"name":"Vinpearl Land Nha Trang","city":"Nha Trang","province":"Khánh Hòa","type":"theme_park"},
-    {"name":"Vinpearl Safari Phú Quốc","city":"Phú Quốc","province":"Kiên Giang","type":"theme_park"},
-    {"name":"VinWonders Phú Quốc","city":"Phú Quốc","province":"Kiên Giang","type":"theme_park"},
-    {"name":"Công viên nước Hồ Tây","city":"Hà Nội","province":"Hà Nội","type":"theme_park"},
-    {"name":"Thảo Cầm Viên Sài Gòn","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"theme_park"},
-    {"name":"Đầm Sen","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"theme_park"},
-    {"name":"Suối Tiên Sài Gòn","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"theme_park"},
-    {"name":"Công viên Thỏ Trắng","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"theme_park"},
-    {"name":"Asia Park Đà Nẵng","city":"Đà Nẵng","province":"Đà Nẵng","type":"theme_park"},
-    {"name":"Công viên Apec Mandala Đà Nẵng","city":"Đà Nẵng","province":"Đà Nẵng","type":"theme_park"},
-    {"name":"VinWonders Nam Hội An","city":"Hội An","province":"Quảng Nam","type":"theme_park"},
-    {"name":"Sun World Hạ Long Park","city":"Hạ Long","province":"Quảng Ninh","type":"theme_park"},
-    {"name":"Sun World Fansipan Legend","city":"Sa Pa","province":"Lào Cai","type":"theme_park"},
-    {"name":"Sun World Bà Nà Hills","city":"Đà Nẵng","province":"Đà Nẵng","type":"theme_park"},
-    {"name":"Sun World Hon Thom Nature Park","city":"Phú Quốc","province":"Kiên Giang","type":"theme_park"},
-    {"name":"Khu du lịch Bửu Long","city":"Biên Hòa","province":"Đồng Nai","type":"theme_park"},
-    {"name":"Công viên Thiên đường Bảo Sơn","city":"Hà Nội","province":"Hà Nội","type":"theme_park"},
-    {"name":"Happy Land Mộc Châu","city":"Mộc Châu","province":"Sơn La","type":"theme_park"}
+    {
+      "name": "Vịnh Hạ Long",
+      "city": "Hạ Long",
+      "province": "Quảng Ninh",
+      "type": "attraction"
+    },
+    {
+      "name": "Yên Tử",
+      "city": "Uông Bí",
+      "province": "Quảng Ninh",
+      "type": "attraction"
+    },
+    {
+      "name": "Bãi Cháy",
+      "city": "Hạ Long",
+      "province": "Quảng Ninh",
+      "type": "attraction"
+    },
+    {
+      "name": "Đảo Cô Tô",
+      "city": "Cô Tô",
+      "province": "Quảng Ninh",
+      "type": "attraction"
+    },
+    {
+      "name": "Đảo Quan Lạn",
+      "city": "Vân Đồn",
+      "province": "Quảng Ninh",
+      "type": "attraction"
+    },
+    {
+      "name": "Phố Cổ Hội An",
+      "city": "Hội An",
+      "province": "Quảng Nam",
+      "type": "attraction"
+    },
+    {
+      "name": "Thánh địa Mỹ Sơn",
+      "city": "Duy Xuyên",
+      "province": "Quảng Nam",
+      "type": "attraction"
+    },
+    {
+      "name": "Phong Nha - Kẻ Bàng",
+      "city": "Bố Trạch",
+      "province": "Quảng Bình",
+      "type": "attraction"
+    },
+    {
+      "name": "Động Phong Nha",
+      "city": "Bố Trạch",
+      "province": "Quảng Bình",
+      "type": "attraction"
+    },
+    {
+      "name": "Động Thiên Đường",
+      "city": "Bố Trạch",
+      "province": "Quảng Bình",
+      "type": "attraction"
+    },
+    {
+      "name": "Hang Sơn Đoòng",
+      "city": "Bố Trạch",
+      "province": "Quảng Bình",
+      "type": "attraction"
+    },
+    {
+      "name": "Sông Chày - Hang Tối",
+      "city": "Bố Trạch",
+      "province": "Quảng Bình",
+      "type": "attraction"
+    },
+    {
+      "name": "Suối Nước Moọc",
+      "city": "Bố Trạch",
+      "province": "Quảng Bình",
+      "type": "attraction"
+    },
+    {
+      "name": "Cố Đô Huế",
+      "city": "Huế",
+      "province": "Thừa Thiên Huế",
+      "type": "attraction"
+    },
+    {
+      "name": "Đại Nội Huế",
+      "city": "Huế",
+      "province": "Thừa Thiên Huế",
+      "type": "attraction"
+    },
+    {
+      "name": "Lăng Khải Định",
+      "city": "Huế",
+      "province": "Thừa Thiên Huế",
+      "type": "attraction"
+    },
+    {
+      "name": "Lăng Tự Đức",
+      "city": "Huế",
+      "province": "Thừa Thiên Huế",
+      "type": "attraction"
+    },
+    {
+      "name": "Lăng Minh Mạng",
+      "city": "Huế",
+      "province": "Thừa Thiên Huế",
+      "type": "attraction"
+    },
+    {
+      "name": "Chùa Linh Ứng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "attraction"
+    },
+    {
+      "name": "Cầu Vàng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "attraction"
+    },
+    {
+      "name": "Bà Nà Hills",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "attraction"
+    },
+    {
+      "name": "Cầu Rồng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "attraction"
+    },
+    {
+      "name": "Bảo tàng Điêu khắc Chăm",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "attraction"
+    },
+    {
+      "name": "Ngũ Hành Sơn",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "attraction"
+    },
+    {
+      "name": "Vinpearl Nha Trang",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "attraction"
+    },
+    {
+      "name": "Hòn Mun",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "attraction"
+    },
+    {
+      "name": "Đảo Hòn Tằm",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "attraction"
+    },
+    {
+      "name": "Tháp Bà Ponagar",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "attraction"
+    },
+    {
+      "name": "Bãi Dài Cam Ranh",
+      "city": "Cam Ranh",
+      "province": "Khánh Hòa",
+      "type": "attraction"
+    },
+    {
+      "name": "Đảo Bình Ba",
+      "city": "Cam Ranh",
+      "province": "Khánh Hòa",
+      "type": "attraction"
+    },
+    {
+      "name": "Điệp Sơn",
+      "city": "Vạn Ninh",
+      "province": "Khánh Hòa",
+      "type": "attraction"
+    },
+    {
+      "name": "Thác Prenn",
+      "city": "Đà Lạt",
+      "province": "Lâm Đồng",
+      "type": "attraction"
+    },
+    {
+      "name": "Hồ Tuyền Lâm",
+      "city": "Đà Lạt",
+      "province": "Lâm Đồng",
+      "type": "attraction"
+    },
+    {
+      "name": "Thung Lũng Tình Yêu",
+      "city": "Đà Lạt",
+      "province": "Lâm Đồng",
+      "type": "attraction"
+    },
+    {
+      "name": "Langbiang",
+      "city": "Đà Lạt",
+      "province": "Lâm Đồng",
+      "type": "attraction"
+    },
+    {
+      "name": "Thác Datanla",
+      "city": "Đà Lạt",
+      "province": "Lâm Đồng",
+      "type": "attraction"
+    },
+    {
+      "name": "Bãi Sao",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "attraction"
+    },
+    {
+      "name": "Dinh Cậu",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "attraction"
+    },
+    {
+      "name": "Vinpearl Safari",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "attraction"
+    },
+    {
+      "name": "Bãi Khem",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "attraction"
+    },
+    {
+      "name": "Suối Tranh",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "attraction"
+    },
+    {
+      "name": "Chùa Hương",
+      "city": "Mỹ Đức",
+      "province": "Hà Nội",
+      "type": "attraction"
+    },
+    {
+      "name": "Hoàng Thành Thăng Long",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "attraction"
+    },
+    {
+      "name": "Hồ Hoàn Kiếm",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "attraction"
+    },
+    {
+      "name": "Văn Miếu - Quốc Tử Giám",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "attraction"
+    },
+    {
+      "name": "Chùa Một Cột",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "attraction"
+    },
+    {
+      "name": "Nhà tù Hỏa Lò",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "attraction"
+    },
+    {
+      "name": "Chùa Trấn Quốc",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "attraction"
+    },
+    {
+      "name": "Cầu Long Biên",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "attraction"
+    },
+    {
+      "name": "Nhà Hát Lớn Hà Nội",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "attraction"
+    },
+    {
+      "name": "Lăng Chủ tịch Hồ Chí Minh",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "attraction"
+    },
+    {
+      "name": "Nhà Thờ Đức Bà",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "attraction"
+    },
+    {
+      "name": "Dinh Độc Lập",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "attraction"
+    },
+    {
+      "name": "Chợ Bến Thành",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "attraction"
+    },
+    {
+      "name": "Địa đạo Củ Chi",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "attraction"
+    },
+    {
+      "name": "Bitexco Tower",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "attraction"
+    },
+    {
+      "name": "Bảo tàng Chứng tích Chiến tranh",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "attraction"
+    },
+    {
+      "name": "Bưu điện Trung tâm Sài Gòn",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "attraction"
+    },
+    {
+      "name": "Phố đi bộ Nguyễn Huệ",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "attraction"
+    },
+    {
+      "name": "Thảo Cầm Viên Sài Gòn",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "attraction"
+    },
+    {
+      "name": "Landmark 81 SkyView",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "attraction"
+    },
+    {
+      "name": "Mũi Né",
+      "city": "Phan Thiết",
+      "province": "Bình Thuận",
+      "type": "attraction"
+    },
+    {
+      "name": "Đồi Cát Bay Mũi Né",
+      "city": "Phan Thiết",
+      "province": "Bình Thuận",
+      "type": "attraction"
+    },
+    {
+      "name": "Suối Tiên (Mũi Né)",
+      "city": "Phan Thiết",
+      "province": "Bình Thuận",
+      "type": "attraction"
+    },
+    {
+      "name": "Hải đăng Kê Gà",
+      "city": "Hàm Thuận Nam",
+      "province": "Bình Thuận",
+      "type": "attraction"
+    },
+    {
+      "name": "Fansipan",
+      "city": "Sa Pa",
+      "province": "Lào Cai",
+      "type": "attraction"
+    },
+    {
+      "name": "Núi Hàm Rồng",
+      "city": "Sa Pa",
+      "province": "Lào Cai",
+      "type": "attraction"
+    },
+    {
+      "name": "Bản Cát Cát",
+      "city": "Sa Pa",
+      "province": "Lào Cai",
+      "type": "attraction"
+    },
+    {
+      "name": "Tràng An",
+      "city": "Ninh Bình",
+      "province": "Ninh Bình",
+      "type": "attraction"
+    },
+    {
+      "name": "Tam Cốc - Bích Động",
+      "city": "Hoa Lư",
+      "province": "Ninh Bình",
+      "type": "attraction"
+    },
+    {
+      "name": "Chùa Bái Đính",
+      "city": "Gia Viễn",
+      "province": "Ninh Bình",
+      "type": "attraction"
+    },
+    {
+      "name": "Hang Múa",
+      "city": "Hoa Lư",
+      "province": "Ninh Bình",
+      "type": "attraction"
+    },
+    {
+      "name": "Vườn Quốc gia Cúc Phương",
+      "city": "Nho Quan",
+      "province": "Ninh Bình",
+      "type": "attraction"
+    },
+    {
+      "name": "Đèo Mã Pí Lèng",
+      "city": "Mèo Vạc",
+      "province": "Hà Giang",
+      "type": "attraction"
+    },
+    {
+      "name": "Cột cờ Lũng Cú",
+      "city": "Đồng Văn",
+      "province": "Hà Giang",
+      "type": "attraction"
+    },
+    {
+      "name": "Phố cổ Đồng Văn",
+      "city": "Đồng Văn",
+      "province": "Hà Giang",
+      "type": "attraction"
+    },
+    {
+      "name": "Ruộng bậc thang Mù Cang Chải",
+      "city": "Mù Cang Chải",
+      "province": "Yên Bái",
+      "type": "attraction"
+    },
+    {
+      "name": "Đền Hùng",
+      "city": "Việt Trì",
+      "province": "Phú Thọ",
+      "type": "attraction"
+    },
+    {
+      "name": "Gành Đá Đĩa",
+      "city": "Tuy An",
+      "province": "Phú Yên",
+      "type": "attraction"
+    },
+    {
+      "name": "Mũi Điện (Mũi Đại Lãnh)",
+      "city": "Đông Hòa",
+      "province": "Phú Yên",
+      "type": "attraction"
+    },
+    {
+      "name": "Eo Gió",
+      "city": "Quy Nhơn",
+      "province": "Bình Định",
+      "type": "attraction"
+    },
+    {
+      "name": "Kỳ Co",
+      "city": "Nhơn Lý",
+      "province": "Bình Định",
+      "type": "attraction"
+    },
+    {
+      "name": "Tháp Đôi Quy Nhơn",
+      "city": "Quy Nhơn",
+      "province": "Bình Định",
+      "type": "attraction"
+    },
+    {
+      "name": "Nhà thờ gỗ Kon Tum",
+      "city": "Kon Tum",
+      "province": "Kon Tum",
+      "type": "attraction"
+    },
+    {
+      "name": "Buôn Đôn",
+      "city": "Buôn Đôn",
+      "province": "Đắk Lắk",
+      "type": "attraction"
+    },
+    {
+      "name": "Thác Dray Nur",
+      "city": "Cư Kuin",
+      "province": "Đắk Lắk",
+      "type": "attraction"
+    },
+    {
+      "name": "Biển Hồ (Hồ T’Nưng)",
+      "city": "Pleiku",
+      "province": "Gia Lai",
+      "type": "attraction"
+    },
+    {
+      "name": "Bến Ninh Kiều",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ",
+      "type": "attraction"
+    },
+    {
+      "name": "Chợ nổi Cái Răng",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ",
+      "type": "attraction"
+    },
+    {
+      "name": "Thạch Động",
+      "city": "Hà Tiên",
+      "province": "Kiên Giang",
+      "type": "attraction"
+    },
+    {
+      "name": "Tượng Chúa Kitô Vua",
+      "city": "Vũng Tàu",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "attraction"
+    },
+    {
+      "name": "Hải đăng Vũng Tàu",
+      "city": "Vũng Tàu",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "attraction"
+    },
+    {
+      "name": "Thành cổ Quảng Trị",
+      "city": "Đông Hà",
+      "province": "Quảng Trị",
+      "type": "attraction"
+    },
+    {
+      "name": "Nghĩa trang Trường Sơn",
+      "city": "Gio Linh",
+      "province": "Quảng Trị",
+      "type": "attraction"
+    },
+    {
+      "name": "Khu du lịch Bửu Long",
+      "city": "Biên Hòa",
+      "province": "Đồng Nai",
+      "type": "attraction"
+    },
+    {
+      "name": "Thác Giang Điền",
+      "city": "Trảng Bom",
+      "province": "Đồng Nai",
+      "type": "attraction"
+    },
+    {
+      "name": "Chùa Bà Thiên Hậu",
+      "city": "Thủ Dầu Một",
+      "province": "Bình Dương",
+      "type": "attraction"
+    },
+    {
+      "name": "Tràng Tiền - Phố Tây Huế",
+      "city": "Huế",
+      "province": "Thừa Thiên Huế",
+      "type": "attraction"
+    },
+    {
+      "name": "Bãi Trường",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Sao (Bãi Xếp)",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Ông Lang",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Dài Phú Quốc",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Mỹ Khê Đà Nẵng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Non Nước",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Bắc Mỹ An",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi An Bàng",
+      "city": "Hội An",
+      "province": "Quảng Nam",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Cửa Đại",
+      "city": "Hội An",
+      "province": "Quảng Nam",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Trần Phú",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Dài Nha Trang",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Dốc Lết",
+      "city": "Ninh Hòa",
+      "province": "Khánh Hòa",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Tiên Sa",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Trước Vũng Tàu",
+      "city": "Vũng Tàu",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Sau Vũng Tàu",
+      "city": "Vũng Tàu",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Dứa",
+      "city": "Vũng Tàu",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Dâu",
+      "city": "Vũng Tàu",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Hồ Cốc",
+      "city": "Xuyên Mộc",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Hồ Tràm",
+      "city": "Xuyên Mộc",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Mũi Né",
+      "city": "Phan Thiết",
+      "province": "Bình Thuận",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Hàm Tiến",
+      "city": "Phan Thiết",
+      "province": "Bình Thuận",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Kê Gà",
+      "city": "Hàm Thuận Nam",
+      "province": "Bình Thuận",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Cảnh Dương",
+      "city": "Quy Nhơn",
+      "province": "Bình Định",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Kỳ Co",
+      "city": "Quy Nhơn",
+      "province": "Bình Định",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Hoàng Hậu",
+      "city": "Quy Nhơn",
+      "province": "Bình Định",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Đại Lãnh",
+      "city": "Tuy An",
+      "province": "Phú Yên",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Tư Nham",
+      "city": "Tuy Hòa",
+      "province": "Phú Yên",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Cửa Lò",
+      "city": "Cửa Lò",
+      "province": "Nghệ An",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Sầm Sơn",
+      "city": "Sầm Sơn",
+      "province": "Thanh Hóa",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Cát Bà",
+      "city": "Cát Bà",
+      "province": "Hải Phòng",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Đồ Sơn",
+      "city": "Đồ Sơn",
+      "province": "Hải Phòng",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Minh Châu",
+      "city": "Cô Tô",
+      "province": "Quảng Ninh",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Vọng Nguyệt",
+      "city": "Vân Đồn",
+      "province": "Quảng Ninh",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Lăng Cô",
+      "city": "Phú Lộc",
+      "province": "Thừa Thiên Huế",
+      "type": "beach"
+    },
+    {
+      "name": "Bãi Thuận An",
+      "city": "Huế",
+      "province": "Thừa Thiên Huế",
+      "type": "beach"
+    },
+    {
+      "name": "Đảo Phú Quốc",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "island"
+    },
+    {
+      "name": "Đảo Cát Bà",
+      "city": "Cát Bà",
+      "province": "Hải Phòng",
+      "type": "island"
+    },
+    {
+      "name": "Đảo Cô Tô",
+      "city": "Cô Tô",
+      "province": "Quảng Ninh",
+      "type": "island"
+    },
+    {
+      "name": "Đảo Quan Lạn",
+      "city": "Vân Đồn",
+      "province": "Quảng Ninh",
+      "type": "island"
+    },
+    {
+      "name": "Đảo Cồn Đảo",
+      "city": "Côn Đảo",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "island"
+    },
+    {
+      "name": "Đảo Hòn Sơn",
+      "city": "Kiên Lương",
+      "province": "Kiên Giang",
+      "type": "island"
+    },
+    {
+      "name": "Đảo Nam Du",
+      "city": "Kiên Hải",
+      "province": "Kiên Giang",
+      "type": "island"
+    },
+    {
+      "name": "Đảo Cù Lao Chàm",
+      "city": "Hội An",
+      "province": "Quảng Nam",
+      "type": "island"
+    },
+    {
+      "name": "Đảo Bình Ba",
+      "city": "Cam Ranh",
+      "province": "Khánh Hòa",
+      "type": "island"
+    },
+    {
+      "name": "Đảo Bình Hưng",
+      "city": "Cam Ranh",
+      "province": "Khánh Hòa",
+      "type": "island"
+    },
+    {
+      "name": "Đảo Hòn Tre",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "island"
+    },
+    {
+      "name": "Đảo Hòn Tằm",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "island"
+    },
+    {
+      "name": "Đảo Điệp Sơn",
+      "city": "Vạn Ninh",
+      "province": "Khánh Hòa",
+      "type": "island"
+    },
+    {
+      "name": "Cù Lao Xanh",
+      "city": "Quy Nhơn",
+      "province": "Bình Định",
+      "type": "island"
+    },
+    {
+      "name": "Sân bay Tân Sơn Nhất",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Nội Bài",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Đà Nẵng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Cam Ranh",
+      "city": "Cam Ranh",
+      "province": "Khánh Hòa",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Phú Quốc",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Liên Khương",
+      "city": "Đà Lạt",
+      "province": "Lâm Đồng",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Cát Bi",
+      "city": "Hải Phòng",
+      "province": "Hải Phòng",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Phù Cát",
+      "city": "Quy Nhơn",
+      "province": "Bình Định",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Cần Thơ",
+      "city": "Cần Thơ",
+      "province": "Cần Thơ",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Vinh",
+      "city": "Vinh",
+      "province": "Nghệ An",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Pleiku",
+      "city": "Pleiku",
+      "province": "Gia Lai",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Buôn Ma Thuột",
+      "city": "Buôn Ma Thuột",
+      "province": "Đắk Lắk",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Phú Bài",
+      "city": "Huế",
+      "province": "Thừa Thiên Huế",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Thọ Xuân",
+      "city": "Thọ Xuân",
+      "province": "Thanh Hóa",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Vân Đồn",
+      "city": "Vân Đồn",
+      "province": "Quảng Ninh",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Côn Đảo",
+      "city": "Côn Đảo",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "airport"
+    },
+    {
+      "name": "Sân bay Rạch Giá",
+      "city": "Rạch Giá",
+      "province": "Kiên Giang",
+      "type": "airport"
+    },
+    {
+      "name": "Bảo tàng Hồ Chí Minh",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Lịch sử Quốc gia",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Mỹ thuật Việt Nam",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Dân tộc học Việt Nam",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Phụ nữ Việt Nam",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Hà Nội",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Hồ Chí Minh - Chi nhánh TP.HCM",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Thành phố Hồ Chí Minh",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Chứng tích Chiến tranh",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Lịch sử Việt Nam TP.HCM",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Mỹ thuật TP.HCM",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Áo dài",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Điêu khắc Chăm Đà Nẵng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Mỹ thuật Đà Nẵng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Đà Nẵng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Cổ vật Cung đình Huế",
+      "city": "Huế",
+      "province": "Thừa Thiên Huế",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Quảng Trị",
+      "city": "Đông Hà",
+      "province": "Quảng Trị",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng tỉnh Khánh Hòa",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Hải Dương Học",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "museum"
+    },
+    {
+      "name": "Bảo tàng Quảng Ninh",
+      "city": "Hạ Long",
+      "province": "Quảng Ninh",
+      "type": "museum"
+    },
+    {
+      "name": "Vinpearl Land Nha Trang",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "theme_park"
+    },
+    {
+      "name": "Vinpearl Safari Phú Quốc",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "theme_park"
+    },
+    {
+      "name": "VinWonders Phú Quốc",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "theme_park"
+    },
+    {
+      "name": "Công viên nước Hồ Tây",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "theme_park"
+    },
+    {
+      "name": "Thảo Cầm Viên Sài Gòn",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "theme_park"
+    },
+    {
+      "name": "Đầm Sen",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "theme_park"
+    },
+    {
+      "name": "Suối Tiên Sài Gòn",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "theme_park"
+    },
+    {
+      "name": "Công viên Thỏ Trắng",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "theme_park"
+    },
+    {
+      "name": "Asia Park Đà Nẵng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "theme_park"
+    },
+    {
+      "name": "Công viên Apec Mandala Đà Nẵng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "theme_park"
+    },
+    {
+      "name": "VinWonders Nam Hội An",
+      "city": "Hội An",
+      "province": "Quảng Nam",
+      "type": "theme_park"
+    },
+    {
+      "name": "Sun World Hạ Long Park",
+      "city": "Hạ Long",
+      "province": "Quảng Ninh",
+      "type": "theme_park"
+    },
+    {
+      "name": "Sun World Fansipan Legend",
+      "city": "Sa Pa",
+      "province": "Lào Cai",
+      "type": "theme_park"
+    },
+    {
+      "name": "Sun World Bà Nà Hills",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "theme_park"
+    },
+    {
+      "name": "Sun World Hon Thom Nature Park",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "theme_park"
+    },
+    {
+      "name": "Khu du lịch Bửu Long",
+      "city": "Biên Hòa",
+      "province": "Đồng Nai",
+      "type": "theme_park"
+    },
+    {
+      "name": "Công viên Thiên đường Bảo Sơn",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "theme_park"
+    },
+    {
+      "name": "Happy Land Mộc Châu",
+      "city": "Mộc Châu",
+      "province": "Sơn La",
+      "type": "theme_park"
+    }
   ],
   "areas": [
-    {"name":"Phố Cổ","city":"Hà Nội","province":"Hà Nội","type":"area"},
-    {"name":"Hồ Tây","city":"Hà Nội","province":"Hà Nội","type":"area"},
-    {"name":"Mỹ Đình","city":"Hà Nội","province":"Hà Nội","type":"area"},
-    {"name":"Cầu Giấy","city":"Hà Nội","province":"Hà Nội","type":"area"},
-    {"name":"Phố đi bộ Hồ Gươm","city":"Hà Nội","province":"Hà Nội","type":"area"},
-    {"name":"Tràng Tiền","city":"Hà Nội","province":"Hà Nội","type":"area"},
-    {"name":"Kim Mã","city":"Hà Nội","province":"Hà Nội","type":"area"},
-
-    {"name":"Bùi Viện","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"area"},
-    {"name":"Phạm Ngũ Lão","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"area"},
-    {"name":"Nguyễn Huệ","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"area"},
-    {"name":"Phú Mỹ Hưng","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"area"},
-    {"name":"Thảo Điền","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"area"},
-    {"name":"Chợ Lớn","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"area"},
-    {"name":"Tân Định","city":"Hồ Chí Minh","province":"TP. Hồ Chí Minh","type":"area"},
-    {"name":"Thủ Thiêm","city":"Thủ Đức","province":"TP. Hồ Chí Minh","type":"area"},
-
-    {"name":"Mỹ Khê","city":"Đà Nẵng","province":"Đà Nẵng","type":"area"},
-    {"name":"Non Nước","city":"Đà Nẵng","province":"Đà Nẵng","type":"area"},
-    {"name":"An Thượng","city":"Đà Nẵng","province":"Đà Nẵng","type":"area"},
-    {"name":"Bạch Đằng","city":"Đà Nẵng","province":"Đà Nẵng","type":"area"},
-
-    {"name":"Trần Phú","city":"Nha Trang","province":"Khánh Hòa","type":"area"},
-    {"name":"Lộc Thọ","city":"Nha Trang","province":"Khánh Hòa","type":"area"},
-    {"name":"An Viên","city":"Nha Trang","province":"Khánh Hòa","type":"area"},
-
-    {"name":"Bãi Trước","city":"Vũng Tàu","province":"Bà Rịa - Vũng Tàu","type":"area"},
-    {"name":"Bãi Sau","city":"Vũng Tàu","province":"Bà Rịa - Vũng Tàu","type":"area"},
-    {"name":"Bãi Dâu","city":"Vũng Tàu","province":"Bà Rịa - Vũng Tàu","type":"area"},
-
-    {"name":"Hồ Xuân Hương","city":"Đà Lạt","province":"Lâm Đồng","type":"area"},
-    {"name":"Khu Hòa Bình","city":"Đà Lạt","province":"Lâm Đồng","type":"area"},
-
-    {"name":"Dương Đông","city":"Phú Quốc","province":"Kiên Giang","type":"area"},
-    {"name":"An Thới","city":"Phú Quốc","province":"Kiên Giang","type":"area"},
-    {"name":"Gành Dầu","city":"Phú Quốc","province":"Kiên Giang","type":"area"},
-    {"name":"Bãi Trường","city":"Phú Quốc","province":"Kiên Giang","type":"area"},
-
-    {"name":"Bãi Cháy","city":"Hạ Long","province":"Quảng Ninh","type":"area"},
-    {"name":"Hòn Gai","city":"Hạ Long","province":"Quảng Ninh","type":"area"}
+    {
+      "name": "Phố Cổ",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "area"
+    },
+    {
+      "name": "Hồ Tây",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "area"
+    },
+    {
+      "name": "Mỹ Đình",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "area"
+    },
+    {
+      "name": "Cầu Giấy",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "area"
+    },
+    {
+      "name": "Phố đi bộ Hồ Gươm",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "area"
+    },
+    {
+      "name": "Tràng Tiền",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "area"
+    },
+    {
+      "name": "Kim Mã",
+      "city": "Hà Nội",
+      "province": "Hà Nội",
+      "type": "area"
+    },
+    {
+      "name": "Bùi Viện",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "area"
+    },
+    {
+      "name": "Phạm Ngũ Lão",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "area"
+    },
+    {
+      "name": "Nguyễn Huệ",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "area"
+    },
+    {
+      "name": "Phú Mỹ Hưng",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "area"
+    },
+    {
+      "name": "Thảo Điền",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "area"
+    },
+    {
+      "name": "Chợ Lớn",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "area"
+    },
+    {
+      "name": "Tân Định",
+      "city": "Hồ Chí Minh",
+      "province": "TP. Hồ Chí Minh",
+      "type": "area"
+    },
+    {
+      "name": "Thủ Thiêm",
+      "city": "Thủ Đức",
+      "province": "TP. Hồ Chí Minh",
+      "type": "area"
+    },
+    {
+      "name": "Mỹ Khê",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "area"
+    },
+    {
+      "name": "Non Nước",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "area"
+    },
+    {
+      "name": "An Thượng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "area"
+    },
+    {
+      "name": "Bạch Đằng",
+      "city": "Đà Nẵng",
+      "province": "Đà Nẵng",
+      "type": "area"
+    },
+    {
+      "name": "Trần Phú",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "area"
+    },
+    {
+      "name": "Lộc Thọ",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "area"
+    },
+    {
+      "name": "An Viên",
+      "city": "Nha Trang",
+      "province": "Khánh Hòa",
+      "type": "area"
+    },
+    {
+      "name": "Bãi Trước",
+      "city": "Vũng Tàu",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "area"
+    },
+    {
+      "name": "Bãi Sau",
+      "city": "Vũng Tàu",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "area"
+    },
+    {
+      "name": "Bãi Dâu",
+      "city": "Vũng Tàu",
+      "province": "Bà Rịa - Vũng Tàu",
+      "type": "area"
+    },
+    {
+      "name": "Hồ Xuân Hương",
+      "city": "Đà Lạt",
+      "province": "Lâm Đồng",
+      "type": "area"
+    },
+    {
+      "name": "Khu Hòa Bình",
+      "city": "Đà Lạt",
+      "province": "Lâm Đồng",
+      "type": "area"
+    },
+    {
+      "name": "Dương Đông",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "area"
+    },
+    {
+      "name": "An Thới",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "area"
+    },
+    {
+      "name": "Gành Dầu",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "area"
+    },
+    {
+      "name": "Bãi Trường",
+      "city": "Phú Quốc",
+      "province": "Kiên Giang",
+      "type": "area"
+    },
+    {
+      "name": "Bãi Cháy",
+      "city": "Hạ Long",
+      "province": "Quảng Ninh",
+      "type": "area"
+    },
+    {
+      "name": "Hòn Gai",
+      "city": "Hạ Long",
+      "province": "Quảng Ninh",
+      "type": "area"
+    }
   ]
 }

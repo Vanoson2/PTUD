@@ -194,13 +194,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
       $count = $cListing->cCountListingByProvince($p['province']);
       $countText = number_format($count) . ' chỗ ở';
       
-      echo "<div class='place-card'>";
+      // Tạo URL với tham số location, sử dụng ngày mặc định
+      $searchUrl = "./view/user/traveller/listListings.php?location=" . urlencode($p['province']) . 
+                   "&checkin=" . $tomorrow . 
+                   "&checkout=" . $dayAfterTomorrow . 
+                   "&guests=1";
+      
+      echo "<a href='{$searchUrl}' class='place-card' style='text-decoration: none; color: inherit;'>";
       echo "<img src='{$p['img']}' alt='{$p['title']}'>";
       echo "<div class='place-card-content'>";
       echo "<div class='place-card-title'>{$p['title']}</div>";
       echo "<div class='place-card-info'>{$countText}</div>";
       echo "</div>";
-      echo "</div>";
+      echo "</a>";
     }
     ?>
   </div>
@@ -241,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
   <div class="promo-cards-grid">
     <!-- Card 1 -->
     <div class="promo-card">
-      <img src="./public/img/home/DaNang.jpg" alt="Promo 1">
+      <img src="./public/img/home/host.jpg" alt="Promo 1">
       <div class="overlay"></div>
       <div class="promo-content">
         <h3 class="promo-title">NHIỀU KHÁCH BIẾT ĐẾN<br>CHỖ Ở BẠN HƠN?</h3>
@@ -250,7 +256,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
     </div>
     <!-- Card 2 -->
     <div class="promo-card">
-      <img src="./public/img/home/NhaTrang.jpg" alt="Promo 2">
+      <img src="./public/img/home/support.jpg" alt="Promo 2">
       <div class="overlay"></div>
       <div class="promo-content">
         <h3 class="promo-title">GẶP KHÓ KHĂN KHI<br>SỬ DỤNG HỆ THỐNG?</h3>
