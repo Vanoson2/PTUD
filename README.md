@@ -47,7 +47,10 @@ git clone https://github.com/Vanoson2/PTUD.git Project_PTUD_Again
 4. Copy toàn bộ nội dung và paste vào phpMyAdmin
 5. Click **Go** để chạy script
 6. Mở file `seed.sql` và làm tương tự để import dữ liệu mẫu
-
+### Hoặc import trực tiếp 
+1. Tạo cơ sở dữ liệu we_go
+2. Import we_go.sql vào database vừa tạo
+3. Import seed.sql vào để tạo dữ liệu mẫu 
 #### Cách 2: Sử dụng MySQL Command Line
 
 ```bash
@@ -102,7 +105,7 @@ class mConnect{
 ### Bước 6: Chạy ứng dụng
 
 1. Mở trình duyệt
-2. Truy cập: [http://localhost/Project_PTUD_Again/index.php](http://localhost/Project_PTUD_Again/index.php)
+2. Truy cập: [http://localhost/index.php]
 3. Trang chủ sẽ hiển thị với form tìm kiếm và các địa điểm du lịch nổi tiếng
 
 ## 📁 Cấu trúc thư mục
@@ -218,9 +221,9 @@ Database `we_go` bao gồm các bảng chính:
 
 ## 🌐 Các URL quan trọng
 
-- **Trang chủ**: http://localhost/Project_PTUD_Again/index.php
+- **Trang chủ**: http://localhostindex.php
 - **phpMyAdmin**: http://localhost/phpmyadmin
-- **Tìm kiếm Đà Nẵng**: http://localhost/Project_PTUD_Again/view/user/traveller/listListings.php?location=Đà%20Nẵng&checkin=2025-10-26&checkout=2025-10-27&guests=1
+- **Tìm kiếm Đà Nẵng**: http://localhost/view/user/traveller/listListings.php?location=Đà%20Nẵng&checkin=2025-10-26&checkout=2025-10-27&guests=1
 
 ## 📝 API Endpoints (Internal)
 
