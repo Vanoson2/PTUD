@@ -1,0 +1,51 @@
+/* Minimal, used site-wide styles */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #f8f9fb;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+.site-header .navbar-brand {
+  font-weight: 700;
+  color: #5b21b6;
+  font-size: 1.25rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Sticky header styles */
+.site-header.sticky-top {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  z-index: 1030;
+  background: white;
+  transition: box-shadow 0.2s ease;
+}
+
+.site-header.sticky-top .navbar {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Buttons (kept as used in footer/newsletter) */
+.btn-primary {
+  background: #6d28d9;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+.btn-primary:hover { background: #5b21b6; }
+
+/* Become Host Button Hover Effect */
+.btn-host:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4) !important;
+}

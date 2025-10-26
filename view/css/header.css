@@ -1,0 +1,81 @@
+/* Header Navigation Styles */
+
+/* Logo/Brand */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #6366f1;
+  text-decoration: none;
+}
+
+.navbar-brand .brand-icon {
+  font-size: 1.8rem;
+}
+
+/* Host Button (Become Host & Dashboard HOST) */
+.btn-host {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.btn-host.dashboard-host {
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.btn-host:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  color: white;
+}
+
+/* User Menu Dropdown Button */
+.btn-outline-primary.dropdown-toggle {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 2px solid #6366f1;
+  color: #6366f1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Dropdown Items with Icons */
+.dropdown-item svg {
+  margin-right: 8px;
+}
+
+/* Dropdown Header (Host Section) */
+.dropdown-header.host-section {
+  font-weight: 600;
+  color: #6366f1;
+}
+
+/* Login/Register Buttons */
+.btn-outline-primary.auth-btn {
+  padding: 8px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 2px solid #6366f1;
+  color: #6366f1;
+}
+
+.btn-primary.auth-btn {
+  padding: 8px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: #6366f1;
+  border: none;
+}

@@ -1,0 +1,33 @@
+/* Listing Search Results Page Styles */
+
+/* Search Form Container */
+.search-results-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.search-results-header {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.search-results-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1a1a1a;
+}
+
+.search-results-info {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.search-results-info .separator {
+  margin: 0 8px;
+}

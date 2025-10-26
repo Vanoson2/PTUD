@@ -1,0 +1,30 @@
+/* Email Verification Page Styles */
+
+/* Resend Code Form */
+form.resend-form {
+  margin: 0;
+}
+
+.email-display {
+  color: #6366f1;
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+#code {
+  font-size: 24px;
+  letter-spacing: 8px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+.form-text {
+  display: block;
+  margin-top: 8px;
+  color: #ef4444;
+  font-size: 13px;
+  text-align: center;
+}
+

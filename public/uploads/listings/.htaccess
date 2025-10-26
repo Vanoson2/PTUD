@@ -1,0 +1,26 @@
+# Allow only images
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+  Order Allow,Deny
+  Allow from all
+</FilesMatch>
+
+# Deny all other files
+<FilesMatch "^.*$">
+  Order Deny,Allow
+  Deny from all
+</FilesMatch>
+
+# Allow images to be viewed
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+  Order Allow,Deny
+  Allow from all
+</FilesMatch>
+
+# Prevent PHP execution
+<FilesMatch "\.php$">
+  Order Deny,Allow
+  Deny from all
+</FilesMatch>
+
+# Disable directory listing
+Options -Indexes
