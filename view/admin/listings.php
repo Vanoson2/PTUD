@@ -24,6 +24,9 @@ $pendingCount = count($cAdmin->cGetAllListings('pending'));
 $activeCount = count($cAdmin->cGetAllListings('active'));
 $rejectedCount = count($cAdmin->cGetAllListings('rejected'));
 $draftCount = count($cAdmin->cGetAllListings('draft'));
+
+// Tổng số tất cả các listing (không phân biệt status)
+$totalCount = count($cAdmin->cGetAllListings(null));
 ?>
 
 <!DOCTYPE html>
@@ -40,13 +43,15 @@ $draftCount = count($cAdmin->cGetAllListings('draft'));
   <nav class="admin-navbar">
     <div class="container-fluid">
       <div class="navbar-brand">
-        <h1>🏠 WeGo Admin</h1>
-        <span class="admin-name">Xin chào, <?php echo htmlspecialchars($adminName); ?></span>
+        <h1>🏠 Quản lý phòng</h1>
+        <span class="admin-name">Xin chào, <?php echo htmlspecialchars($adminName); ?>!</span>
       </div>
       <div class="navbar-links">
         <a href="./dashboard.php" class="nav-link">📊 Dashboard</a>
-        <a href="./applications.php" class="nav-link">📝 Đơn đăng ký Host</a>
-        <a href="./listings.php" class="nav-link active">🏠 Quản lý phòng</a>
+        <a href="./users.php" class="nav-link">👥 Người dùng</a>
+        <a href="./hosts.php" class="nav-link">🏡 Chủ nhà</a>
+        <a href="./applications.php" class="nav-link">📝 Đơn đăng ký</a>
+        <a href="./amenities-services.php" class="nav-link">🛠️ Tiện nghi & DV</a>
         <a href="./logout.php" class="nav-link logout">🚪 Đăng xuất</a>
       </div>
     </div>
@@ -81,7 +86,7 @@ $draftCount = count($cAdmin->cGetAllListings('draft'));
     <!-- Filter Tabs -->
     <div class="filter-tabs">
       <a href="./listings.php" class="filter-btn <?php echo $filterStatus === null ? 'active' : ''; ?>">
-        📋 Tất cả (<?php echo count($listings); ?>)
+        📋 Tất cả (<?php echo $totalCount; ?>)
       </a>
       <a href="./listings.php?status=pending" class="filter-btn <?php echo $filterStatus === 'pending' ? 'active' : ''; ?>">
         ⏳ Chờ duyệt (<?php echo $pendingCount; ?>)

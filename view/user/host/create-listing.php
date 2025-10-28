@@ -50,7 +50,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Validation
   if (empty($title) || empty($address) || $price <= 0 || $capacity <= 0) {
     $errorMessage = 'Vui lòng điền đầy đủ thông tin bắt buộc (Tiêu đề, Địa chỉ, Giá, Sức chứa)';
-  } else {
+  } 
+  // Validate số lượng ảnh (tối thiểu 3, tối đa 5)
+  elseif (!isset($_FILES['images']) || empty($_FILES['images']['name'][0])) {
+    $errorMessage = 'Vui lòng upload ít nhất 3 ảnh cho phòng';
+  }
+  elseif (count(array_filter($_FILES['images']['name'])) < 3) {
+    $errorMessage = 'Vui lòng upload ít nhất 3 ảnh cho phòng';
+  }
+  elseif (count(array_filter($_FILES['images']['name'])) > 5) {
+    $errorMessage = 'Chỉ được upload tối đa 5 ảnh';
+  }
+  else {
     // Tạo listing
     $listingData = [
       'title' => $title,
@@ -80,26 +91,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $coverIndex = intval($_POST['cover_index'] ?? 0);
         $uploadedCount = 0;
+        $imageCounter = 1;
         
         foreach ($_FILES['images']['tmp_name'] as $index => $tmpName) {
           if (empty($tmpName)) continue;
           
           $fileName = $_FILES['images']['name'][$index];
           $fileSize = $_FILES['images']['size'][$index];
+          $fileMimeType = $_FILES['images']['type'][$index];
           $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
           
-          // Validate
-          $allowedTypes = ['jpg', 'jpeg', 'png', 'webp'];
-          if (!in_array($fileType, $allowedTypes)) {
+          // Validate file type (chỉ cho phép PNG, JPG, JPEG)
+          $allowedTypes = ['jpg', 'jpeg', 'png'];
+          $allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+          
+          if (!in_array($fileType, $allowedTypes) || !in_array($fileMimeType, $allowedMimeTypes)) {
             continue;
           }
           
-          if ($fileSize > 10 * 1024 * 1024) { // Max 10MB
+          // Validate file size (tối đa 5MB)
+          $maxSize = 5 * 1024 * 1024; // 5MB
+          if ($fileSize > $maxSize) {
             continue;
           }
           
-          // Generate unique filename
-          $newFileName = 'listing_' . $listingId . '_' . time() . '_' . $index . '.' . $fileType;
+          // Generate filename theo format: userId_img01, userId_img02, ...
+          $imageNumber = str_pad($imageCounter, 2, '0', STR_PAD_LEFT);
+          $newFileName = $userId . '_img' . $imageNumber . '.' . $fileType;
           $targetPath = $uploadDir . $newFileName;
           
           if (move_uploaded_file($tmpName, $targetPath)) {
@@ -107,6 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $isCover = ($index === $coverIndex);
             $cHost->cUploadListingImage($listingId, $fileUrl, $isCover, $index);
             $uploadedCount++;
+            $imageCounter++;
           }
         }
       }
@@ -272,15 +291,15 @@ foreach ($amenities as $amenity) {
         <!-- Ảnh -->
         <div class="form-section">
           <h3 class="section-title">📷 Hình ảnh</h3>
-          <p class="text-muted">Tải lên ít nhất 3 ảnh (tối đa 10MB/ảnh, định dạng JPG/PNG/WEBP)</p>
+          <p class="text-muted">Tải lên từ 3-5 ảnh (tối đa 5MB/ảnh, định dạng JPG/PNG/JPEG)</p>
           
           <div class="image-upload-area" onclick="document.getElementById('images').click()">
             <div class="upload-icon">📸</div>
-            <p><strong>Click để chọn ảnh</strong></p>
+            <p><strong>Click để chọn ảnh (3-5 ảnh)</strong></p>
             <p class="text-muted">Hoặc kéo thả ảnh vào đây</p>
           </div>
           
-          <input type="file" id="images" name="images[]" multiple accept="image/*">
+          <input type="file" id="images" name="images[]" multiple accept="image/png,image/jpg,image/jpeg" required>
           <input type="hidden" id="cover_index" name="cover_index" value="0">
           
           <div id="imagePreviewGrid" class="image-preview-grid"></div>
@@ -341,10 +360,21 @@ foreach ($amenities as $amenity) {
     const imagesInput = document.getElementById('images');
     const previewGrid = document.getElementById('imagePreviewGrid');
     let selectedFiles = [];
+    const maxFiles = 5;
+    const minFiles = 3;
     
     imagesInput.addEventListener('change', function(e) {
       const files = Array.from(e.target.files);
-      selectedFiles = [...selectedFiles, ...files];
+      
+      // Kiểm tra số lượng ảnh
+      if (selectedFiles.length + files.length > maxFiles) {
+        alert(`Chỉ được upload tối đa ${maxFiles} ảnh!`);
+        const allowedCount = maxFiles - selectedFiles.length;
+        selectedFiles = [...selectedFiles, ...files.slice(0, allowedCount)];
+      } else {
+        selectedFiles = [...selectedFiles, ...files];
+      }
+      
       updatePreview();
     });
     
@@ -412,8 +442,31 @@ foreach ($amenities as $amenity) {
       this.style.background = 'transparent';
       
       const files = Array.from(e.dataTransfer.files);
-      selectedFiles = [...selectedFiles, ...files];
+      
+      // Kiểm tra số lượng ảnh
+      if (selectedFiles.length + files.length > maxFiles) {
+        alert(`Chỉ được upload tối đa ${maxFiles} ảnh!`);
+        const allowedCount = maxFiles - selectedFiles.length;
+        selectedFiles = [...selectedFiles, ...files.slice(0, allowedCount)];
+      } else {
+        selectedFiles = [...selectedFiles, ...files];
+      }
+      
       updatePreview();
+    });
+    
+    // Validate form trước khi submit
+    document.getElementById('listingForm').addEventListener('submit', function(e) {
+      if (selectedFiles.length < minFiles) {
+        e.preventDefault();
+        alert(`Vui lòng upload ít nhất ${minFiles} ảnh cho phòng!`);
+        return false;
+      }
+      if (selectedFiles.length > maxFiles) {
+        e.preventDefault();
+        alert(`Chỉ được upload tối đa ${maxFiles} ảnh!`);
+        return false;
+      }
     });
   </script>
 </body>

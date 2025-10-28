@@ -56,6 +56,11 @@ class cHost {
         return $mHost->mGetUserHostApplication($userId);
     }
     
+    public function cSaveHostDocument($applicationId, $docType, $fileUrl, $mimeType, $fileSizeBytes) {
+        $mHost = new mHost();
+        return $mHost->mSaveHostDocument($applicationId, $docType, $fileUrl, $mimeType, $fileSizeBytes);
+    }
+    
     public function cGetHostStatistics($userId) {
         $mHost = new mHost();
         return $mHost->mGetHostStatistics($userId);
@@ -144,6 +149,11 @@ class cHost {
     public function cGetListingImages($listingId) {
         $mListing = new mListing();
         return $mListing->mGetListingImages($listingId);
+    }
+    
+    public function cCheckTaxCodeExists($taxCode) {
+        $mHost = new mHost();
+        return $mHost->mCheckTaxCodeExists($taxCode);
     }
 }
 ?>

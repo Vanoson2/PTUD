@@ -165,8 +165,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
       $count = $cListing->cCountListingByProvince($p['province']);
       $countText = number_format($count) . ' chỗ ở';
       
-      // Tạo URL với tham số location, sử dụng ngày mặc định
-      $searchUrl = "./view/user/traveller/listListings.php?location=" . urlencode($p['province']) . 
+      // Tạo URL với tham số location, sử dụng ngày mặc định, thêm source=featured
+      $searchUrl = "./view/user/traveller/listListings.php?source=featured&location=" . urlencode($p['province']) . 
                    "&checkin=" . $tomorrow . 
                    "&checkout=" . $dayAfterTomorrow . 
                    "&guests=1";

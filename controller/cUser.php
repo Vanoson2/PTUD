@@ -174,15 +174,5 @@ class cUser {
         $mUser = new mUser();
         return $mUser->mGetUserById($userId);
     }
-    
-    public function cUpdateUser($userId, $data) {
-        $mUser = new mUser();
-        return $mUser->mUpdateUser($userId, $data);
-    }
-    
-    public function cUpdateUserProfile($userId, $profileData) {
-        $mUser = new mUser();
-        return $mUser->mUpdateUserProfile($userId, $profileData);
-    }
 }
 ?>

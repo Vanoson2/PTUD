@@ -144,6 +144,7 @@ CREATE TABLE `host_application` (
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`host_application_id`),
+  UNIQUE KEY `uq_tax_code` (`tax_code`),
   KEY `ix_hostapp_user_status` (`user_id`,`status`),
   KEY `fk_hostapp_admin` (`reviewed_by_admin_id`),
   CONSTRAINT `fk_hostapp_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON UPDATE CASCADE,
@@ -176,7 +177,7 @@ CREATE TABLE `place_type` (
 CREATE TABLE `amenity` (
   `amenity_id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(120) NOT NULL,
-  `group_name` VARCHAR(120) DEFAULT NULL,
+  `group_name` VARCHAR(120) DEFAULT NULL, -- bỏ 
   `description` VARCHAR(500) DEFAULT NULL,
   PRIMARY KEY (`amenity_id`),
   UNIQUE KEY `uq_amenity_name` (`name`)
@@ -290,12 +291,14 @@ CREATE TABLE `bookings` (
   `cancelled_by` ENUM('user','admin','system') DEFAULT NULL,
   `cancel_reason` VARCHAR(500) DEFAULT NULL,
   `note` VARCHAR(500) DEFAULT NULL,
+  `is_rated` BOOLEAN NOT NULL DEFAULT FALSE,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`booking_id`),
   UNIQUE KEY `uq_booking_code` (`code`),
   KEY `ix_booking_listing_dates` (`listing_id`,`check_in`,`check_out`),
   KEY `ix_booking_user_status` (`user_id`,`status`),
+  KEY `ix_booking_rated` (`is_rated`),
   CONSTRAINT `fk_booking_listing` FOREIGN KEY (`listing_id`) REFERENCES `listing` (`listing_id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_booking_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

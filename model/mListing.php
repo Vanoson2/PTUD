@@ -30,34 +30,20 @@ class mListing {
         }
     }
     
-    // Tìm kiếm listings theo location (tỉnh/thành phố)
-        public function mSearchListingsByLocation($location){
+    // Tìm kiếm listings theo location (tỉnh/thành phố) - Dùng cho địa điểm nổi tiếng
+    // CHỈ TÌM THEO TỈNH/THÀNH PHỐ - Không tìm trong ward, address, title
+    public function mSearchListingsByLocation($location){
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
         if($conn){
-            // Tách location thành các từ khóa
-            $keywords = array_map('trim', explode(',', $location));
-            // Xây dựng WHERE clause cho location
-            $whereConditions = [];
-            foreach ($keywords as $keyword) {
-                $keyword = $conn->real_escape_string($keyword);
-                $whereConditions[] = "(
-                    p.name LIKE '%$keyword%' 
-                    OR p.full_name LIKE '%$keyword%'
-                    OR w.name LIKE '%$keyword%'
-                    OR w.full_name LIKE '%$keyword%'
-                    OR l.address LIKE '%$keyword%'
-                    OR l.title LIKE '%$keyword%'
-                )";
-            }
+            $location = $conn->real_escape_string($location);
             
-            $whereClause = implode(' OR ', $whereConditions);
-            
+            // CHỈ tìm trong province name và full_name (KHÔNG tìm ward, address, title)
             $strSelect = "SELECT 
                             l.listing_id,
                             l.title,
                             l.description,
-                            l.price_per_night,
+                            l.price,
                             l.capacity,
                             l.address,
                             l.place_type_id,
@@ -75,8 +61,8 @@ class mListing {
                          LEFT JOIN provinces p ON w.province_code = p.code
                          LEFT JOIN listing_image li ON l.listing_id = li.listing_id AND li.is_cover = 1
                          LEFT JOIN review r ON l.listing_id = r.listing_id
-                         WHERE l.status = 'published'
-                         AND ($whereClause)
+                         WHERE l.status = 'active'
+                         AND (p.name LIKE '%$location%' OR p.full_name LIKE '%$location%')
                          GROUP BY l.listing_id
                          ORDER BY 
                             CASE WHEN COUNT(DISTINCT r.review_id) > 0 THEN 0 ELSE 1 END,
@@ -126,7 +112,7 @@ class mListing {
                 // Booking trùng khi: (checkin_mới < checkout_cũ) AND (checkout_mới > checkin_cũ)
                 $dateFilter = "AND l.listing_id NOT IN (
                     SELECT DISTINCT b.listing_id 
-                    FROM booking b 
+                    FROM bookings b 
                     WHERE b.status IN ('confirmed', 'pending')
                     AND (
                         (b.check_in < '$checkout' AND b.check_out > '$checkin')
@@ -138,7 +124,7 @@ class mListing {
                             l.listing_id,
                             l.title,
                             l.description,
-                            l.price_per_night,
+                            l.price,
                             l.capacity,
                             l.address,
                             l.place_type_id,
@@ -156,7 +142,7 @@ class mListing {
                          LEFT JOIN provinces p ON w.province_code = p.code
                          LEFT JOIN listing_image li ON l.listing_id = li.listing_id AND li.is_cover = 1
                          LEFT JOIN review r ON l.listing_id = r.listing_id
-                         WHERE l.status = 'published'
+                         WHERE l.status = 'active'
                          AND ($whereClause)
                          $capacityFilter
                          $dateFilter
@@ -179,22 +165,15 @@ class mListing {
         $conn = $p->mMoKetNoi();
         if($conn){
             $listingId = intval($listingId);
-            $strSelect = "SELECT a.*
+            $strSelect = "SELECT a.amenity_id, a.name
                          FROM listing_amenity la
                          INNER JOIN amenity a ON la.amenity_id = a.amenity_id
-                         WHERE la.listing_id = $listingId
-                         ORDER BY a.name";
+                         WHERE la.listing_id = $listingId";
             
             $result = $conn->query($strSelect);
-            $amenities = [];
-            if($result && $result->num_rows > 0){
-                while($row = $result->fetch_assoc()){
-                    $amenities[] = $row;
-                }
-            }
-            return $amenities;
+            return $result; // Return mysqli_result
         }else{
-            return [];
+            return false;
         }
     }
     
@@ -669,6 +648,47 @@ class mListing {
         $sql .= " WHERE listing_id = $listingId";
         
         return $conn->query($sql);
+    }
+    
+    // Lấy danh sách services của một listing
+    public function mGetListingServices($listingId){
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if($conn){
+            $listingId = intval($listingId);
+            $strSelect = "SELECT ls.*, s.name, s.description
+                         FROM listing_service ls
+                         INNER JOIN service s ON ls.service_id = s.service_id
+                         WHERE ls.listing_id = $listingId
+                         ORDER BY s.name ASC";
+            
+            $result = $conn->query($strSelect);
+            return $result; // Return mysqli_result
+        }else{
+            return false;
+        }
+    }
+    
+    // Lấy rating trung bình và số lượng đánh giá của listing
+    public function mGetListingRating($listingId){
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if($conn){
+            $listingId = intval($listingId);
+            $strSelect = "SELECT 
+                            AVG(rating) as avg_rating,
+                            COUNT(*) as review_count
+                         FROM review
+                         WHERE listing_id = $listingId";
+            
+            $result = $conn->query($strSelect);
+            if($result && $row = $result->fetch_assoc()){
+                return $row;
+            }
+            return ['avg_rating' => 0, 'review_count' => 0];
+        }else{
+            return false;
+        }
     }
 }
 ?>

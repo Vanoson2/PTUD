@@ -176,7 +176,7 @@ class mUser {
         }
         
         // Kiểm tra mã có đúng không
-        if ($user['verify_version'] !== $code) {
+        if ($user['verify_version'] != $code) {
             $p->mDongKetNoi($conn);
             return [
                 'success' => false,
@@ -201,7 +201,9 @@ class mUser {
                           updated_at = CURRENT_TIMESTAMP
                       WHERE user_id = $userId";
         
-        if ($conn->query($updateSql)) {
+        $updateResult = $conn->query($updateSql);
+        
+        if ($updateResult) {
             $p->mDongKetNoi($conn);
             return [
                 'success' => true,

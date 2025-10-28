@@ -1,5 +1,136 @@
 /* HOST Dashboard Styles */
 
+/* Host Layout with Sidebar */
+.host-container {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.host-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+.host-sidebar {
+  width: 280px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  padding: 24px 0;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.host-brand {
+  padding: 0 24px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 16px;
+}
+
+.host-brand h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.host-brand p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.host-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.nav-item:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.nav-item.active {
+  background: #eef2ff;
+  color: #6366f1;
+  border-left-color: #6366f1;
+  font-weight: 600;
+}
+
+.nav-item svg {
+  flex-shrink: 0;
+}
+
+.host-main {
+  flex: 1;
+  margin-left: 280px;
+  padding: 32px;
+  max-width: 1400px;
+}
+
+.profile-header {
+  margin-bottom: 32px;
+}
+
+.profile-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.profile-header p {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Responsive for sidebar layout */
+@media (max-width: 1024px) {
+  .host-sidebar {
+    width: 240px;
+  }
+  
+  .host-main {
+    margin-left: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .host-sidebar {
+    position: fixed;
+    left: -280px;
+    transition: left 0.3s ease;
+  }
+  
+  .host-sidebar.active {
+    left: 0;
+  }
+  
+  .host-main {
+    margin-left: 0;
+    padding: 20px 16px;
+  }
+  
+  .profile-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
 .dashboard-container {
   max-width: 1400px;
   margin: 0 auto;

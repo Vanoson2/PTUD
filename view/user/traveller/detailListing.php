@@ -6,30 +6,30 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Get listing ID from URL
 $listingId = $_GET['id'] ?? 0;
-
 if (empty($listingId)) {
   header('Location: ../../../index.php');
   exit;
 }
-
 // Include controllers
 include_once(__DIR__ . '/../../../controller/cListing.php');
 include_once(__DIR__ . '/../../../controller/cType&Amenties.php');
-
 // Get listing details
 $cListing = new cListing();
 $listing = $cListing->cGetListingDetail($listingId);
-
 if (!$listing) {
   header('Location: ../../../index.php');
   exit;
 }
-
 // Get listing images
 $images = $cListing->cGetListingImages($listingId);
-
 // Get listing amenities
-$amenities = $cListing->cGetListingAmenities($listingId);
+$amenitiesResult = $cListing->cGetListingAmenities($listingId);
+$amenitiesIds = [];
+if ($amenitiesResult && $amenitiesResult->num_rows > 0) {
+  while ($amenityRow = $amenitiesResult->fetch_assoc()) {
+    $amenitiesIds[] = $amenityRow['amenity_id'];
+  }
+}
 
 // Get all amenities details
 $cType = new cTypeAndAmenties();
@@ -63,9 +63,7 @@ if ($checkin && $checkout) {
 // Calculate total price
 $totalPrice = $listing['price'] * $nights;
 ?>
-
 <?php include __DIR__ . '/../../partials/header.php'; ?>
-
 <!-- Page-specific CSS -->
 <link rel="stylesheet" href="../../../view/css/detailListing.css?v=<?php echo time(); ?>">
 
@@ -179,10 +177,10 @@ $totalPrice = $listing['price'] * $nights;
       <div class="detail-section">
         <h2 class="section-title">CÁC TIỆN NGHI CHỖ Ở</h2>
         <div class="amenities-grid">
-          <?php if (!empty($amenities)): ?>
+          <?php if (!empty($amenitiesIds)): ?>
             <?php 
             $amenityCount = 0;
-            foreach ($amenities as $amenityId): 
+            foreach ($amenitiesIds as $amenityId): 
               if (isset($allAmenities[$amenityId]) && $amenityCount < 6):
                 $amenityCount++;
             ?>
@@ -201,8 +199,8 @@ $totalPrice = $listing['price'] * $nights;
             </div>
           <?php endif; ?>
         </div>
-        <?php if (!empty($amenities) && count($amenities) > 6): ?>
-          <button class="btn-show-all">Hiển thị toàn bộ <?php echo count($amenities); ?> tiện nghi</button>
+        <?php if (!empty($amenitiesIds) && count($amenitiesIds) > 6): ?>
+          <button class="btn-show-all">Hiển thị toàn bộ <?php echo count($amenitiesIds); ?> tiện nghi</button>
         <?php endif; ?>
       </div>
 
@@ -239,6 +237,21 @@ $totalPrice = $listing['price'] * $nights;
                   </div>
                 </div>
                 <p class="review-text"><?php echo htmlspecialchars($review['comment']); ?></p>
+                
+                <?php if (!empty($review['imgRating'])): ?>
+                  <?php 
+                  $images = json_decode($review['imgRating'], true);
+                  if ($images && is_array($images) && count($images) > 0): 
+                  ?>
+                    <div class="review-images">
+                      <?php foreach ($images as $imageUrl): ?>
+                        <div class="review-image-item">
+                          <img src="../../../<?php echo htmlspecialchars($imageUrl); ?>" alt="Review image" onclick="openImageModal(this.src)">
+                        </div>
+                      <?php endforeach; ?>
+                    </div>
+                  <?php endif; ?>
+                <?php endif; ?>
               </div>
             <?php endforeach; ?>
           <?php else: ?>
@@ -310,7 +323,7 @@ $totalPrice = $listing['price'] * $nights;
             </div>
           </div>
 
-          <button type="submit" class="btn-booking">ĐẶT CHỖ</button>
+          <button type="button" class="btn-booking" onclick="handleBookingClick()">ĐẶT CHỖ</button>
         </form>
 
         <div class="booking-summary" id="bookingSummary">
@@ -369,6 +382,62 @@ const pricePerNight = <?php echo $listing['price']; ?>;
 </script>
 
 <!-- Date Picker Scripts -->
-<script src="../../../public/js/booking-date-picker.js"></script>
+  <script src="../../../public/js/booking-date-picker.js"></script>
+  
+  <script>
+    // Handle booking button click - check login first
+    function handleBookingClick() {
+      <?php if (!isset($_SESSION['user_id'])): ?>
+        // Not logged in - redirect to login page
+        const returnUrl = encodeURIComponent(window.location.href);
+        window.location.href = '../login.php?redirect=' + returnUrl;
+      <?php else: ?>
+        // Logged in - proceed to confirmation page
+        const checkin = document.getElementById('hiddenCheckin').value;
+        const checkout = document.getElementById('hiddenCheckout').value;
+        const guests = document.getElementById('bookingGuestsInput').value;
+        
+        if (!checkin || !checkout) {
+          alert('Vui lòng chọn ngày nhận phòng và trả phòng');
+          return;
+        }
+        
+        // Redirect to confirmation page
+        window.location.href = `confirm-booking.php?listing_id=<?php echo $listingId; ?>&checkin=${checkin}&checkout=${checkout}&guests=${guests}`;
+      <?php endif; ?>
+    }
+    
+    // Image modal functions
+    function openImageModal(src) {
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImage');
+      modal.classList.add('active');
+      modalImg.src = src;
+    }
+    
+    function closeImageModal() {
+      document.getElementById('imageModal').classList.remove('active');
+    }
+    
+    // Close modal when clicking outside image
+    document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('imageModal');
+      if (modal) {
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) {
+            closeImageModal();
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+
+<!-- Image Modal -->
+<div class="image-modal" id="imageModal" onclick="closeImageModal()">
+  <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
+  <img class="image-modal-content" id="modalImage">
+</div>
 
 <?php include __DIR__ . '/../../partials/footer.php'; ?>

@@ -40,10 +40,13 @@ $applications = $cAdmin->cGetAllHostApplications($filterStatus);
         </div>
         <div class="col-md-6">
           <div class="admin-info">
-            <span><?php echo htmlspecialchars($_SESSION['admin_name']); ?></span>
-            <a href="./dashboard.php" class="btn-dashboard">← Dashboard</a>
-            <a href="./listings.php" class="btn-dashboard">🏠 Quản lý phòng</a>
-            <a href="./logout.php" class="btn-dashboard">Đăng xuất</a>
+            <span>Xin chào, <?php echo htmlspecialchars($_SESSION['admin_name']); ?>!</span>
+            <a href="./dashboard.php" class="btn-dashboard">📊 Dashboard</a>
+            <a href="./users.php" class="btn-dashboard">👥 Người dùng</a>
+            <a href="./hosts.php" class="btn-dashboard">🏡 Chủ nhà</a>
+            <a href="./listings.php" class="btn-dashboard">🏠 Phòng</a>
+            <a href="./amenities-services.php" class="btn-dashboard">🛠️ Tiện nghi & DV</a>
+            <a href="./logout.php" class="btn-dashboard">🚪 Đăng xuất</a>
           </div>
         </div>
       </div>

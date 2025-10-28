@@ -199,7 +199,7 @@ class mHost {
         } else {
             // Tạo host mới
             $insertSql = "INSERT INTO host (user_id, legal_name, tax_code, status, created_at) 
-                          VALUES ($userId, '$businessName', '$taxCode', 'approved', CURRENT_TIMESTAMP)";
+                          VALUES ($userId, '$businessName', Null , 'approved', CURRENT_TIMESTAMP)";
             $success = $conn->query($insertSql);
         }
         
@@ -282,38 +282,77 @@ class mHost {
             'total_reviews' => 0
         ];
         
+        // Lấy host_id từ user_id
+        $hostSql = "SELECT host_id FROM host WHERE user_id = $userId LIMIT 1";
+        $hostResult = $conn->query($hostSql);
+        
+        if (!$hostResult || $hostResult->num_rows === 0) {
+            $p->mDongKetNoi($conn);
+            return $stats; // User chưa là host
+        }
+        
+        $hostRow = $hostResult->fetch_assoc();
+        $hostId = $hostRow['host_id'];
+        
         // Đếm số listings
-        $listingSql = "SELECT COUNT(*) as total FROM listing WHERE user_id = $userId AND status = 'published'";
+        $listingSql = "SELECT COUNT(*) as total FROM listing WHERE host_id = $hostId AND status = 'active'";
         $result = $conn->query($listingSql);
         if ($result && $row = $result->fetch_assoc()) {
             $stats['total_listings'] = (int)$row['total'];
         }
         
-        // Đếm bookings và revenue (nếu có bảng booking)
+        // Đếm bookings và revenue
         $bookingSql = "SELECT COUNT(*) as total_bookings, 
-                       COALESCE(SUM(total_price), 0) as total_revenue 
-                       FROM booking b
+                       COALESCE(SUM(total_amount), 0) as total_revenue 
+                       FROM bookings b
                        INNER JOIN listing l ON b.listing_id = l.listing_id
-                       WHERE l.user_id = $userId AND b.status != 'cancelled'";
+                       WHERE l.host_id = $hostId AND b.status IN ('confirmed', 'completed')";
         $result = $conn->query($bookingSql);
         if ($result && $row = $result->fetch_assoc()) {
             $stats['total_bookings'] = (int)$row['total_bookings'];
             $stats['total_revenue'] = (float)$row['total_revenue'];
         }
         
-        // Đánh giá trung bình (nếu có bảng review)
+        // Đánh giá trung bình
         $reviewSql = "SELECT AVG(r.rating) as avg_rating, COUNT(*) as total_reviews
                       FROM review r
                       INNER JOIN listing l ON r.listing_id = l.listing_id
-                      WHERE l.user_id = $userId";
+                      WHERE l.host_id = $hostId";
         $result = $conn->query($reviewSql);
         if ($result && $row = $result->fetch_assoc()) {
-            $stats['average_rating'] = (float)$row['avg_rating'];
+            $stats['average_rating'] = round((float)$row['avg_rating'], 1);
             $stats['total_reviews'] = (int)$row['total_reviews'];
         }
         
         $p->mDongKetNoi($conn);
         return $stats;
+    }
+    
+    public function mCheckTaxCodeExists($taxCode) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return false;
+        }
+        
+        $taxCode = $conn->real_escape_string($taxCode);
+        
+        // Kiểm tra trong host_application (không bao gồm các đơn bị từ chối)
+        $sql = "SELECT COUNT(*) as count 
+                FROM host_application 
+                WHERE tax_code = '$taxCode' 
+                AND status != 'rejected'";
+        
+        $result = $conn->query($sql);
+        $exists = false;
+        
+        if ($result && $row = $result->fetch_assoc()) {
+            $exists = ($row['count'] > 0);
+        }
+        
+        $p->mDongKetNoi($conn);
+        return $exists;
     }
 }
 ?>

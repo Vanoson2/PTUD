@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $phone = trim($_POST['phone'] ?? $user['phone']);
   $bankAccount = trim($_POST['bank_account'] ?? '');
   $bankName = trim($_POST['bank_name'] ?? '');
+  $taxCode = trim($_POST['tax_code'] ?? '');
   $acceptTerms = isset($_POST['accept_terms']);
   
   // Validation
@@ -67,6 +68,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors['bank_name'] = 'Vui lòng nhập tên ngân hàng';
   }
   
+  // Validate mã số thuế
+  if (empty($taxCode)) {
+    $errors['tax_code'] = 'Vui lòng nhập mã số thuế';
+  } elseif (!preg_match('/^[0-9]{10,13}$/', $taxCode)) {
+    $errors['tax_code'] = 'Mã số thuế không hợp lệ (10-13 số)';
+  }
+  
   if (!$acceptTerms) {
     $errors['accept_terms'] = 'Bạn phải đồng ý với điều khoản và chính sách';
   }
@@ -87,9 +95,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($_FILES['id_front']['size'] > $maxSize) {
       $errors['id_front'] = 'Kích thước ảnh không được vượt quá 5MB';
     } else {
-      // Tạo tên file unique
+      // Tạo tên file theo format userId_img01
       $extension = pathinfo($_FILES['id_front']['name'], PATHINFO_EXTENSION);
-      $idFrontImage = 'id_front_' . $userId . '_' . time() . '.' . $extension;
+      $idFrontImage = $userId . '_img01.' . $extension;
     }
   }
   
@@ -104,8 +112,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($_FILES['id_back']['size'] > $maxSize) {
       $errors['id_back'] = 'Kích thước ảnh không được vượt quá 5MB';
     } else {
+      // Tạo tên file theo format userId_img02
       $extension = pathinfo($_FILES['id_back']['name'], PATHINFO_EXTENSION);
-      $idBackImage = 'id_back_' . $userId . '_' . time() . '.' . $extension;
+      $idBackImage = $userId . '_img02.' . $extension;
     }
   }
   
@@ -120,8 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($_FILES['business_license']['size'] > $maxSize) {
       $errors['business_license'] = 'Kích thước ảnh không được vượt quá 5MB';
     } else {
+      // Tạo tên file theo format userId_img03
       $extension = pathinfo($_FILES['business_license']['name'], PATHINFO_EXTENSION);
-      $businessLicenseImage = 'business_license_' . $userId . '_' . time() . '.' . $extension;
+      $businessLicenseImage = $userId . '_img03.' . $extension;
     }
   }
   
@@ -132,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Tạo host application
     $fullName = $user['full_name'];
-    $result = $cHost->cCreateHostApplication($userId, $fullName, '');
+    $result = $cHost->cCreateHostApplication($userId, $fullName, $taxCode);
     
     if (!$result['success']) {
       $errors['general'] = $result['message'];
@@ -142,17 +152,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Upload ảnh CCCD mặt trước
       if ($idFrontImage && move_uploaded_file($_FILES['id_front']['tmp_name'], $uploadDir . $idFrontImage)) {
         $fileUrl = 'public/uploads/host/' . $idFrontImage;
-        $mHost->mSaveHostDocument($applicationId, 'cccd_front', $fileUrl, $_FILES['id_front']['type'], $_FILES['id_front']['size']);
+        $cHost->cSaveHostDocument($applicationId, 'cccd_front', $fileUrl, $_FILES['id_front']['type'], $_FILES['id_front']['size']);
         
         // Upload ảnh CCCD mặt sau
         if ($idBackImage && move_uploaded_file($_FILES['id_back']['tmp_name'], $uploadDir . $idBackImage)) {
           $fileUrl = 'public/uploads/host/' . $idBackImage;
-          $mHost->mSaveHostDocument($applicationId, 'cccd_back', $fileUrl, $_FILES['id_back']['type'], $_FILES['id_back']['size']);
+          $cHost->cSaveHostDocument($applicationId, 'cccd_back', $fileUrl, $_FILES['id_back']['type'], $_FILES['id_back']['size']);
           
           // Upload ảnh giấy phép kinh doanh
           if ($businessLicenseImage && move_uploaded_file($_FILES['business_license']['tmp_name'], $uploadDir . $businessLicenseImage)) {
             $fileUrl = 'public/uploads/host/' . $businessLicenseImage;
-            $mHost->mSaveHostDocument($applicationId, 'business_license', $fileUrl, $_FILES['business_license']['type'], $_FILES['business_license']['size']);
+            $cHost->cSaveHostDocument($applicationId, 'business_license', $fileUrl, $_FILES['business_license']['type'], $_FILES['business_license']['size']);
             
             $successMessage = 'Đăng ký host thành công! Chúng tôi sẽ xem xét hồ sơ của bạn trong vòng 24-48h.';
           } else {
@@ -391,6 +401,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               >
               <?php if (isset($errors['bank_account'])): ?>
                 <div class="invalid-feedback"><?php echo $errors['bank_account']; ?></div>
+              <?php endif; ?>
+            </div>
+            
+            <div class="form-group">
+              <label for="tax_code">Mã số thuế *</label>
+              <input 
+                type="text" 
+                id="tax_code" 
+                name="tax_code" 
+                class="form-control <?php echo isset($errors['tax_code']) ? 'is-invalid' : ''; ?>" 
+                placeholder="Nhập mã số thuế (10-13 số)"
+                pattern="[0-9]{10,13}"
+                maxlength="13"
+                required
+              >
+              <small class="form-text text-muted">Mã số thuế doanh nghiệp (10-13 chữ số)</small>
+              <?php if (isset($errors['tax_code'])): ?>
+                <div class="invalid-feedback"><?php echo $errors['tax_code']; ?></div>
               <?php endif; ?>
             </div>
           </div>

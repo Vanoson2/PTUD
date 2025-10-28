@@ -369,12 +369,6 @@ select.form-control {
   margin-right: 5px;
 }
 
-/* Verify Email Button */
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
 .btn-block {
   display: block;
   width: 100%;

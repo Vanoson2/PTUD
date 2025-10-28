@@ -125,5 +125,46 @@ class mEmailPHPMailer {
         </html>
         ";
     }
+    
+    /**
+     * Gửi email tùy chỉnh
+     */
+    public function sendEmail($toEmail, $subject, $body, $toName = '') {
+        if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+            return false;
+        }
+        
+        try {
+            $mail = new PHPMailer(true);
+            
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host       = $this->smtpHost;
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $this->smtpUsername;
+            $mail->Password   = $this->smtpPassword;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port       = $this->smtpPort;
+            $mail->CharSet    = 'UTF-8';
+            
+            // Recipients
+            $mail->setFrom($this->fromEmail, $this->fromName);
+            $mail->addAddress($toEmail, $toName);
+            $mail->addReplyTo($this->fromEmail, $this->fromName);
+            
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body = $body;
+            $mail->AltBody = strip_tags($body);
+            
+            $mail->send();
+            return true;
+            
+        } catch (Exception $e) {
+            error_log("PHPMailer Error: {$mail->ErrorInfo}");
+            return false;
+        }
+    }
 }
 ?>

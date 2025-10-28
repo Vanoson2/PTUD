@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 // Get search parameters
+$source = $_GET['source'] ?? ''; // 'featured' hoặc rỗng
 $location = $_GET['location'] ?? '';
 $checkin = $_GET['checkin'] ?? '';
 $checkout = $_GET['checkout'] ?? '';
@@ -44,8 +45,17 @@ if ($amenitiesResult) {
 $listings = [];
 $cListing = new cListing();
 if (!empty($location)) {
-  // Sử dụng search với filters: location, checkin, checkout, guests
-  $listingsResult = $cListing->cSearchListingsWithFilters($location, $checkin, $checkout, $guests);
+  // Phân biệt 2 loại search:
+  // 1. Từ địa điểm nổi tiếng (source=featured) → Chỉ tìm theo tỉnh
+  // 2. Từ form tìm kiếm (source rỗng) → Tìm linh hoạt với filters
+  if ($source === 'featured') {
+    // Địa điểm nổi tiếng: Chỉ tìm theo tỉnh, không filter capacity/date
+    $listingsResult = $cListing->cSearchListingsByLocation($location);
+  } else {
+    // Form search: Tìm linh hoạt với filters
+    $listingsResult = $cListing->cSearchListingsWithFilters($location, $checkin, $checkout, $guests);
+  }
+  
   if ($listingsResult) {
     while ($row = $listingsResult->fetch_assoc()) {
       $listings[] = $row;
@@ -72,19 +82,30 @@ $totalResults = count($listings);
 <!-- Search Form at Top -->
 <div class="search-results-container">
   <div class="search-results-header">
-    <h1 class="search-results-title">
-      <?php echo $totalResults; ?>+ chỗ ở tại <?php echo htmlspecialchars($location); ?>
-    </h1>
-    <div class="search-results-info">
-      <span><?php echo date('d/m', strtotime($checkin)); ?> - <?php echo date('d/m', strtotime($checkout)); ?></span>
-      <span class="separator">•</span>
-      <span><?php echo $guests; ?> khách</span>
+    <div class="search-info">
+      <h1 class="search-results-title">
+        <?php echo $totalResults; ?>+ chỗ ở tại <?php echo htmlspecialchars($location); ?>
+      </h1>
+      <div class="search-results-info">
+        <span><?php echo date('d/m', strtotime($checkin)); ?> - <?php echo date('d/m', strtotime($checkout)); ?></span>
+        <span class="separator">•</span>
+        <span><?php echo $guests; ?> khách</span>
+        <button class="btn-search-modify" id="toggleSearchForm" type="button">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
     </div>
-    <?php 
-    $formAction = ''; // Submit to same page
-    $formWrapperClass = 'search-form-wrapper-inline';
-    include __DIR__ . '/../../partials/search-form.php'; 
-    ?>
+    
+    <!-- Collapsible Search Form -->
+    <div class="search-form-container" id="searchFormContainer" style="display: none; margin-top: 1rem;">
+      <?php 
+      $formAction = ''; // Submit to same page
+      $formWrapperClass = 'search-form-wrapper-inline';
+      include __DIR__ . '/../../partials/search-form.php'; 
+      ?>
+    </div>
   </div>
 </div>
 
@@ -192,8 +213,14 @@ $totalResults = count($listings);
         <?php foreach ($listings as $listing): ?>
           <?php
           // Lấy amenities của listing
-          $amenities = $cListing->cGetListingAmenities($listing['listing_id']);
-          $amenitiesStr = implode(',', $amenities);
+          $amenitiesResult = $cListing->cGetListingAmenities($listing['listing_id']);
+          $amenitiesIds = [];
+          if ($amenitiesResult && $amenitiesResult->num_rows > 0) {
+            while ($amenityRow = $amenitiesResult->fetch_assoc()) {
+              $amenitiesIds[] = $amenityRow['amenity_id'];
+            }
+          }
+          $amenitiesStr = implode(',', $amenitiesIds);
           ?>
           <a href="./detailListing.php?id=<?php echo $listing['listing_id']; ?>&checkin=<?php echo urlencode($checkin); ?>&checkout=<?php echo urlencode($checkout); ?>&guests=<?php echo urlencode($guests); ?>" 
              class="listing-card-link">

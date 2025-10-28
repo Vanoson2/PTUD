@@ -22,12 +22,12 @@ document.addEventListener('DOMContentLoaded', function() {
   let selectingCheckout = false;
   let currentMonthOffset = 0; // Track which months we're showing
   
-  // Parse booked dates to get disabled date ranges
+  // Parse booked dates to get disabled date ranges (store as YYYY-MM-DD strings to avoid timezone issues)
   const disabledDates = [];
   if (typeof bookedDatesData !== 'undefined' && bookedDatesData.length > 0) {
     bookedDatesData.forEach(booking => {
-      const start = new Date(booking.check_in);
-      const end = new Date(booking.check_out);
+      const start = String(booking.check_in);
+      const end = String(booking.check_out);
       disabledDates.push({ from: start, to: end });
     });
   }
@@ -66,8 +66,8 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Update date displays
   function updateDateDisplays() {
-    const checkinText = selectedCheckin ? formatDate(new Date(selectedCheckin)) : 'Thêm ngày';
-    const checkoutText = selectedCheckout ? formatDate(new Date(selectedCheckout)) : 'Thêm ngày';
+    const checkinText = selectedCheckin ? formatDate(selectedCheckin) : 'Thêm ngày';
+    const checkoutText = selectedCheckout ? formatDate(selectedCheckout) : 'Thêm ngày';
     
     displayCheckin.textContent = checkinText;
     displayCheckout.textContent = checkoutText;
@@ -92,8 +92,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Update price display
   function updatePriceDisplay() {
     if (selectedCheckin && selectedCheckout) {
-      const checkin = new Date(selectedCheckin);
-      const checkout = new Date(selectedCheckout);
+      // Parse dates without timezone conversion
+      const [y1, m1, d1] = selectedCheckin.split('-').map(Number);
+      const [y2, m2, d2] = selectedCheckout.split('-').map(Number);
+      const checkin = new Date(y1, m1 - 1, d1);
+      const checkout = new Date(y2, m2 - 1, d2);
       const nights = Math.round((checkout - checkin) / (1000 * 60 * 60 * 24));
       const total = pricePerNight * nights;
       
@@ -115,22 +118,27 @@ document.addEventListener('DOMContentLoaded', function() {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
   
-  // Format date as dd/mm/yyyy
-  function formatDate(date) {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
+  // Format date as dd/mm/yyyy from YYYY-MM-DD string
+  function formatDate(dateStr) {
+    if (!dateStr) return 'Thêm ngày';
+    const parts = dateStr.split('-');
+    const year = parts[0];
+    const month = parts[1].padStart(2, '0');
+    const day = parts[2].padStart(2, '0');
     return `${day}/${month}/${year}`;
   }
   
   // Check if date is disabled (booked)
   function isDateDisabled(date) {
-    const dateStr = date.toISOString().split('T')[0];
-    
+    // Build YYYY-MM-DD string without timezone conversion
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const dateStr = `${y}-${m}-${d}`;
+
     for (let range of disabledDates) {
-      const fromStr = range.from.toISOString().split('T')[0];
-      const toStr = range.to.toISOString().split('T')[0];
-      
+      const fromStr = range.from; // already YYYY-MM-DD
+      const toStr = range.to;     // already YYYY-MM-DD
       if (dateStr >= fromStr && dateStr <= toStr) {
         return true;
       }
@@ -245,7 +253,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Days
     for (let day = 1; day <= lastDay.getDate(); day++) {
       const currentDate = new Date(date.getFullYear(), date.getMonth(), day);
-      const dateStr = currentDate.toISOString().split('T')[0];
+      // Format date as YYYY-MM-DD without timezone conversion
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const dayStr = String(currentDate.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${dayStr}`;
       
       const dayDiv = document.createElement('div');
       dayDiv.className = 'calendar-day';
@@ -297,11 +309,14 @@ document.addEventListener('DOMContentLoaded', function() {
       if (dateStr > selectedCheckin) {
         // Check if there are any booked dates in between
         let hasBlockedDates = false;
-        const start = new Date(selectedCheckin);
-        const end = new Date(dateStr);
+        // Build Date objects from components to iterate through the range (local time)
+        const [sy, sm, sd] = selectedCheckin.split('-').map(Number);
+        const [ey, em, ed] = dateStr.split('-').map(Number);
+        const start = new Date(sy, sm - 1, sd);
+        const end = new Date(ey, em - 1, ed);
         
         for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-          if (isDateDisabled(d) && d.toISOString().split('T')[0] !== selectedCheckin) {
+          if (isDateDisabled(d) && `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` !== selectedCheckin) {
             hasBlockedDates = true;
             break;
           }

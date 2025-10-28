@@ -33,9 +33,14 @@ $stats = $cAdmin->cGetDashboardStats();
         </div>
         <div class="col-md-6">
           <div class="admin-info">
-            <span><?php echo htmlspecialchars($_SESSION['admin_name']); ?></span>
+            <span>Xin chào, <?php echo htmlspecialchars($_SESSION['admin_name']); ?>!</span>
             <span class="badge bg-light text-dark"><?php echo strtoupper($_SESSION['admin_role']); ?></span>
-            <a href="./logout.php" class="btn-logout">Đăng xuất</a>
+            <a href="./users.php" class="btn-logout">👥 Người dùng</a>
+            <a href="./hosts.php" class="btn-logout">🏡 Chủ nhà</a>
+            <a href="./applications.php" class="btn-logout">📋 Đơn đăng ký</a>
+            <a href="./listings.php" class="btn-logout">🏠 Phòng</a>
+            <a href="./amenities-services.php" class="btn-logout">🛠️ Tiện nghi & DV</a>
+            <a href="./logout.php" class="btn-logout">🚪 Đăng xuất</a>
           </div>
         </div>
       </div>
@@ -106,24 +111,29 @@ $stats = $cAdmin->cGetDashboardStats();
         <div class="quick-links">
           <h3>Quản lý nhanh</h3>
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-3 mb-3">
+              <a href="./users.php" class="quick-link-btn">
+                👥 Quản lý người dùng
+              </a>
+            </div>
+            <div class="col-md-3 mb-3">
+              <a href="./hosts.php" class="quick-link-btn">
+                🏠 Quản lý chủ nhà
+              </a>
+            </div>
+            <div class="col-md-3 mb-3">
               <a href="./applications.php?status=pending" class="quick-link-btn">
-                ⏳ Xem đơn chờ duyệt (<?php echo $stats['pending_applications']; ?>)
+                📋 Đơn đăng ký Host (<?php echo $stats['pending_applications']; ?>)
               </a>
             </div>
-            <div class="col-md-3">
-              <a href="./applications.php" class="quick-link-btn">
-                📋 Xem tất cả đơn đăng ký
-              </a>
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-3 mb-3">
               <a href="./listings.php?status=pending" class="quick-link-btn">
-                🏠 Phòng chờ duyệt
+                🏠 Quản lý phòng
               </a>
             </div>
-            <div class="col-md-3">
-              <a href="./listings.php" class="quick-link-btn">
-                📋 Quản lý phòng
+            <div class="col-md-3 mb-3">
+              <a href="./amenities-services.php" class="quick-link-btn">
+                🛠️ Tiện nghi & Dịch vụ
               </a>
             </div>
           </div>

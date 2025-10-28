@@ -26,6 +26,25 @@ if (!$application) {
   exit;
 }
 
+// Load documents
+include_once __DIR__ . '/../../model/mHost.php';
+$mHost = new mHost();
+$documents = $mHost->mGetHostDocuments($applicationId);
+
+// Organize documents by type
+$cccdFront = '';
+$cccdBack = '';
+$businessLicense = '';
+foreach ($documents as $doc) {
+  if ($doc['doc_type'] === 'cccd_front') {
+    $cccdFront = $doc['file_url'];
+  } elseif ($doc['doc_type'] === 'cccd_back') {
+    $cccdBack = $doc['file_url'];
+  } elseif ($doc['doc_type'] === 'business_license') {
+    $businessLicense = $doc['file_url'];
+  }
+}
+
 $successMessage = '';
 $errorMessage = '';
 
@@ -71,9 +90,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         </div>
         <div class="col-md-6">
           <div class="admin-info">
-            <span><?php echo htmlspecialchars($_SESSION['admin_name']); ?></span>
-            <a href="./applications.php" class="btn-back">← Quay lại</a>
-            <a href="./logout.php" class="btn-back">Đăng xuất</a>
+            <span>Xin chào, <?php echo htmlspecialchars($_SESSION['admin_name']); ?>!</span>
+            <a href="./dashboard.php" class="btn-back">📊 Dashboard</a>
+            <a href="./users.php" class="btn-back">👥 Người dùng</a>
+            <a href="./hosts.php" class="btn-back">🏡 Chủ nhà</a>
+            <a href="./applications.php" class="btn-back">📋 Đơn đăng ký</a>
+            <a href="./listings.php" class="btn-back">🏠 Phòng</a>
+            <a href="./amenities-services.php" class="btn-back">🛠️ Tiện nghi & DV</a>
+            <a href="./logout.php" class="btn-back">🚪 Đăng xuất</a>
           </div>
         </div>
       </div>
@@ -177,37 +201,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <!-- Documents -->
     <div class="detail-card">
       <h3>📎 Tài liệu đính kèm</h3>
-      <div class="document-grid">
-        <?php if ($cccdFront): ?>
-          <div class="document-item">
-            <div class="document-label">CCCD/CMND (Mặt trước)</div>
-            <img src="../../<?php echo htmlspecialchars($cccdFront); ?>" 
-                 alt="CCCD Front" 
-                 class="document-image"
-                 onclick="openLightbox(this.src)">
-          </div>
-        <?php endif; ?>
-        
-        <?php if ($cccdBack): ?>
-          <div class="document-item">
-            <div class="document-label">CCCD/CMND (Mặt sau)</div>
-            <img src="../../<?php echo htmlspecialchars($cccdBack); ?>" 
-                 alt="CCCD Back" 
-                 class="document-image"
-                 onclick="openLightbox(this.src)">
-          </div>
-        <?php endif; ?>
-        
-        <?php if ($businessLicense): ?>
-          <div class="document-item">
-            <div class="document-label">Giấy phép kinh doanh</div>
-            <img src="../../<?php echo htmlspecialchars($businessLicense); ?>" 
-                 alt="Business License" 
-                 class="document-image"
-                 onclick="openLightbox(this.src)">
-          </div>
-        <?php endif; ?>
-      </div>
+      
+      <?php if (empty($documents)): ?>
+        <div class="alert alert-warning">
+          <strong>Chưa có tài liệu!</strong> Người dùng chưa upload tài liệu đính kèm.
+        </div>
+      <?php else: ?>
+        <div class="document-grid">
+          <?php if ($cccdFront): ?>
+            <div class="document-item">
+              <div class="document-label">CCCD/CMND (Mặt trước)</div>
+              <img src="../../<?php echo htmlspecialchars($cccdFront); ?>" 
+                   alt="CCCD Front" 
+                   class="document-image"
+                   onclick="openLightbox(this.src)">
+            </div>
+          <?php endif; ?>
+          
+          <?php if ($cccdBack): ?>
+            <div class="document-item">
+              <div class="document-label">CCCD/CMND (Mặt sau)</div>
+              <img src="../../<?php echo htmlspecialchars($cccdBack); ?>" 
+                   alt="CCCD Back" 
+                   class="document-image"
+                   onclick="openLightbox(this.src)">
+            </div>
+          <?php endif; ?>
+          
+          <?php if ($businessLicense): ?>
+            <div class="document-item">
+              <div class="document-label">Giấy phép kinh doanh</div>
+              <img src="../../<?php echo htmlspecialchars($businessLicense); ?>" 
+                   alt="Business License" 
+                   class="document-image"
+                   onclick="openLightbox(this.src)">
+            </div>
+          <?php endif; ?>
+          
+          <?php if (!$cccdFront && !$cccdBack && !$businessLicense): ?>
+            <div class="alert alert-warning">
+              <strong>Không có ảnh!</strong> Các tài liệu trong database chưa được phân loại đúng.
+            </div>
+          <?php endif; ?>
+        </div>
+      <?php endif; ?>
     </div>
     
     <!-- Action Buttons (only for pending applications) -->

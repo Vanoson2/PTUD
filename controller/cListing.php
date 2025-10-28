@@ -18,7 +18,13 @@ include_once(__DIR__ . "/../model/mListing.php");
     
     public function cGetListingAmenities($listingId){
         $mListing = new mListing();
-        return $mListing->mGetListingAmenities($listingId);
+        $amenitiesResult = $mListing->mGetListingAmenities($listingId);
+        
+        // Vẫn return mysqli_result nếu có, hoặc array nếu model đã xử lý
+        if (is_array($amenitiesResult)) {
+            return $amenitiesResult;
+        }
+        return $amenitiesResult;
     }
     
     public function cGetListingDetail($listingId){
@@ -39,6 +45,11 @@ include_once(__DIR__ . "/../model/mListing.php");
     public function cGetBookedDates($listingId){
         $mListing = new mListing();
         return $mListing->mGetBookedDates($listingId);
+    }
+    
+    public function cGetListingServices($listingId){
+        $mListing = new mListing();
+        return $mListing->mGetListingServices($listingId);
     }
  }
 ?>
