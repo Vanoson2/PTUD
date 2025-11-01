@@ -141,6 +141,8 @@ body {
   font-weight: 600;
   border: none;
   transition: all 0.3s;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .btn-view:hover {

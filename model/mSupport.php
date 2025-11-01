@@ -293,5 +293,214 @@ class mSupport {
         $p->mDongKetNoi($conn);
         return $counts;
     }
+    
+    // ========== ADMIN METHODS ==========
+    
+    // Admin: Lấy tất cả tickets với filter
+    public function mAdminGetAllTickets($status = null, $category = null, $priority = null, $search = null) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return [];
+        }
+        
+        $whereClauses = [];
+        
+        if ($status) {
+            $status = $conn->real_escape_string($status);
+            $whereClauses[] = "st.status = '$status'";
+        }
+        
+        if ($category) {
+            $category = $conn->real_escape_string($category);
+            $whereClauses[] = "st.category = '$category'";
+        }
+        
+        if ($priority) {
+            $priority = $conn->real_escape_string($priority);
+            $whereClauses[] = "st.priority = '$priority'";
+        }
+        
+        if ($search) {
+            $search = $conn->real_escape_string($search);
+            $whereClauses[] = "(st.title LIKE '%$search%' OR st.content LIKE '%$search%' OR u.full_name LIKE '%$search%' OR u.email LIKE '%$search%')";
+        }
+        
+        $whereSQL = '';
+        if (!empty($whereClauses)) {
+            $whereSQL = 'WHERE ' . implode(' AND ', $whereClauses);
+        }
+        
+        $sql = "SELECT st.*, 
+                       u.full_name, u.email, u.phone,
+                       (SELECT COUNT(*) FROM support_message WHERE ticket_id = st.ticket_id) as message_count,
+                       (SELECT COUNT(*) FROM support_message 
+                        WHERE ticket_id = st.ticket_id AND sender_type = 'user' 
+                        AND created_at > IFNULL((SELECT MAX(created_at) FROM support_message sm2 
+                                                 WHERE sm2.ticket_id = st.ticket_id AND sm2.sender_type = 'admin'), '1970-01-01')
+                       ) as unread_count
+                FROM support_ticket st
+                INNER JOIN user u ON st.user_id = u.user_id
+                $whereSQL
+                ORDER BY 
+                    CASE st.priority 
+                        WHEN 'urgent' THEN 1
+                        WHEN 'high' THEN 2
+                        WHEN 'normal' THEN 3
+                    END,
+                    st.last_message_at DESC";
+        
+        $result = $conn->query($sql);
+        $tickets = [];
+        
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $tickets[] = $row;
+            }
+        }
+        
+        $p->mDongKetNoi($conn);
+        return $tickets;
+    }
+    
+    // Admin: Trả lời ticket
+    public function mAdminReplyTicket($ticketId, $adminId, $content) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return [
+                'success' => false,
+                'message' => 'Không thể kết nối database'
+            ];
+        }
+        
+        $content = $conn->real_escape_string($content);
+        
+        // Insert message
+        $msgSql = "INSERT INTO support_message (ticket_id, sender_type, admin_id, content) 
+                   VALUES ($ticketId, 'admin', $adminId, '$content')";
+        
+        if ($conn->query($msgSql)) {
+            // Update ticket last_message and status
+            $updateSql = "UPDATE support_ticket 
+                         SET last_message_at = NOW(), 
+                             last_message_by = 'admin',
+                             status = CASE 
+                                WHEN status = 'open' THEN 'in_progress'
+                                ELSE status 
+                             END
+                         WHERE ticket_id = $ticketId";
+            $conn->query($updateSql);
+            
+            $p->mDongKetNoi($conn);
+            return [
+                'success' => true,
+                'message' => 'Đã gửi tin nhắn'
+            ];
+        }
+        
+        $p->mDongKetNoi($conn);
+        return [
+            'success' => false,
+            'message' => 'Không thể gửi tin nhắn: ' . $conn->error
+        ];
+    }
+    
+    // Admin: Cập nhật trạng thái ticket
+    public function mAdminUpdateStatus($ticketId, $status) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return [
+                'success' => false,
+                'message' => 'Không thể kết nối database'
+            ];
+        }
+        
+        $validStatuses = ['open', 'in_progress', 'resolved', 'closed'];
+        if (!in_array($status, $validStatuses)) {
+            $p->mDongKetNoi($conn);
+            return [
+                'success' => false,
+                'message' => 'Trạng thái không hợp lệ'
+            ];
+        }
+        
+        $status = $conn->real_escape_string($status);
+        $closedAt = ($status === 'closed') ? ", closed_at = NOW()" : "";
+        
+        $sql = "UPDATE support_ticket 
+                SET status = '$status' $closedAt
+                WHERE ticket_id = $ticketId";
+        
+        if ($conn->query($sql)) {
+            $p->mDongKetNoi($conn);
+            return [
+                'success' => true,
+                'message' => 'Đã cập nhật trạng thái'
+            ];
+        }
+        
+        $p->mDongKetNoi($conn);
+        return [
+            'success' => false,
+            'message' => 'Không thể cập nhật: ' . $conn->error
+        ];
+    }
+    
+    // Admin: Thống kê tickets
+    public function mAdminGetStatistics() {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return [
+                'total' => 0,
+                'open' => 0,
+                'in_progress' => 0,
+                'resolved' => 0,
+                'closed' => 0,
+                'urgent' => 0,
+                'high' => 0,
+                'normal' => 0,
+                'unread' => 0
+            ];
+        }
+        
+        $sql = "SELECT 
+                    COUNT(*) as total,
+                    SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open,
+                    SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) as in_progress,
+                    SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved,
+                    SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed,
+                    SUM(CASE WHEN priority = 'urgent' THEN 1 ELSE 0 END) as urgent,
+                    SUM(CASE WHEN priority = 'high' THEN 1 ELSE 0 END) as high,
+                    SUM(CASE WHEN priority = 'normal' THEN 1 ELSE 0 END) as normal,
+                    SUM(CASE WHEN status IN ('open', 'in_progress') AND last_message_by = 'user' THEN 1 ELSE 0 END) as unread
+                FROM support_ticket";
+        
+        $result = $conn->query($sql);
+        $stats = [
+            'total' => 0,
+            'open' => 0,
+            'in_progress' => 0,
+            'resolved' => 0,
+            'closed' => 0,
+            'urgent' => 0,
+            'high' => 0,
+            'normal' => 0,
+            'unread' => 0
+        ];
+        
+        if ($result) {
+            $stats = $result->fetch_assoc();
+        }
+        
+        $p->mDongKetNoi($conn);
+        return $stats;
+    }
 }
 ?>

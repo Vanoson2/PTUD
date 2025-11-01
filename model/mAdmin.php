@@ -190,6 +190,20 @@ class mAdmin {
             $stats['total_hosts'] = $row['total_hosts'];
         }
         
+        // Support ticket stats
+        $sql4 = "SELECT 
+                    COUNT(*) as total_tickets,
+                    SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open_tickets,
+                    SUM(CASE WHEN status IN ('open', 'in_progress') AND last_message_by = 'user' THEN 1 ELSE 0 END) as unread_tickets
+                FROM support_ticket";
+        $result4 = $conn->query($sql4);
+        if ($result4) {
+            $row = $result4->fetch_assoc();
+            $stats['total_tickets'] = $row['total_tickets'] ?? 0;
+            $stats['open_tickets'] = $row['open_tickets'] ?? 0;
+            $stats['unread_tickets'] = $row['unread_tickets'] ?? 0;
+        }
+        
         $p->mDongKetNoi($conn);
         return $stats;
     }
@@ -681,6 +695,24 @@ class mAdmin {
             ];
         }
         
+        // Get ticket and user info first
+        $ticketSql = "SELECT st.title, st.user_id, u.full_name, u.email, a.full_name as admin_name
+                      FROM support_ticket st
+                      JOIN user u ON st.user_id = u.user_id
+                      LEFT JOIN admin a ON a.admin_id = $adminId
+                      WHERE st.ticket_id = $ticketId";
+        $ticketResult = $conn->query($ticketSql);
+        
+        if (!$ticketResult || $ticketResult->num_rows === 0) {
+            $p->mDongKetNoi($conn);
+            return [
+                'success' => false,
+                'message' => 'Không tìm thấy ticket'
+            ];
+        }
+        
+        $ticketInfo = $ticketResult->fetch_assoc();
+        
         $content = $conn->real_escape_string($content);
         
         // Insert message
@@ -696,10 +728,22 @@ class mAdmin {
                          WHERE ticket_id = $ticketId";
             $conn->query($updateSql);
             
+            // Send email notification to user
+            require_once(__DIR__ . '/mEmailPHPMailer.php');
+            $emailModel = new mEmailPHPMailer();
+            $emailModel->sendSupportReply(
+                $ticketInfo['email'],
+                $ticketInfo['full_name'],
+                $ticketId,
+                $ticketInfo['title'],
+                $content,
+                $ticketInfo['admin_name'] ?? 'WeGo Support'
+            );
+            
             $p->mDongKetNoi($conn);
             return [
                 'success' => true,
-                'message' => 'Đã gửi tin nhắn'
+                'message' => 'Đã gửi tin nhắn và email thông báo'
             ];
         }
         

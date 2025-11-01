@@ -78,33 +78,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chi tiết đơn đăng ký #<?php echo $applicationId; ?> - WeGo Admin</title>
+  <link rel="stylesheet" href="../css/admin-layout.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="../css/application-detail.css?v=<?php echo time(); ?>">
 </head>
 <body>
-  <div class="admin-header">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <h1>📄 Chi tiết đơn đăng ký #<?php echo $applicationId; ?></h1>
-        </div>
-        <div class="col-md-6">
-          <div class="admin-info">
-            <span>Xin chào, <?php echo htmlspecialchars($_SESSION['admin_name']); ?>!</span>
-            <a href="./dashboard.php" class="btn-back">📊 Dashboard</a>
-            <a href="./users.php" class="btn-back">👥 Người dùng</a>
-            <a href="./hosts.php" class="btn-back">🏡 Chủ nhà</a>
-            <a href="./applications.php" class="btn-back">📋 Đơn đăng ký</a>
-            <a href="./listings.php" class="btn-back">🏠 Phòng</a>
-            <a href="./amenities-services.php" class="btn-back">🛠️ Tiện nghi & DV</a>
-            <a href="./logout.php" class="btn-back">🚪 Đăng xuất</a>
-          </div>
-        </div>
-      </div>
+
+<div class="admin-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <i class="fas fa-shield-alt"></i>
+      <h2>Quản trị</h2>
     </div>
-  </div>
-  
-  <div class="container">
+    <nav class="sidebar-nav">
+      <a href="dashboard.php">
+        <i class="fas fa-home"></i>
+        <span>Tổng quan</span>
+      </a>
+      <a href="users.php">
+        <i class="fas fa-users"></i>
+        <span>Quản lý Người dùng</span>
+      </a>
+      <a href="hosts.php">
+        <i class="fas fa-hotel"></i>
+        <span>Quản lý Chủ nhà</span>
+      </a>
+      <a href="applications.php" class="active">
+        <i class="fas fa-file-alt"></i>
+        <span>Đơn đăng ký Host</span>
+      </a>
+      <a href="listings.php">
+        <i class="fas fa-building"></i>
+        <span>Quản lý Phòng</span>
+      </a>
+      <a href="support.php">
+        <i class="fas fa-headset"></i>
+        <span>Hỗ trợ khách hàng</span>
+      </a>
+      <a href="amenities-services.php">
+        <i class="fas fa-cog"></i>
+        <span>Tiện nghi & Dịch vụ</span>
+      </a>
+      <a href="logout.php">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Đăng xuất</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-title">
+      <h1>
+        <i class="fas fa-file-alt"></i>
+        Chi tiết đơn đăng ký #<?php echo $applicationId; ?>
+      </h1>
+      <a href="applications.php" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Quay lại danh sách
+      </a>
+    </div>
+    
+    <div class="container">
     <?php if ($successMessage): ?>
       <div class="alert alert-success">
         <strong>Thành công!</strong> <?php echo htmlspecialchars($successMessage); ?>
@@ -322,5 +358,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
       }
     });
   </script>
+  
+  </main>
+</div>
 </body>
 </html>

@@ -35,33 +35,66 @@ $totalCount = count($cAdmin->cGetAllListings(null));
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quản lý phòng - WeGo Admin</title>
+  <link rel="stylesheet" href="../css/admin-layout.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="../css/admin-listings.css?v=<?php echo time(); ?>">
 </head>
 <body>
-  <!-- Header -->
-  <nav class="admin-navbar">
-    <div class="container-fluid">
-      <div class="navbar-brand">
-        <h1>🏠 Quản lý phòng</h1>
-        <span class="admin-name">Xin chào, <?php echo htmlspecialchars($adminName); ?>!</span>
-      </div>
-      <div class="navbar-links">
-        <a href="./dashboard.php" class="nav-link">📊 Dashboard</a>
-        <a href="./users.php" class="nav-link">👥 Người dùng</a>
-        <a href="./hosts.php" class="nav-link">🏡 Chủ nhà</a>
-        <a href="./applications.php" class="nav-link">📝 Đơn đăng ký</a>
-        <a href="./amenities-services.php" class="nav-link">🛠️ Tiện nghi & DV</a>
-        <a href="./logout.php" class="nav-link logout">🚪 Đăng xuất</a>
-      </div>
-    </div>
-  </nav>
 
-  <div class="container mt-5">
-    <div class="page-header">
-      <h2>🏠 Quản lý phòng</h2>
-      <p>Quản lý và duyệt các phòng đăng bởi host</p>
+<div class="admin-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <i class="fas fa-shield-alt"></i>
+      <h2>Quản trị</h2>
     </div>
+    <nav class="sidebar-nav">
+      <a href="dashboard.php">
+        <i class="fas fa-home"></i>
+        <span>Tổng quan</span>
+      </a>
+      <a href="users.php">
+        <i class="fas fa-users"></i>
+        <span>Quản lý Người dùng</span>
+      </a>
+      <a href="hosts.php">
+        <i class="fas fa-hotel"></i>
+        <span>Quản lý Chủ nhà</span>
+      </a>
+      <a href="applications.php">
+        <i class="fas fa-file-alt"></i>
+        <span>Đơn đăng ký Host</span>
+      </a>
+      <a href="listings.php" class="active">
+        <i class="fas fa-building"></i>
+        <span>Quản lý Phòng</span>
+      </a>
+      <a href="support.php">
+        <i class="fas fa-headset"></i>
+        <span>Hỗ trợ khách hàng</span>
+      </a>
+      <a href="amenities-services.php">
+        <i class="fas fa-cog"></i>
+        <span>Tiện nghi & Dịch vụ</span>
+      </a>
+      <a href="logout.php">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Đăng xuất</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-title">
+      <h1>
+        <i class="fas fa-building"></i>
+        Quản lý Phòng
+      </h1>
+    </div>
+    
+    <div class="container mt-5">
 
     <!-- Statistics -->
     <div class="stats-row">
@@ -188,6 +221,9 @@ $totalCount = count($cAdmin->cGetAllListings(null));
       <?php endif; ?>
     </div>
   </div>
+  
+  </main>
+</div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

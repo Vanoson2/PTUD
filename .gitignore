@@ -1,2 +1,15 @@
-.vendor/
+# Composer dependencies
+# Dashboard folder
 .dashboard/
+# Email configuration (contains sensitive data)
+config/email.php
+# Test files
+test-email.php
+# OS files
+.DS_Store
+Thumbs.db
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo

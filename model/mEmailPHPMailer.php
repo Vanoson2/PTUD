@@ -4,10 +4,8 @@
  * PHPMailer hỗ trợ tốt hơn cho Gmail SMTP với TLS/SSL
  */
 
-// Load PHPMailer
-require_once __DIR__ . '/../vendor/PHPMailer/PHPMailer/PHPMailer.php';
-require_once __DIR__ . '/../vendor/PHPMailer/PHPMailer/SMTP.php';
-require_once __DIR__ . '/../vendor/PHPMailer/PHPMailer/Exception.php';
+// Load PHPMailer through autoloader
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -15,14 +13,28 @@ use PHPMailer\PHPMailer\Exception;
 
 class mEmailPHPMailer {
     
-    private $fromEmail = 'noreply@wego.com';
-    private $fromName = 'WeGo Travel';
+    private $config;
+    private $fromEmail;
+    private $fromName;
+    private $smtpHost;
+    private $smtpPort;
+    private $smtpUsername;
+    private $smtpPassword;
+    private $smtpSecure;
     
-    // Gmail SMTP settings
-    private $smtpHost = 'smtp.gmail.com';
-    private $smtpPort = 465;  // SSL port
-    private $smtpUsername = 'Thaivanson5555@gmail.com';
-    private $smtpPassword = 'bwffokkbaahhsgjd';  // App Password mới
+    public function __construct() {
+        // Load email configuration
+        $this->config = require __DIR__ . '/../config/email.php';
+        
+        // Set properties from config
+        $this->fromEmail = $this->config['from_email'];
+        $this->fromName = $this->config['from_name'];
+        $this->smtpHost = $this->config['smtp_host'];
+        $this->smtpPort = $this->config['smtp_port'];
+        $this->smtpUsername = $this->config['smtp_username'];
+        $this->smtpPassword = $this->config['smtp_password'];
+        $this->smtpSecure = $this->config['smtp_secure'];
+    }
     
     /**
      * Gửi mã xác thực 6 số qua email
@@ -42,9 +54,16 @@ class mEmailPHPMailer {
             $mail->SMTPAuth   = true;
             $mail->Username   = $this->smtpUsername;
             $mail->Password   = $this->smtpPassword;
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;  // SSL cho port 465
+            
+            // Set encryption based on config
+            if ($this->smtpSecure === 'ssl') {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            } else {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            }
+            
             $mail->Port       = $this->smtpPort;
-            $mail->CharSet    = 'UTF-8';
+            $mail->CharSet    = $this->config['charset'];
             
             // Recipients
             $mail->setFrom($this->fromEmail, $this->fromName);
@@ -143,9 +162,16 @@ class mEmailPHPMailer {
             $mail->SMTPAuth   = true;
             $mail->Username   = $this->smtpUsername;
             $mail->Password   = $this->smtpPassword;
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            
+            // Set encryption based on config
+            if ($this->smtpSecure === 'ssl') {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            } else {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            }
+            
             $mail->Port       = $this->smtpPort;
-            $mail->CharSet    = 'UTF-8';
+            $mail->CharSet    = $this->config['charset'];
             
             // Recipients
             $mail->setFrom($this->fromEmail, $this->fromName);
@@ -157,6 +183,201 @@ class mEmailPHPMailer {
             $mail->Subject = $subject;
             $mail->Body = $body;
             $mail->AltBody = strip_tags($body);
+            
+            $mail->send();
+            return true;
+            
+        } catch (Exception $e) {
+            error_log("PHPMailer Error: {$mail->ErrorInfo}");
+            return false;
+        }
+    }
+    
+    /**
+     * Gửi email thông báo ticket mới cho admin
+     */
+    public function sendSupportTicketNotification($ticketId, $userName, $userEmail, $title, $content, $category, $priority) {
+        try {
+            $mail = new PHPMailer(true);
+            
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host = $this->smtpHost;
+            $mail->SMTPAuth = true;
+            $mail->Username = $this->smtpUsername;
+            $mail->Password = $this->smtpPassword;
+            
+            if ($this->smtpSecure === 'ssl') {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            } else {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            }
+            
+            $mail->Port = $this->smtpPort;
+            $mail->CharSet = $this->config['charset'];
+            
+            // Recipients - Gửi đến admin email
+            $mail->setFrom($this->fromEmail, $this->fromName);
+            $mail->addAddress($this->fromEmail, 'WeGo Admin'); // Admin nhận email
+            $mail->addReplyTo($userEmail, $userName); // Reply về user
+            
+            // Định nghĩa category và priority
+            $categoryMap = [
+                'dat_phong' => 'Đặt phòng',
+                'tai_khoan' => 'Tài khoản',
+                'nha_cung_cap' => 'Nhà cung cấp',
+                'khac' => 'Khác'
+            ];
+            $priorityMap = [
+                'normal' => 'Bình thường',
+                'high' => 'Cao',
+                'urgent' => 'Khẩn cấp'
+            ];
+            
+            $categoryText = $categoryMap[$category] ?? 'Khác';
+            $priorityText = $priorityMap[$priority] ?? 'Bình thường';
+            $priorityColor = $priority === 'urgent' ? '#dc3545' : ($priority === 'high' ? '#fd7e14' : '#28a745');
+            
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = "[Hỗ trợ #{$ticketId}] $title";
+            
+            $mail->Body = "
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset='UTF-8'>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                    .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
+                    .info-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea; }
+                    .label { font-weight: bold; color: #667eea; }
+                    .priority { display: inline-block; padding: 5px 15px; border-radius: 20px; color: white; font-weight: bold; }
+                    .btn { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                    .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+                </style>
+            </head>
+            <body>
+                <div class='container'>
+                    <div class='header'>
+                        <h1>🎫 Yêu cầu hỗ trợ mới</h1>
+                        <p>Ticket #$ticketId</p>
+                    </div>
+                    <div class='content'>
+                        <div class='info-box'>
+                            <p><span class='label'>Từ:</span> $userName ($userEmail)</p>
+                            <p><span class='label'>Danh mục:</span> $categoryText</p>
+                            <p><span class='label'>Độ ưu tiên:</span> <span class='priority' style='background: $priorityColor;'>$priorityText</span></p>
+                            <p><span class='label'>Tiêu đề:</span> $title</p>
+                        </div>
+                        
+                        <div class='info-box'>
+                            <p><span class='label'>Nội dung:</span></p>
+                            <p>" . nl2br(htmlspecialchars($content)) . "</p>
+                        </div>
+                        
+                        <a href='http://localhost/PTUD/view/admin/support.php?ticket_id=$ticketId' class='btn'>Xem & Trả lời</a>
+                    </div>
+                    <div class='footer'>
+                        <p>Email này được gửi tự động từ hệ thống WeGo Travel</p>
+                    </div>
+                </div>
+            </body>
+            </html>";
+            
+            $mail->AltBody = "Yêu cầu hỗ trợ mới #$ticketId\n\nTừ: $userName ($userEmail)\nDanh mục: $categoryText\nĐộ ưu tiên: $priorityText\nTiêu đề: $title\n\nNội dung:\n$content";
+            
+            $mail->send();
+            return true;
+            
+        } catch (Exception $e) {
+            error_log("PHPMailer Error: {$mail->ErrorInfo}");
+            return false;
+        }
+    }
+    
+    /**
+     * Gửi email trả lời ticket cho user
+     */
+    public function sendSupportReply($toEmail, $toName, $ticketId, $title, $replyContent, $adminName) {
+        try {
+            $mail = new PHPMailer(true);
+            
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host = $this->smtpHost;
+            $mail->SMTPAuth = true;
+            $mail->Username = $this->smtpUsername;
+            $mail->Password = $this->smtpPassword;
+            
+            if ($this->smtpSecure === 'ssl') {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            } else {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            }
+            
+            $mail->Port = $this->smtpPort;
+            $mail->CharSet = $this->config['charset'];
+            
+            // Recipients
+            $mail->setFrom($this->fromEmail, $this->fromName);
+            $mail->addAddress($toEmail, $toName);
+            $mail->addReplyTo($this->fromEmail, $this->fromName);
+            
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = "[Trả lời #$ticketId] $title";
+            
+            $mail->Body = "
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset='UTF-8'>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                    .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
+                    .info-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745; }
+                    .label { font-weight: bold; color: #667eea; }
+                    .reply { background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 15px 0; }
+                    .btn { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px; }
+                    .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+                </style>
+            </head>
+            <body>
+                <div class='container'>
+                    <div class='header'>
+                        <h1>💬 Có phản hồi mới từ WeGo</h1>
+                        <p>Ticket #$ticketId</p>
+                    </div>
+                    <div class='content'>
+                        <p>Xin chào <strong>$toName</strong>,</p>
+                        <p>Chúng tôi đã phản hồi yêu cầu hỗ trợ của bạn:</p>
+                        
+                        <div class='info-box'>
+                            <p><span class='label'>Tiêu đề:</span> $title</p>
+                            <p><span class='label'>Người trả lời:</span> $adminName</p>
+                        </div>
+                        
+                        <div class='reply'>
+                            <p><strong>Nội dung phản hồi:</strong></p>
+                            <p>" . nl2br(htmlspecialchars($replyContent)) . "</p>
+                        </div>
+                        
+                        <p>Bạn có thể tiếp tục trao đổi bằng cách trả lời tin nhắn này hoặc truy cập:</p>
+                        <a href='http://localhost/PTUD/view/user/support/ticket-detail.php?ticket_id=$ticketId' class='btn'>Xem chi tiết</a>
+                    </div>
+                    <div class='footer'>
+                        <p>Cảm ơn bạn đã sử dụng dịch vụ WeGo Travel!</p>
+                    </div>
+                </div>
+            </body>
+            </html>";
+            
+            $mail->AltBody = "Có phản hồi mới từ WeGo\n\nTicket #$ticketId: $title\nNgười trả lời: $adminName\n\nNội dung:\n$replyContent";
             
             $mail->send();
             return true;

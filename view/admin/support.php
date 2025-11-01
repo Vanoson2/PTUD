@@ -78,6 +78,7 @@ $statusLabels = [
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yêu cầu Hỗ trợ - Admin</title>
+  <link rel="stylesheet" href="../css/admin-layout.css">
   <link rel="stylesheet" href="../css/admin-dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="../css/admin-support.css?v=<?php echo time(); ?>">
@@ -100,7 +101,7 @@ $statusLabels = [
           <span>Quản lý Người dùng</span>
         </a>
         <a href="hosts.php">
-          <i class="fas fa-user-tie"></i>
+          <i class="fas fa-hotel"></i>
           <span>Quản lý Chủ nhà</span>
         </a>
         <a href="applications.php">
@@ -113,7 +114,11 @@ $statusLabels = [
         </a>
         <a href="support.php" class="active">
           <i class="fas fa-headset"></i>
-          <span>Yêu cầu Hỗ trợ</span>
+          <span>Hỗ trợ khách hàng</span>
+        </a>
+        <a href="amenities-services.php">
+          <i class="fas fa-cog"></i>
+          <span>Tiện nghi & Dịch vụ</span>
         </a>
         <a href="logout.php">
           <i class="fas fa-sign-out-alt"></i>

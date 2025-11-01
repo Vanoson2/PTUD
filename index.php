@@ -231,7 +231,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
       <div class="overlay"></div>
       <div class="promo-content">
         <h3 class="promo-title">GẶP KHÓ KHĂN KHI<br>SỬ DỤNG HỆ THỐNG?</h3>
-        <button class="promo-btn">Hãy phản hồi cho chúng tôi biết</button>
+        <?php if (isset($_SESSION['user_id'])): ?>
+          <a href="./view/user/support/create-ticket.php" class="promo-btn" style="text-decoration: none; display: inline-block;">
+            Hãy phản hồi cho chúng tôi biết
+          </a>
+        <?php else: ?>
+          <a href="./view/user/login.php" class="promo-btn" style="text-decoration: none; display: inline-block;">
+            Đăng nhập để gửi phản hồi
+          </a>
+        <?php endif; ?>
       </div>
     </div>
   </div>

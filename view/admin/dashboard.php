@@ -21,33 +21,67 @@ $stats = $cAdmin->cGetDashboardStats();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - WeGo</title>
+  <link rel="stylesheet" href="../css/admin-layout.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="../css/admin-dashboard.css?v=<?php echo time(); ?>">
 </head>
 <body>
-  <div class="admin-header">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <h1>🏠 WeGo Admin Dashboard</h1>
-        </div>
-        <div class="col-md-6">
-          <div class="admin-info">
-            <span>Xin chào, <?php echo htmlspecialchars($_SESSION['admin_name']); ?>!</span>
-            <span class="badge bg-light text-dark"><?php echo strtoupper($_SESSION['admin_role']); ?></span>
-            <a href="./users.php" class="btn-logout">👥 Người dùng</a>
-            <a href="./hosts.php" class="btn-logout">🏡 Chủ nhà</a>
-            <a href="./applications.php" class="btn-logout">📋 Đơn đăng ký</a>
-            <a href="./listings.php" class="btn-logout">🏠 Phòng</a>
-            <a href="./amenities-services.php" class="btn-logout">🛠️ Tiện nghi & DV</a>
-            <a href="./logout.php" class="btn-logout">🚪 Đăng xuất</a>
-          </div>
-        </div>
-      </div>
+
+<div class="admin-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <i class="fas fa-shield-alt"></i>
+      <h2>Quản trị</h2>
     </div>
-  </div>
-  
-  <div class="container">
+    <nav class="sidebar-nav">
+      <a href="dashboard.php" class="active">
+        <i class="fas fa-home"></i>
+        <span>Tổng quan</span>
+      </a>
+      <a href="users.php">
+        <i class="fas fa-users"></i>
+        <span>Quản lý Người dùng</span>
+      </a>
+      <a href="hosts.php">
+        <i class="fas fa-hotel"></i>
+        <span>Quản lý Chủ nhà</span>
+      </a>
+      <a href="applications.php">
+        <i class="fas fa-file-alt"></i>
+        <span>Đơn đăng ký Host</span>
+      </a>
+      <a href="listings.php">
+        <i class="fas fa-building"></i>
+        <span>Quản lý Phòng</span>
+      </a>
+      <a href="support.php">
+        <i class="fas fa-headset"></i>
+        <span>Hỗ trợ khách hàng</span>
+      </a>
+      <a href="amenities-services.php">
+        <i class="fas fa-cog"></i>
+        <span>Tiện nghi & Dịch vụ</span>
+      </a>
+      <a href="logout.php">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Đăng xuất</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-title">
+      <h1>
+        <i class="fas fa-tachometer-alt"></i>
+        Tổng quan Dashboard
+      </h1>
+      <span class="badge bg-primary"><?php echo htmlspecialchars($_SESSION['admin_name']); ?> - <?php echo strtoupper($_SESSION['admin_role']); ?></span>
+    </div>
+    
+    <div class="container">
     <h2 class="page-title">Tổng quan hệ thống</h2>
     
     <div class="row">
@@ -104,6 +138,24 @@ $stats = $cAdmin->cGetDashboardStats();
           <div class="stats-label">Tổng hosts hoạt động</div>
         </div>
       </div>
+      
+      <!-- Support Tickets -->
+      <div class="col-md-4">
+        <div class="stats-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+          <div class="stats-icon" style="background: rgba(255,255,255,0.2);">🎫</div>
+          <div class="stats-number" style="color: white;"><?php echo $stats['total_tickets'] ?? 0; ?></div>
+          <div class="stats-label" style="color: white;">Tổng yêu cầu hỗ trợ</div>
+        </div>
+      </div>
+      
+      <!-- Open Tickets -->
+      <div class="col-md-4">
+        <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+          <div class="stats-icon" style="background: rgba(255,255,255,0.2);">📬</div>
+          <div class="stats-number" style="color: white;"><?php echo $stats['unread_tickets'] ?? 0; ?></div>
+          <div class="stats-label" style="color: white;">Yêu cầu chưa trả lời</div>
+        </div>
+      </div>
     </div>
     
     <div class="row mt-4">
@@ -136,11 +188,19 @@ $stats = $cAdmin->cGetDashboardStats();
                 🛠️ Tiện nghi & Dịch vụ
               </a>
             </div>
+            <div class="col-md-3 mb-3">
+              <a href="./support.php" class="quick-link-btn">
+                🎫 Yêu cầu hỗ trợ
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  
+  </main>
+</div>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

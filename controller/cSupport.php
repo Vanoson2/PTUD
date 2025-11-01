@@ -91,5 +91,56 @@ class cSupport {
         $mSupport = new mSupport();
         return $mSupport->mGetUserTicketCounts($userId);
     }
+    
+    // ========== ADMIN METHODS ==========
+    
+    public function cAdminGetAllTickets($status = null, $category = null, $priority = null, $search = null) {
+        $mSupport = new mSupport();
+        return $mSupport->mAdminGetAllTickets($status, $category, $priority, $search);
+    }
+    
+    public function cAdminReplyTicket($ticketId, $adminId, $content) {
+        if ($ticketId <= 0) {
+            return [
+                'success' => false,
+                'message' => 'ID yêu cầu không hợp lệ'
+            ];
+        }
+        
+        if (empty($content) || strlen($content) < 5) {
+            return [
+                'success' => false,
+                'message' => 'Nội dung tin nhắn phải có ít nhất 5 ký tự'
+            ];
+        }
+        
+        $mSupport = new mSupport();
+        return $mSupport->mAdminReplyTicket($ticketId, $adminId, $content);
+    }
+    
+    public function cAdminUpdateStatus($ticketId, $status) {
+        if ($ticketId <= 0) {
+            return [
+                'success' => false,
+                'message' => 'ID yêu cầu không hợp lệ'
+            ];
+        }
+        
+        $validStatuses = ['open', 'in_progress', 'resolved', 'closed'];
+        if (!in_array($status, $validStatuses)) {
+            return [
+                'success' => false,
+                'message' => 'Trạng thái không hợp lệ'
+            ];
+        }
+        
+        $mSupport = new mSupport();
+        return $mSupport->mAdminUpdateStatus($ticketId, $status);
+    }
+    
+    public function cAdminGetStatistics() {
+        $mSupport = new mSupport();
+        return $mSupport->mAdminGetStatistics();
+    }
 }
 ?>

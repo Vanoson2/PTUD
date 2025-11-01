@@ -85,16 +85,17 @@ class cUser {
         if ($result['success']) {
             $userId = $result['user_id'];
             
-            // Gửi email xác thực
+            // Gửi email xác thực với mã 6 số
             $emailSent = false;
             try {
                 // Tạo mã xác thực 6 số
                 $verifyCode = $mUser->mGenerateVerifyCode($userId);
                 
                 if ($verifyCode) {
-                    // Gửi email bằng PHPMailer
-                    $mEmail = new mEmailPHPMailer();
-                    $emailSent = $mEmail->sendVerificationCode($email, $fullName, $verifyCode);
+                    // Gửi email bằng EmailHelper
+                    require_once(__DIR__ . '/../helper/EmailHelper.php');
+                    $emailHelper = new EmailHelper();
+                    $emailSent = $emailHelper->sendVerificationCode($email, $fullName, $verifyCode);
                 }
             } catch (Exception $e) {
                 // Log error nhưng không fail registration
@@ -103,9 +104,9 @@ class cUser {
             
             $message = 'Đăng ký thành công! ';
             if ($emailSent) {
-                $message .= 'Chúng tôi đã gửi mã xác thực 6 số đến ' . $email . '. Vui lòng nhập mã để xác thực tài khoản.';
+                $message .= 'Chúng tôi đã gửi mã xác thực 6 số đến ' . $email . '. Vui lòng kiểm tra email và nhập mã để xác thực tài khoản.';
             } else {
-                $message .= 'Tuy nhiên, không thể gửi email xác thực. Bạn vẫn có thể đăng nhập.';
+                $message .= 'Tuy nhiên, không thể gửi email xác thực. Bạn vẫn có thể đăng nhập nhưng nên xác thực email sau.';
             }
             
             return [
