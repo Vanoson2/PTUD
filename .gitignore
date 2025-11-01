@@ -2,7 +2,7 @@
 # Dashboard folder
 .dashboard/
 # Email configuration (contains sensitive data)
-.config/email.php
+config/email.php
 # Test files
 test-email.php
 # OS files
