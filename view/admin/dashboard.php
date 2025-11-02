@@ -12,8 +12,43 @@ if (!isset($_SESSION['admin_id'])) {
   exit;
 }
 
+// Get admin info
+$adminRole = $_SESSION['admin_role'] ?? 'support';
+$adminName = $_SESSION['admin_name'] ?? 'Admin';
+
+// Define role permissions
+$isSuperAdmin = ($adminRole === 'superadmin');
+$isManager = ($adminRole === 'manager' || $isSuperAdmin);
+$isSupport = ($adminRole === 'support');
+
 $cAdmin = new cAdmin();
 $stats = $cAdmin->cGetDashboardStats();
+
+// Default values nếu không có data
+if (!$stats || !is_array($stats)) {
+  $stats = [
+    'total_applications' => 0,
+    'pending_applications' => 0,
+    'approved_applications' => 0,
+    'rejected_applications' => 0,
+    'total_users' => 0,
+    'total_hosts' => 0,
+    'total_tickets' => 0,
+    'unread_tickets' => 0
+  ];
+}
+
+// Ensure all keys exist
+$stats = array_merge([
+  'total_applications' => 0,
+  'pending_applications' => 0,
+  'approved_applications' => 0,
+  'rejected_applications' => 0,
+  'total_users' => 0,
+  'total_hosts' => 0,
+  'total_tickets' => 0,
+  'unread_tickets' => 0
+], $stats);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,37 +68,68 @@ $stats = $cAdmin->cGetDashboardStats();
   <aside class="sidebar">
     <div class="sidebar-header">
       <i class="fas fa-shield-alt"></i>
-      <h2>Quản trị</h2>
+      <h2>Quản trị WeGo</h2>
+      <small style="color: #94a3b8; margin-top: 5px; display: block;">
+        <?php 
+        if ($isSuperAdmin) echo '👑 Superadmin';
+        elseif ($isManager) echo '🔧 Manager';
+        else echo '💬 Support';
+        ?>
+      </small>
     </div>
     <nav class="sidebar-nav">
+      <!-- Dashboard - Tất cả role -->
       <a href="dashboard.php" class="active">
         <i class="fas fa-home"></i>
         <span>Tổng quan</span>
       </a>
+      
+      <!-- Users - Manager & Superadmin -->
+      <?php if ($isManager): ?>
       <a href="users.php">
         <i class="fas fa-users"></i>
         <span>Quản lý Người dùng</span>
       </a>
+      <?php endif; ?>
+      
+      <!-- Hosts - Manager & Superadmin -->
+      <?php if ($isManager): ?>
       <a href="hosts.php">
         <i class="fas fa-hotel"></i>
         <span>Quản lý Chủ nhà</span>
       </a>
+      <?php endif; ?>
+      
+      <!-- Host Applications - Manager & Superadmin -->
+      <?php if ($isManager): ?>
       <a href="applications.php">
         <i class="fas fa-file-alt"></i>
         <span>Đơn đăng ký Host</span>
       </a>
+      <?php endif; ?>
+      
+      <!-- Listings - Tất cả xem, Manager & Superadmin duyệt -->
       <a href="listings.php">
         <i class="fas fa-building"></i>
         <span>Quản lý Phòng</span>
       </a>
+      
+      <!-- Support Tickets - Tất cả role -->
       <a href="support.php">
         <i class="fas fa-headset"></i>
         <span>Hỗ trợ khách hàng</span>
       </a>
+      
+      <!-- Settings - Manager & Superadmin -->
+      <?php if ($isManager): ?>
       <a href="amenities-services.php">
         <i class="fas fa-cog"></i>
         <span>Tiện nghi & Dịch vụ</span>
       </a>
+      <?php endif; ?>
+      
+      <!-- Logout -->
+      <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
       <a href="logout.php">
         <i class="fas fa-sign-out-alt"></i>
         <span>Đăng xuất</span>
@@ -79,15 +145,13 @@ $stats = $cAdmin->cGetDashboardStats();
         Tổng quan Dashboard
       </h1>
       <div style="display: flex; gap: 15px; align-items: center;">
-        <a href="admin-reports.php" class="btn btn-primary" style="white-space: nowrap;">
-          <i class="fas fa-chart-line"></i> Báo cáo chi tiết
-        </a>
-        <span class="badge bg-primary"><?php echo htmlspecialchars($_SESSION['admin_name']); ?> - <?php echo strtoupper($_SESSION['admin_role']); ?></span>
+        <span style="color: #666;">Xin chào, <strong><?php echo htmlspecialchars($adminName); ?></strong></span>
+        <span class="badge bg-primary"><?php echo strtoupper($adminRole); ?></span>
       </div>
     </div>
     
     <div class="container">
-    <h2 class="page-title">Tổng quan hệ thống</h2>
+      <h2 class="page-title">Tổng quan hệ thống</h2>
     
     <div class="row">
       <!-- Total Applications -->

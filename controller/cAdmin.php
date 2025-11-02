@@ -388,7 +388,7 @@ class cAdmin {
     }
     
     // Support Ticket Methods
-    public function cGetAllSupportTickets($status = null, $page = 1, $limit = 10) {
+    public function cGetAllSupportTickets($status = null, $category = null, $page = 1, $limit = 10) {
         $page = max(1, intval($page));
         $limit = max(1, min(100, intval($limit)));
         
@@ -399,8 +399,15 @@ class cAdmin {
             }
         }
         
+        if ($category !== null) {
+            $validCategories = ['dat_phong', 'tai_khoan', 'nha_cung_cap', 'de_xuat_dich_vu', 'khac'];
+            if (!in_array($category, $validCategories)) {
+                $category = null;
+            }
+        }
+        
         $mAdmin = new mAdmin();
-        return $mAdmin->mGetAllSupportTickets($status, $page, $limit);
+        return $mAdmin->mGetAllSupportTickets($status, $category, $page, $limit);
     }
     
     public function cGetTicketDetail($ticketId) {

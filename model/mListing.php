@@ -801,5 +801,39 @@ class mListing {
         
         return $conn->query($sql) ? true : false;
     }
+    
+    public function mToggleListingStatus($listingId, $hostId) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if (!$conn) return false;
+        
+        // Verify ownership
+        $checkSql = "SELECT l.listing_id, l.status 
+                     FROM listing l
+                     INNER JOIN host h ON l.host_id = h.host_id
+                     WHERE l.listing_id = $listingId AND h.host_id = $hostId";
+        
+        $result = $conn->query($checkSql);
+        if (!$result || $result->num_rows === 0) {
+            return false; // Not found or not owned by this host
+        }
+        
+        $listing = $result->fetch_assoc();
+        $currentStatus = $listing['status'];
+        
+        // Toggle between active and inactive
+        // Only allow toggling for active/inactive status
+        if ($currentStatus === 'active') {
+            $newStatus = 'inactive';
+        } elseif ($currentStatus === 'inactive') {
+            $newStatus = 'active';
+        } else {
+            // Don't toggle if status is draft, pending, or rejected
+            return false;
+        }
+        
+        $sql = "UPDATE listing SET status = '$newStatus' WHERE listing_id = $listingId";
+        return $conn->query($sql) ? $newStatus : false;
+    }
 }
 ?>

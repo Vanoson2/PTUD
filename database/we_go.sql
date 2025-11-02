@@ -334,7 +334,7 @@ CREATE TABLE `support_ticket` (
   `user_id` BIGINT UNSIGNED NOT NULL,
   `title` VARCHAR(255) NOT NULL,
   `content` TEXT NOT NULL,
-  `category` ENUM('dat_phong','tai_khoan','nha_cung_cap','khac') NOT NULL DEFAULT 'khac',
+  `category` ENUM('dat_phong','tai_khoan','nha_cung_cap','de_xuat_dich_vu','khac') NOT NULL DEFAULT 'khac',
   `priority` ENUM('normal','high','urgent') NOT NULL DEFAULT 'normal',
   `status` ENUM('open','in_progress','resolved','closed') NOT NULL DEFAULT 'open',
   `last_message_at` DATETIME DEFAULT NULL,

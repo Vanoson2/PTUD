@@ -12,6 +12,12 @@ include_once(__DIR__ . "/../../controller/cAdmin.php");
 $cAdmin = new cAdmin();
 $adminId = $_SESSION['admin_id'];
 $adminName = $_SESSION['admin_name'] ?? 'Admin';
+$adminRole = $_SESSION['admin_role'] ?? 'support';
+
+// Define permissions
+$isSuperAdmin = ($adminRole === 'superadmin');
+$isManager = ($adminRole === 'manager' || $isSuperAdmin);
+$canApprove = $isManager; // Chỉ Manager và Superadmin mới duyệt được
 
 // Get filter status
 $filterStatus = $_GET['status'] ?? null;

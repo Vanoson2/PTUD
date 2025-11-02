@@ -14,6 +14,12 @@ $cAdmin = new cAdmin();
 $mListing = new mListing();
 $adminId = $_SESSION['admin_id'];
 $adminName = $_SESSION['admin_name'] ?? 'Admin';
+$adminRole = $_SESSION['admin_role'] ?? 'support';
+
+// Define permissions
+$isSuperAdmin = ($adminRole === 'superadmin');
+$isManager = ($adminRole === 'manager' || $isSuperAdmin);
+$canApprove = $isManager; // Chỉ Manager và Superadmin mới duyệt/từ chối được
 
 $listingId = intval($_GET['id'] ?? 0);
 $successMessage = '';
@@ -23,20 +29,25 @@ $errorMessage = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $action = $_POST['action'] ?? '';
   
-  if ($action === 'approve') {
-    $result = $cAdmin->cApproveListing($listingId, $adminId);
-    if ($result['success']) {
-      $successMessage = $result['message'];
-    } else {
-      $errorMessage = $result['message'];
-    }
-  } elseif ($action === 'reject') {
-    $reason = trim($_POST['reason'] ?? '');
-    $result = $cAdmin->cRejectListing($listingId, $adminId, $reason);
-    if ($result['success']) {
-      $successMessage = $result['message'];
-    } else {
-      $errorMessage = $result['message'];
+  // Check permission trước khi thực hiện action
+  if (!$canApprove) {
+    $errorMessage = 'Bạn không có quyền thực hiện thao tác này! Chỉ Manager và Superadmin mới có thể phê duyệt/từ chối phòng.';
+  } else {
+    if ($action === 'approve') {
+      $result = $cAdmin->cApproveListing($listingId, $adminId);
+      if ($result['success']) {
+        $successMessage = $result['message'];
+      } else {
+        $errorMessage = $result['message'];
+      }
+    } elseif ($action === 'reject') {
+      $reason = trim($_POST['reason'] ?? '');
+      $result = $cAdmin->cRejectListing($listingId, $adminId, $reason);
+      if ($result['success']) {
+        $successMessage = $result['message'];
+      } else {
+        $errorMessage = $result['message'];
+      }
     }
   }
 }
@@ -289,21 +300,29 @@ $services = $mListing->mGetListingServices($listingId);
 
       <!-- Action Buttons -->
       <?php if ($listing['status'] === 'pending'): ?>
-        <div class="detail-section action-section">
-          <h3>⚙️ Thao tác</h3>
-          <div class="action-buttons">
-            <form method="POST" style="display: inline-block;">
-              <input type="hidden" name="action" value="approve">
-              <button type="submit" class="btn-approve" onclick="return confirm('Bạn có chắc muốn phê duyệt phòng này?')">
-                ✅ Phê duyệt
+        <?php if ($canApprove): ?>
+          <div class="detail-section action-section">
+            <h3>⚙️ Thao tác</h3>
+            <div class="action-buttons">
+              <form method="POST" style="display: inline-block;">
+                <input type="hidden" name="action" value="approve">
+                <button type="submit" class="btn-approve" onclick="return confirm('Bạn có chắc muốn phê duyệt phòng này?')">
+                  ✅ Phê duyệt
+                </button>
+              </form>
+              
+              <button type="button" class="btn-reject" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                ❌ Từ chối
               </button>
-            </form>
-            
-            <button type="button" class="btn-reject" data-bs-toggle="modal" data-bs-target="#rejectModal">
-              ❌ Từ chối
-            </button>
+            </div>
           </div>
-        </div>
+        <?php else: ?>
+          <div class="detail-section">
+            <div class="alert alert-warning" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 8px;">
+              <strong>⚠️ Thông báo:</strong> Phòng đang chờ phê duyệt. Chỉ Manager và Superadmin mới có quyền phê duyệt/từ chối.
+            </div>
+          </div>
+        <?php endif; ?>
       <?php endif; ?>
     </div>
   </div>

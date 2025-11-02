@@ -574,7 +574,7 @@ class mAdmin {
     }
     
     // Support Ticket Methods
-    public function mGetAllSupportTickets($status = null, $page = 1, $limit = 10) {
+    public function mGetAllSupportTickets($status = null, $category = null, $page = 1, $limit = 10) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
         
@@ -585,11 +585,16 @@ class mAdmin {
         $offset = ($page - 1) * $limit;
         
         // Build WHERE clause
-        $whereClause = "";
+        $conditions = [];
         if ($status) {
             $status = $conn->real_escape_string($status);
-            $whereClause = " WHERE st.status = '$status'";
+            $conditions[] = "st.status = '$status'";
         }
+        if ($category) {
+            $category = $conn->real_escape_string($category);
+            $conditions[] = "st.category = '$category'";
+        }
+        $whereClause = !empty($conditions) ? " WHERE " . implode(" AND ", $conditions) : "";
         
         // Get total count
         $countSql = "SELECT COUNT(*) as total FROM support_ticket st" . $whereClause;

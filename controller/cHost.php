@@ -165,5 +165,10 @@ class cHost {
         $mHost = new mHost();
         return $mHost->mCheckTaxCodeExists($taxCode);
     }
+    
+    public function cToggleListingStatus($listingId, $hostId) {
+        $mListing = new mListing();
+        return $mListing->mToggleListingStatus($listingId, $hostId);
+    }
 }
 ?>

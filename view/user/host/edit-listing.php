@@ -436,8 +436,15 @@ foreach ($amenities as $amenity) {
         
         <!-- Dịch vụ thêm -->
         <div class="form-section">
-          <h3 class="section-title">🛎️ Dịch vụ thêm (tùy chọn)</h3>
-          <p class="text-muted">Cập nhật các dịch vụ phụ phí mà khách có thể sử dụng</p>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h3 class="section-title mb-1">🛎️ Dịch vụ thêm (tùy chọn)</h3>
+              <p class="text-muted mb-0">Cập nhật các dịch vụ phụ phí mà khách có thể sử dụng</p>
+            </div>
+            <a href="suggest-service.php" class="btn btn-outline-primary btn-sm" target="_blank">
+              <i class="fas fa-lightbulb"></i> Đề xuất dịch vụ mới
+            </a>
+          </div>
           
           <?php if (!empty($services)): ?>
             <div class="services-list">

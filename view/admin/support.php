@@ -30,31 +30,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get filter parameters
 $filterStatus = $_GET['status'] ?? null;
+$filterCategory = $_GET['category'] ?? null;
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $limit = 10;
 
 // Get tickets
-$ticketData = $cAdmin->cGetAllSupportTickets($filterStatus, $page, $limit);
+$ticketData = $cAdmin->cGetAllSupportTickets($filterStatus, $filterCategory, $page, $limit);
 $tickets = $ticketData['tickets'];
 $totalPages = $ticketData['pages'];
 $totalTickets = $ticketData['total'];
 
 // Get counts by status
-$openData = $cAdmin->cGetAllSupportTickets('open', 1, 1);
-$inProgressData = $cAdmin->cGetAllSupportTickets('in_progress', 1, 1);
-$resolvedData = $cAdmin->cGetAllSupportTickets('resolved', 1, 1);
-$closedData = $cAdmin->cGetAllSupportTickets('closed', 1, 1);
+$openData = $cAdmin->cGetAllSupportTickets('open', null, 1, 1);
+$inProgressData = $cAdmin->cGetAllSupportTickets('in_progress', null, 1, 1);
+$resolvedData = $cAdmin->cGetAllSupportTickets('resolved', null, 1, 1);
+$closedData = $cAdmin->cGetAllSupportTickets('closed', null, 1, 1);
 
 $openCount = $openData['total'];
 $inProgressCount = $inProgressData['total'];
 $resolvedCount = $resolvedData['total'];
 $closedCount = $closedData['total'];
 
+// Get count for service requests
+$serviceRequestData = $cAdmin->cGetAllSupportTickets(null, 'de_xuat_dich_vu', 1, 1);
+$serviceRequestCount = $serviceRequestData['total'];
+
 // Category translations
 $categoryLabels = [
   'dat_phong' => 'Đặt phòng',
   'tai_khoan' => 'Tài khoản',
   'nha_cung_cap' => 'Nhà cung cấp',
+  'de_xuat_dich_vu' => 'Đề xuất dịch vụ',
   'khac' => 'Khác'
 ];
 
@@ -160,11 +166,15 @@ $statusLabels = [
             <div class="stat-number"><?php echo $closedCount; ?></div>
             <div class="stat-label">Đã đóng</div>
           </div>
+          <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="stat-number" style="color: white;"><?php echo $serviceRequestCount; ?></div>
+            <div class="stat-label" style="color: white;">Đề xuất dịch vụ</div>
+          </div>
         </div>
         
         <!-- Filter Tabs -->
         <div class="filter-tabs">
-          <a href="support.php" class="filter-tab <?php echo $filterStatus === null ? 'active' : ''; ?>">
+          <a href="support.php" class="filter-tab <?php echo $filterStatus === null && $filterCategory === null ? 'active' : ''; ?>">
             Tất cả (<?php echo $totalTickets; ?>)
           </a>
           <a href="support.php?status=open" class="filter-tab <?php echo $filterStatus === 'open' ? 'active' : ''; ?>">
@@ -178,6 +188,9 @@ $statusLabels = [
           </a>
           <a href="support.php?status=closed" class="filter-tab <?php echo $filterStatus === 'closed' ? 'active' : ''; ?>">
             Đã đóng (<?php echo $closedCount; ?>)
+          </a>
+          <a href="support.php?category=de_xuat_dich_vu" class="filter-tab <?php echo $filterCategory === 'de_xuat_dich_vu' ? 'active' : ''; ?>" style="border-left: 3px solid #667eea;">
+            <i class="fas fa-lightbulb"></i> Đề xuất dịch vụ (<?php echo $serviceRequestCount; ?>)
           </a>
         </div>
         

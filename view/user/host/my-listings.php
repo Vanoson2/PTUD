@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <?php else: ?>
       <div class="listings-grid">
         <?php foreach ($listings as $listing): ?>
-          <div class="listing-card">
+          <div class="listing-card <?php echo $listing['status'] === 'inactive' ? 'inactive-card' : ''; ?>">
             <a href="./listing-detail.php?id=<?php echo $listing['listing_id']; ?>" class="listing-image-link">
               <div class="listing-image">
                 <?php if (!empty($listing['image_url'])): ?>
@@ -193,12 +193,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
               </div>
               
               <div class="listing-actions">
+                <a href="./listing-detail.php?id=<?php echo $listing['listing_id']; ?>" class="btn-action btn-view">
+                  👁️ Xem
+                </a>
+                
                 <a href="./edit-listing.php?id=<?php echo $listing['listing_id']; ?>" class="btn-action btn-edit">
                   ✏️ Sửa
                 </a>
                 
+                <?php if ($listing['status'] === 'active' || $listing['status'] === 'inactive'): ?>
+                  <button type="button" 
+                          class="btn-action btn-toggle-status" 
+                          data-listing-id="<?php echo $listing['listing_id']; ?>"
+                          data-current-status="<?php echo $listing['status']; ?>">
+                    <?php echo $listing['status'] === 'active' ? '👁️‍🗨️ Ẩn' : '👁️ Hiện'; ?>
+                  </button>
+                <?php endif; ?>
+                
                 <?php if ($listing['status'] === 'draft'): ?>
-                  <form method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa phòng này?');">
+                  <form method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa phòng này?');" style="display: inline;">
                     <input type="hidden" name="action" value="delete">
                     <input type="hidden" name="listing_id" value="<?php echo $listing['listing_id']; ?>">
                     <button type="submit" class="btn-action btn-delete">
@@ -221,5 +234,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
   </div>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Handle toggle listing status
+    document.querySelectorAll('.btn-toggle-status').forEach(button => {
+      button.addEventListener('click', async function() {
+        const listingId = this.getAttribute('data-listing-id');
+        const currentStatus = this.getAttribute('data-current-status');
+        const actionText = currentStatus === 'active' ? 'ẩn' : 'hiện';
+        
+        if (!confirm(`Bạn có chắc muốn ${actionText} phòng này?`)) {
+          return;
+        }
+        
+        // Disable button and show loading
+        const originalText = this.innerHTML;
+        this.disabled = true;
+        this.innerHTML = '⏳ Đang xử lý...';
+        
+        try {
+          const formData = new FormData();
+          formData.append('listing_id', listingId);
+          
+          const response = await fetch('./toggle-listing-status.php', {
+            method: 'POST',
+            body: formData
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            // Show success message
+            alert(result.message);
+            
+            // Reload page to update UI
+            window.location.reload();
+          } else {
+            alert('Lỗi: ' + result.message);
+            this.disabled = false;
+            this.innerHTML = originalText;
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Có lỗi xảy ra. Vui lòng thử lại.');
+          this.disabled = false;
+          this.innerHTML = originalText;
+        }
+      });
+    });
+  </script>
 </body>
 </html>
