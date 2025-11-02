@@ -1,5 +1,6 @@
 <?php
 include_once __DIR__ . '/controller/cListing.php';
+include_once __DIR__ . '/model/mConnect.php';
 // Start session for server-side state (PHP only)
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
@@ -93,6 +94,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
 <script defer src="./public/js/date-validation.js"></script>
 <script defer src="./public/js/date-picker.js?v=<?php echo time(); ?>"></script>
 
+<script>
+// Handle redirect after login
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if user just logged in successfully
+  <?php if (isset($_SESSION['login_success']) && $_SESSION['login_success'] === true): ?>
+    // Clear the flag
+    <?php unset($_SESSION['login_success']); ?>
+    
+    // Check for validated return URL
+    const returnUrl = sessionStorage.getItem('validatedReturnUrl');
+    if (returnUrl) {
+      // Clear session storage
+      sessionStorage.removeItem('returnUrl');
+      sessionStorage.removeItem('validatedReturnUrl');
+      
+      // Redirect to the original page
+      window.location.href = returnUrl;
+    }
+    // If no return URL, stay on homepage (current behavior)
+  <?php endif; ?>
+});
+</script>
+
 <section class="container mt-4">
   <!-- Hero Section with Search -->
   <div class="hero-section">
@@ -135,46 +159,96 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
   <h2 class="section-title-home">CÁC ĐỊA ĐIỂM DU LỊCH NỔI TIẾNG</h2>
   <div class="places-grid">
     <?php
-    // Sử dụng controller để đếm số lượng listing thực tế từ database
+    // Lấy top 4 tỉnh có nhiều booking nhất từ database
     $cListing = new cListing();
+    $topProvinces = $cListing->cGetTopProvincesByBookings(4);
     
-    $places = [
-      [
-        'title' => 'ĐÀ NẴNG',
-        'img' => './public/img/home/DaNang.jpg',
-        'province' => 'Đà Nẵng'
-      ],
-      [
-        'title' => 'NHA TRANG',
-        'img' => './public/img/home/NhaTrang.jpg',
-        'province' => 'Khánh Hòa'
-      ],
-      [
-        'title' => 'HUẾ',
-        'img' => './public/img/home/Hue.jpg',
-        'province' => 'Huế'
-      ],
-      [
-        'title' => 'HÀ NỘI',
-        'img' => './public/img/home/Hanoi.jpg',
-        'province' => 'Hà Nội'
-      ],
-    ];
+    // Function tự động map tên tỉnh với file ảnh
+    function getProvinceImage($provinceName) {
+      // Map tên tỉnh database -> tên file ảnh
+      $imageMap = [
+        'An Giang' => 'AnGiang.jpg',
+        'Bắc Ninh' => 'BacNinh.png',
+        'Cà Mau' => 'CaMau.jpg',
+        'Cần Thơ' => 'CanTho.png',
+        'Cao Bằng' => 'CaoBang.jpg',
+        'Đắk Lắk' => 'DakLak.jpg',
+        'Đà Nẵng' => 'DaNang.jpg',
+        'Điện Biên' => 'DienBien.jpg',
+        'Đồng Nai' => 'DongNai.jpg',
+        'Đồng Tháp' => 'DongThap.png',
+        'Gia Lai' => 'GiaLai.jpg',
+        'Hải Phòng' => 'HaiPhong.jpg',
+        'Hà Nội' => 'Hanoi.jpg',
+        'Hà Tĩnh' => 'HaTinh.jpg',
+        'Thừa Thiên Huế' => 'Hue.jpg',
+        'Huế' => 'Hue.jpg',
+        'Hưng Yên' => 'HungYen.jpg',
+        'Khánh Hòa' => 'KhanhHoa.jpg',
+        'Lai Châu' => 'LaiChau.jpg',
+        'Lâm Đồng' => 'LamDong.jpg',
+        'Lạng Sơn' => 'LangSon.jpg',
+        'Lào Cai' => 'LaoCai.jpg',
+        'Nghệ An' => 'NgheAn.jpg',
+        'Ninh Bình' => 'NinhBinh.jpg',
+        'Phú Thọ' => 'PhuTho.jpg',
+        'Quảng Ngãi' => 'QuangNgai.jpg',
+        'Quảng Ninh' => 'QuangNinh.jpg',
+        'Quảng Trị' => 'QuangTri.jpg',
+        'Sơn La' => 'SonLa.jpg',
+        'Tây Ninh' => 'TayNinh.jpeg',
+        'Thái Nguyên' => 'ThaiNguyen.png',
+        'Thanh Hóa' => 'ThanhHoa.jpg',
+        'Thành phố Hồ Chí Minh' => 'TP.HCM.jpg',
+        'Hồ Chí Minh' => 'TP.HCM.jpg',
+        'Tuyên Quang' => 'TuyenQuang.jpg',
+        'Vĩnh Long' => 'VinhLong.jpg',
+      ];
+      
+      // Nếu tìm thấy mapping, trả về đường dẫn file
+      if (isset($imageMap[$provinceName])) {
+        return './public/img/home/' . $imageMap[$provinceName];
+      }
+      
+      // Nếu không tìm thấy, dùng ảnh mặc định
+      return './public/img/home/DaNang.jpg';
+    }
     
-    foreach($places as $p){
-      $count = $cListing->cCountListingByProvince($p['province']);
-      $countText = number_format($count) . ' chỗ ở';
+    // Nếu không có booking nào, hiển thị các tỉnh mặc định
+    if (empty($topProvinces)) {
+      $topProvinces = [
+        ['province_name' => 'Đà Nẵng', 'province_full_name' => 'Thành phố Đà Nẵng', 'total_bookings' => 0, 'total_listings' => 0],
+        ['province_name' => 'Khánh Hòa', 'province_full_name' => 'Tỉnh Khánh Hòa', 'total_bookings' => 0, 'total_listings' => 0],
+        ['province_name' => 'Huế', 'province_full_name' => 'Thành phố Huế', 'total_bookings' => 0, 'total_listings' => 0],
+        ['province_name' => 'Hà Nội', 'province_full_name' => 'Thành phố Hà Nội', 'total_bookings' => 0, 'total_listings' => 0],
+      ];
+    }
+    
+    foreach($topProvinces as $province){
+      $provinceName = $province['province_name'];
+      $provinceFullName = $province['province_full_name'];
+      $totalBookings = $province['total_bookings'];
+      $totalListings = $province['total_listings'];
+      
+      // Tự động lấy ảnh tương ứng với tỉnh
+      $img = getProvinceImage($provinceName);
+      
+      // Tạo title viết hoa
+      $title = mb_strtoupper($provinceName, 'UTF-8');
+      
+      // Hiển thị: "X chỗ ở - Đã có hơn Y đơn đặt"
+      $countText = number_format($totalListings) . ' chỗ ở - Đã có hơn ' . number_format($totalBookings) . ' đơn đặt';
       
       // Tạo URL với tham số location, sử dụng ngày mặc định, thêm source=featured
-      $searchUrl = "./view/user/traveller/listListings.php?source=featured&location=" . urlencode($p['province']) . 
+      $searchUrl = "./view/user/traveller/listListings.php?source=featured&location=" . urlencode($provinceName) . 
                    "&checkin=" . $tomorrow . 
                    "&checkout=" . $dayAfterTomorrow . 
                    "&guests=1";
       
       echo "<a href='{$searchUrl}' class='place-card' style='text-decoration: none; color: inherit;'>";
-      echo "<img src='{$p['img']}' alt='{$p['title']}'>";
+      echo "<img src='{$img}' alt='{$title}'>";
       echo "<div class='place-card-content'>";
-      echo "<div class='place-card-title'>{$p['title']}</div>";
+      echo "<div class='place-card-title'>{$title}</div>";
       echo "<div class='place-card-info'>{$countText}</div>";
       echo "</div>";
       echo "</a>";
@@ -183,34 +257,104 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
   </div>
   <!-- Feature Cards -->
   <div class="feature-cards-grid">
-    <!-- Card 1 -->
-    <div class="feature-card">
-      <img src="./public/img/home/NhaTrang.jpg" alt="f1">
-      <div class="overlay"></div>
-      <div class="feature-content">
-        <div class="feature-title">KỲ NGHỈ NGOÀI TRỜI</div>
-        <div class="feature-price">từ 679$ đ</div>
-      </div>
-    </div>
-    <!-- Card 2 -->
-    <div class="feature-card">
-      <img src="./public/img/home/Hue.jpg" alt="f2">
-      <div class="overlay"></div>
-      <div class="feature-badge">ĐIỂM ĐẾN ĐỘC ĐÁO</div>
-      <div class="feature-content">
-        <div class="feature-title">TOÀN BỘ CẢNH ĐẸP</div>
-        <div class="feature-price">từ 888$ đ</div>
-      </div>
-    </div>
-    <!-- Card 3 -->
-    <div class="feature-card">
-      <img src="./public/img/home/Hanoi.jpg" alt="f3">
-      <div class="overlay"></div>
-      <div class="feature-content">
-        <div class="feature-title">CHỈ PHẢI THỎA CƯỜI</div>
-        <div class="feature-price">từ 945$ đ</div>
-      </div>
-    </div>
+    <?php
+    // Định nghĩa 3 categories với amenity IDs và ảnh tương ứng
+    $featureCategories = [
+      [
+        'title' => 'HÒA MÌNH CÙNG THIÊN NHIÊN',
+        'amenity_ids' => [11, 12], // Cảnh biển (11) và Cảnh núi (12)
+        'badge' => 'ĐIỂM ĐẾN ĐỘC ĐÁO',
+        'image' => './public/img/home/BeautyScenery.jpg'
+      ],
+      [
+        'title' => 'BBQ NGOÀI TRỜI',
+        'amenity_ids' => [10], // BBQ ngoài trời (10)
+        'badge' => null,
+        'image' => './public/img/home/BBQ Outside.jpg'
+      ],
+      [
+        'title' => 'CHO PHÉP THÚ CƯNG',
+        'amenity_ids' => [21], // Cho phép thú cưng (21)
+        'badge' => null,
+        'image' => './public/img/home/AllowDog.jpg'
+      ]
+    ];
+    
+    foreach($featureCategories as $category) {
+      $amenityIdsStr = implode(',', $category['amenity_ids']);
+      
+      // Query tìm listing có tiện nghi này với giá thấp nhất
+      $p = new mConnect();
+      $conn = $p->mMoKetNoi();
+      
+      if($conn) {
+        $strSelect = "SELECT 
+                        l.listing_id,
+                        l.title,
+                        l.price,
+                        l.address,
+                        li.file_url,
+                        p.name as province_name,
+                        w.name as ward_name
+                     FROM listing l
+                     INNER JOIN listing_amenity la ON l.listing_id = la.listing_id
+                     LEFT JOIN listing_image li ON l.listing_id = li.listing_id AND li.is_cover = 1
+                     LEFT JOIN wards w ON l.ward_code = w.code
+                     LEFT JOIN provinces p ON w.province_code = p.code
+                     WHERE l.status = 'active'
+                       AND la.amenity_id IN ($amenityIdsStr)
+                     GROUP BY l.listing_id
+                     ORDER BY l.price ASC
+                     LIMIT 1";
+        
+        $result = $conn->query($strSelect);
+        
+        if($result && $result->num_rows > 0) {
+          $listing = $result->fetch_assoc();
+          
+          // Format giá
+          $price = number_format($listing['price'], 0, ',', '.') . ' đ';
+          
+          // Tạo URL tìm kiếm với filter amenity
+          $searchUrl = "./view/user/traveller/listListings.php?amenity=" . urlencode($amenityIdsStr) . 
+                       "&checkin=" . $tomorrow . 
+                       "&checkout=" . $dayAfterTomorrow . 
+                       "&guests=1";
+          
+          // Encode URL để xử lý khoảng trắng và ký tự đặc biệt
+          $imageUrl = str_replace(' ', '%20', $category['image']);
+          
+          echo "<a href='{$searchUrl}' class='feature-card' style='text-decoration: none; color: inherit;'>";
+          echo "<img src='{$imageUrl}' alt='{$category['title']}'>";
+          echo "<div class='overlay'></div>";
+          if($category['badge']) {
+            echo "<div class='feature-badge'>{$category['badge']}</div>";
+          }
+          echo "<div class='feature-content'>";
+          echo "<div class='feature-title'>{$category['title']}</div>";
+          echo "<div class='feature-price'>từ {$price}</div>";
+          echo "</div>";
+          echo "</a>";
+        } else {
+          // Nếu không tìm thấy listing, hiển thị ảnh category với thông báo
+          // Encode URL để xử lý khoảng trắng và ký tự đặc biệt
+          $imageUrl = str_replace(' ', '%20', $category['image']);
+          
+          echo "<div class='feature-card'>";
+          echo "<img src='{$imageUrl}' alt='{$category['title']}'>";
+          echo "<div class='overlay'></div>";
+          if($category['badge']) {
+            echo "<div class='feature-badge'>{$category['badge']}</div>";
+          }
+          echo "<div class='feature-content'>";
+          echo "<div class='feature-title'>{$category['title']}</div>";
+          echo "<div class='feature-price'>Đang cập nhật</div>";
+          echo "</div>";
+          echo "</div>";
+        }
+      }
+    }
+    ?>
   </div>
 
   <!-- Help Section -->

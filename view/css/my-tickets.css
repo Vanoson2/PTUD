@@ -1,0 +1,118 @@
+/* My Tickets Page Styles */
+
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 30px 0;
+}
+
+.container {
+  max-width: 1200px;
+}
+
+.page-header {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.stats-row {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.stat-card {
+  flex: 1;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  color: white;
+}
+
+.stat-card.open { background: #28a745; }
+.stat-card.in-progress { background: #17a2b8; }
+.stat-card.resolved { background: #ffc107; color: #333; }
+.stat-card.closed { background: #6c757d; }
+
+.stat-card h3 { 
+  margin: 0; 
+  font-size: 2em; 
+}
+
+.stat-card p { 
+  margin: 5px 0 0 0; 
+}
+
+.tickets-container {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.ticket-card {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  transition: all 0.3s;
+}
+
+.ticket-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
+
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 10px;
+}
+
+.ticket-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.badge-status {
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.85em;
+}
+
+.badge-open { background: #28a745; color: white; }
+.badge-in_progress { background: #17a2b8; color: white; }
+.badge-resolved { background: #ffc107; color: #333; }
+.badge-closed { background: #6c757d; color: white; }
+
+.badge-priority {
+  padding: 3px 10px;
+  border-radius: 15px;
+  font-size: 0.75em;
+  margin-left: 10px;
+}
+
+.badge-urgent { background: #dc3545; color: white; }
+.badge-high { background: #fd7e14; color: white; }
+.badge-normal { background: #28a745; color: white; }
+
+.ticket-meta {
+  color: #666;
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+
+.unread-badge {
+  background: #dc3545;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.8em;
+  margin-left: 10px;
+}

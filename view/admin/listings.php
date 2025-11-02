@@ -163,8 +163,25 @@ $totalCount = count($cAdmin->cGetAllListings(null));
                 <td>#<?php echo $listing['listing_id']; ?></td>
                 <td>
                   <?php if (!empty($listing['cover_image'])): ?>
-                    <img src="../../<?php echo htmlspecialchars($listing['cover_image']); ?>" 
-                         alt="Cover" class="listing-thumb">
+                    <?php 
+                    // Xử lý đường dẫn ảnh
+                    $imagePath = $listing['cover_image'];
+                    // Nếu là URL Pexels thì dùng trực tiếp
+                    if (strpos($imagePath, 'http') === 0) {
+                        $displayPath = $imagePath;
+                    } 
+                    // Nếu đã có public/ ở đầu thì bỏ đi rồi thêm ../../
+                    elseif (strpos($imagePath, 'public/') === 0) {
+                        $displayPath = '../../' . $imagePath;
+                    }
+                    // Nếu không có thì thêm ../../public/
+                    else {
+                        $displayPath = '../../public/' . $imagePath;
+                    }
+                    ?>
+                    <img src="<?php echo htmlspecialchars($displayPath); ?>" 
+                         alt="Cover" class="listing-thumb"
+                         onerror="this.src='../../public/img/placeholder.jpg'; this.onerror=null;">
                   <?php else: ?>
                     <div class="no-image">📷</div>
                   <?php endif; ?>

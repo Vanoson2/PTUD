@@ -1,0 +1,29 @@
+/* Create Ticket Page Styles */
+
+.support-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+}
+
+.form-section {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.header-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header-section h1 {
+    color: #667eea;
+    font-weight: bold;
+}
+
+.header-section p {
+    color: #666;
+    margin-top: 10px;
+}

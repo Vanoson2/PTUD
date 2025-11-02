@@ -335,11 +335,15 @@ class mListing {
         if (!$conn) return [];
         
         $sql = "SELECT l.*, 
+                       l.price as price_per_night,
                        pt.name as place_type_name,
-                       (SELECT file_url FROM listing_image WHERE listing_id = l.listing_id AND is_cover = 1 LIMIT 1) as cover_image,
-                       (SELECT COUNT(*) FROM listing_image WHERE listing_id = l.listing_id) as image_count
+                       (SELECT file_url FROM listing_image WHERE listing_id = l.listing_id AND is_cover = 1 LIMIT 1) as image_url,
+                       (SELECT COUNT(*) FROM listing_image WHERE listing_id = l.listing_id) as image_count,
+                       CONCAT(w.name, ', ', p.name) as location
                 FROM listing l
                 LEFT JOIN place_type pt ON l.place_type_id = pt.place_type_id
+                LEFT JOIN wards w ON l.ward_code = w.code
+                LEFT JOIN provinces p ON w.province_code = p.code
                 WHERE l.host_id = $hostId";
         
         if ($status) {
@@ -521,6 +525,24 @@ class mListing {
         return $amenities;
     }
     
+    public function mGetAllServices() {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if (!$conn) return [];
+        
+        $sql = "SELECT * FROM service ORDER BY name ASC";
+        $result = $conn->query($sql);
+        $services = [];
+        
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $services[] = $row;
+            }
+        }
+        
+        return $services;
+    }
+    
     public function mSaveListingAmenities($listingId, $amenityIds) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -537,6 +559,33 @@ class mListing {
             
             $sql = "INSERT INTO listing_amenity (listing_id, amenity_id) VALUES " . implode(', ', $values);
             return $conn->query($sql) ? true : false;
+        }
+        
+        return true;
+    }
+    
+    public function mSaveListingServices($listingId, $services) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if (!$conn) return false;
+        
+        // Delete existing services
+        $conn->query("DELETE FROM listing_service WHERE listing_id = $listingId");
+        
+        if (!empty($services)) {
+            $values = [];
+            foreach ($services as $serviceId => $price) {
+                $serviceId = intval($serviceId);
+                $price = floatval($price);
+                if ($price > 0) {
+                    $values[] = "($listingId, $serviceId, $price)";
+                }
+            }
+            
+            if (!empty($values)) {
+                $sql = "INSERT INTO listing_service (listing_id, service_id, price) VALUES " . implode(', ', $values);
+                return $conn->query($sql) ? true : false;
+            }
         }
         
         return true;
@@ -689,6 +738,68 @@ class mListing {
         }else{
             return false;
         }
+    }
+    
+    /**
+     * Get top provinces by booking count
+     * Returns provinces sorted by total bookings (most popular destinations)
+     * 
+     * @param int $limit Number of provinces to return (default: 4)
+     * @return array Array of provinces with booking counts and listing counts
+     */
+    public function mGetTopProvincesByBookings($limit = 4) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if ($conn) {
+            $limit = (int)$limit;
+            
+            $strSelect = "SELECT 
+                            p.code as province_code,
+                            p.name as province_name,
+                            p.full_name as province_full_name,
+                            COUNT(DISTINCT b.booking_id) as total_bookings,
+                            COUNT(DISTINCT l.listing_id) as total_listings
+                         FROM provinces p
+                         INNER JOIN wards w ON p.code = w.province_code
+                         INNER JOIN listing l ON w.code = l.ward_code
+                         LEFT JOIN bookings b ON l.listing_id = b.listing_id 
+                            AND b.status IN ('confirmed', 'completed')
+                         WHERE l.status = 'active'
+                         GROUP BY p.code, p.name, p.full_name
+                         HAVING total_bookings > 0
+                         ORDER BY total_bookings DESC, total_listings DESC
+                         LIMIT $limit";
+            
+            $result = $conn->query($strSelect);
+            
+            if ($result && $result->num_rows > 0) {
+                $provinces = [];
+                while ($row = $result->fetch_assoc()) {
+                    $provinces[] = $row;
+                }
+                return $provinces;
+            }
+            
+            return []; // Return empty array if no results
+        }
+        
+        return false;
+    }
+    
+    public function mSetCoverImage($listingId, $imageId) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if (!$conn) return false;
+        
+        // First, remove is_cover from all images of this listing
+        $conn->query("UPDATE listing_image SET is_cover = 0 WHERE listing_id = $listingId");
+        
+        // Then set the new cover image
+        $sql = "UPDATE listing_image SET is_cover = 1 
+                WHERE image_id = $imageId AND listing_id = $listingId";
+        
+        return $conn->query($sql) ? true : false;
     }
 }
 ?>

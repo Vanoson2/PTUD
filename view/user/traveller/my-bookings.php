@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-  header('Location: ../login.php');
+  header('Location: ../login.php?returnUrl=' . urlencode($_SERVER['REQUEST_URI']));
   exit;
 }
 
@@ -56,6 +56,27 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
   <p>Quản lý thông tin và cài đặt tài khoản của bạn</p>
 </div>
 
+<!-- Success/Error Messages -->
+<?php if (isset($_SESSION['success_message'])): ?>
+  <div class="alert alert-success">
+    <i class="fas fa-check-circle"></i>
+    <?php 
+      echo htmlspecialchars($_SESSION['success_message']); 
+      unset($_SESSION['success_message']);
+    ?>
+  </div>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['error_message'])): ?>
+  <div class="alert alert-error">
+    <i class="fas fa-exclamation-circle"></i>
+    <?php 
+      echo htmlspecialchars($_SESSION['error_message']); 
+      unset($_SESSION['error_message']);
+    ?>
+  </div>
+<?php endif; ?>
+
 <!-- Tabs -->
 <div class="bookings-tabs">
   <a href="?tab=upcoming" class="tab-button <?php echo $activeTab === 'upcoming' ? 'active' : ''; ?>">
@@ -78,7 +99,16 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
       <div class="booking-card">
         <div class="booking-image">
           <?php if (!empty($booking['image_url'])): ?>
-            <img src="../../../<?php echo htmlspecialchars($booking['image_url']); ?>" alt="Listing">
+            <?php
+            // Determine correct image path
+            $imagePath = $booking['image_url'];
+            if (strpos($imagePath, 'http://') !== 0 && strpos($imagePath, 'https://') !== 0) {
+              // Local path - add relative path
+              $imagePath = '../../../' . $imagePath;
+            }
+            // else: Keep full URL as is (Pexels)
+            ?>
+            <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="Listing">
           <?php else: ?>
             <img src="../../../public/img/placeholder_listing/placeholder1.jpg" alt="Listing">
           <?php endif; ?>
@@ -108,8 +138,16 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
         </div>
         
         <div class="booking-actions">
-          <?php if ($activeTab === 'upcoming'): ?>
-            <button class="btn-cancel">Hủy Đơn Đặt</button>
+          <?php if ($activeTab === 'upcoming' && $booking['status'] === 'confirmed'): ?>
+            <a href="cancel-booking.php?booking_id=<?php echo $booking['booking_id']; ?>" 
+               class="btn-cancel"
+               onclick="return confirm('Bạn có chắc chắn muốn hủy đơn đặt này?');">
+              <i class="fas fa-times-circle"></i> Hủy Đơn Đặt
+            </a>
+          <?php elseif ($booking['status'] === 'cancelled'): ?>
+            <span class="badge-cancelled">
+              <i class="fas fa-ban"></i> Đã hủy
+            </span>
           <?php else: ?>
             <?php if (!$booking['user_reviewed']): ?>
               <a href="review-listing.php?listing_id=<?php echo $booking['listing_id']; ?>&booking_id=<?php echo $booking['booking_id']; ?>" 
@@ -143,70 +181,3 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
 <?php include __DIR__ . '/../partials/profile-layout-end.php'; ?>
 
 <?php include __DIR__ . '/../../partials/footer.php'; ?>
-
-<style>
-.booking-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 120px;
-}
-
-.btn-review {
-  padding: 10px 24px;
-  background: #6366f1;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  transition: all 0.2s;
-  border: none;
-  cursor: pointer;
-  display: inline-block;
-}
-
-.btn-review:hover {
-  background: #4f46e5;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-}
-
-.btn-cancel {
-  padding: 10px 24px;
-  background: white;
-  color: #ef4444;
-  text-decoration: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  transition: all 0.2s;
-  border: 2px solid #ef4444;
-  cursor: pointer;
-}
-
-.btn-cancel:hover {
-  background: #ef4444;
-  color: white;
-}
-
-.badge-reviewed {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  background: #d1fae5;
-  color: #065f46;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  border: 1px solid #a7f3d0;
-}
-
-.badge-reviewed svg {
-  flex-shrink: 0;
-}
-</style>

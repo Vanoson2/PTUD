@@ -287,6 +287,66 @@
   background: #F7F7F7;
 }
 
+/* Services */
+.services-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.service-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #DDDDDD;
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.service-item:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-color: #222;
+}
+
+.service-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.service-info i {
+  font-size: 24px;
+  color: #FF385C;
+  min-width: 24px;
+}
+
+.service-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.service-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+}
+
+.service-desc {
+  font-size: 14px;
+  color: #717171;
+}
+
+.service-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: #FF385C;
+  white-space: nowrap;
+  margin-left: 16px;
+}
+
 /* Reviews */
 .reviews-header {
   display: flex;

@@ -38,18 +38,24 @@ if (is_array($recentListingsResult) && !empty($recentListingsResult)) {
 include_once __DIR__ . '/../../partials/header.php';
 ?>
 
-<link rel="stylesheet" href="<?php echo $rootPath; ?>view/css/host-dashboard.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="<?php echo $rootPath; ?>view/css/host-dashboard.css?v=<?php echo time(); ?>">
 
 <div class="dashboard-container">
   <div class="dashboard-header">
-    <h1>
-      <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
-        <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
-      </svg>
-      Dashboard HOST
-    </h1>
-    <p class="welcome-text">Xin chào, <strong><?php echo htmlspecialchars($_SESSION['username'] ?? 'Host'); ?></strong>! Chào mừng đến với bảng điều khiển HOST.</p>
+    <div>
+      <h1>
+        <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
+          <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
+        </svg>
+        Dashboard HOST
+      </h1>
+      <p class="welcome-text">Xin chào, <strong><?php echo htmlspecialchars($_SESSION['username'] ?? 'Host'); ?></strong>! Chào mừng đến với bảng điều khiển HOST.</p>
+    </div>
+    <a href="host-reports.php" class="btn-reports">
+      <i class="fas fa-chart-line"></i> Xem báo cáo chi tiết
+    </a>
   </div>
 
   <!-- Statistics Cards -->
@@ -163,10 +169,19 @@ include_once __DIR__ . '/../../partials/header.php';
     </div>
     <div class="listings-grid">
       <?php foreach ($recentListings as $listing): ?>
-      <div class="listing-card">
+      <a href="./listing-detail.php?id=<?php echo $listing['listing_id']; ?>" class="listing-card">
         <div class="listing-image">
           <?php if (!empty($listing['image_url'])): ?>
-            <img src="<?php echo $rootPath . htmlspecialchars($listing['image_url']); ?>" alt="<?php echo htmlspecialchars($listing['title']); ?>">
+            <?php
+            // Determine correct image path
+            $imagePath = $listing['image_url'];
+            if (strpos($imagePath, 'http://') !== 0 && strpos($imagePath, 'https://') !== 0) {
+              // Local path - add rootPath
+              $imagePath = $rootPath . $imagePath;
+            }
+            // else: Keep full URL as is (Pexels)
+            ?>
+            <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="<?php echo htmlspecialchars($listing['title']); ?>">
           <?php else: ?>
             <div class="no-image">
               <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
@@ -191,7 +206,7 @@ include_once __DIR__ . '/../../partials/header.php';
             <?php echo htmlspecialchars($listing['location'] ?? 'Chưa cập nhật'); ?>
           </p>
         </div>
-      </div>
+      </a>
       <?php endforeach; ?>
     </div>
   </div>

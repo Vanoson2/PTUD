@@ -8,7 +8,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
-  header('Location: ./login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']));
+  header('Location: ./login.php?returnUrl=' . urlencode($_SERVER['REQUEST_URI']));
   exit;
 }
 

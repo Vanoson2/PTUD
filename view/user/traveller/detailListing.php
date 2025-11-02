@@ -41,6 +41,9 @@ if ($allAmenitiesResult) {
   }
 }
 
+// Get listing services
+$services = $cListing->cGetListingServices($listingId);
+
 // Get reviews
 $reviews = $cListing->cGetListingReviews($listingId, 4);
 
@@ -99,20 +102,18 @@ $totalPrice = $listing['price'] * $nights;
   <div class="images-gallery">
     <div class="main-image">
       <?php 
-      // Tạm thời dùng ảnh mặc định vì file_url trong DB chỉ là example
+      // Hiển thị ảnh listing từ DB hoặc placeholder
       $mainImageUrl = '../../../public/img/placeholder_listing/demo.png';
       
-      /* Sau khi có ảnh thật từ chức năng thêm chỗ ở, bỏ comment code này
       if (!empty($images) && !empty($images[0]['file_url'])) {
-        // Nếu là URL đầy đủ (http/https)
+        // Nếu là URL đầy đủ (http/https) - ảnh từ Pexels
         if (strpos($images[0]['file_url'], 'http') === 0) {
           $mainImageUrl = $images[0]['file_url'];
         } else {
-          // Nếu là đường dẫn tương đối trong project
+          // Nếu là đường dẫn tương đối trong project - ảnh local
           $mainImageUrl = '../../../' . ltrim($images[0]['file_url'], '/');
         }
       }
-      */
       ?>
       <img src="<?php echo htmlspecialchars($mainImageUrl); ?>" 
            alt="<?php echo htmlspecialchars($listing['title']); ?>">
@@ -121,10 +122,9 @@ $totalPrice = $listing['price'] * $nights;
     <div class="thumbnail-grid">
       <?php for ($i = 1; $i <= 4; $i++): ?>
         <?php 
-        // Tạm thời dùng ảnh mặc định
+        // Hiển thị thumbnail từ DB hoặc placeholder
         $thumbUrl = '../../../public/img/placeholder_listing/demo.png';
         
-        /* Sau khi có ảnh thật, bỏ comment code này
         if (!empty($images) && isset($images[$i]) && !empty($images[$i]['file_url'])) {
           if (strpos($images[$i]['file_url'], 'http') === 0) {
             $thumbUrl = $images[$i]['file_url'];
@@ -132,7 +132,6 @@ $totalPrice = $listing['price'] * $nights;
             $thumbUrl = '../../../' . ltrim($images[$i]['file_url'], '/');
           }
         }
-        */
         ?>
         <div class="thumbnail-item">
           <img src="<?php echo htmlspecialchars($thumbUrl); ?>" 
@@ -203,6 +202,29 @@ $totalPrice = $listing['price'] * $nights;
           <button class="btn-show-all">Hiển thị toàn bộ <?php echo count($amenitiesIds); ?> tiện nghi</button>
         <?php endif; ?>
       </div>
+
+      <!-- Services -->
+      <?php if (!empty($services) && $services->num_rows > 0): ?>
+      <div class="detail-section">
+        <h2 class="section-title">DỊCH VỤ THÊM</h2>
+        <div class="services-grid">
+          <?php while($service = $services->fetch_assoc()): ?>
+            <div class="service-item">
+              <div class="service-info">
+                <i class="fa-solid fa-concierge-bell"></i>
+                <div class="service-details">
+                  <span class="service-name"><?php echo htmlspecialchars($service['name']); ?></span>
+                  <?php if (!empty($service['description'])): ?>
+                    <span class="service-desc"><?php echo htmlspecialchars($service['description']); ?></span>
+                  <?php endif; ?>
+                </div>
+              </div>
+              <span class="service-price"><?php echo number_format($service['price'], 0, ',', '.'); ?>đ</span>
+            </div>
+          <?php endwhile; ?>
+        </div>
+      </div>
+      <?php endif; ?>
 
       <!-- Reviews -->
       <div class="detail-section">

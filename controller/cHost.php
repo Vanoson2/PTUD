@@ -131,9 +131,19 @@ class cHost {
         return $mListing->mGetAllAmenities();
     }
     
+    public function cGetAllServices() {
+        $mListing = new mListing();
+        return $mListing->mGetAllServices();
+    }
+    
     public function cSaveListingAmenities($listingId, $amenityIds) {
         $mListing = new mListing();
         return $mListing->mSaveListingAmenities($listingId, $amenityIds);
+    }
+    
+    public function cSaveListingServices($listingId, $services) {
+        $mListing = new mListing();
+        return $mListing->mSaveListingServices($listingId, $services);
     }
     
     public function cGetAllProvinces() {

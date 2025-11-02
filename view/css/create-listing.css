@@ -263,3 +263,127 @@ input[type="file"] {
   display: none;
 }
 
+
+
+/* Services Section */
+.services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.service-item-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.service-item-input:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.service-checkbox {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.service-checkbox input[type='checkbox'] {
+  margin-top: 4px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.service-label {
+  cursor: pointer;
+  margin: 0;
+}
+
+.service-label strong {
+  display: block;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.service-price-input {
+  width: 200px;
+}
+
+.service-price:disabled {
+  background: #e5e7eb;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.service-price:not(:disabled) {
+  border-color: #667eea;
+  background: white;
+}
+
+@media (max-width: 768px) {
+  .service-item-input {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .service-price-input {
+    width: 100%;
+  }
+}
+
+/* Required field styling */
+.required {
+  color: #ef4444;
+  font-weight: bold;
+}
+
+/* Form validation */
+.form-control:invalid:not(:placeholder-shown) {
+  border-color: #fca5a5;
+}
+
+.form-control:valid:not(:placeholder-shown) {
+  border-color: #86efac;
+}
+
+.form-select:invalid {
+  border-color: #fca5a5;
+}
+
+/* Alert styling */
+.alert {
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.alert-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.alert-danger ul {
+  margin-top: 8px;
+  padding-left: 20px;
+}
+
+.alert-danger li {
+  margin-bottom: 4px;
+}
+
+.alert-success {
+  background: #d1fae5;
+  color: #065f46;
+}
+

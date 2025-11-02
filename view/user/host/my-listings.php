@@ -139,16 +139,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
       <div class="listings-grid">
         <?php foreach ($listings as $listing): ?>
           <div class="listing-card">
-            <div class="listing-image">
-              <?php if ($listing['cover_image']): ?>
-                <img src="../../../<?php echo htmlspecialchars($listing['cover_image']); ?>" alt="<?php echo htmlspecialchars($listing['title']); ?>">
-              <?php else: ?>
-                🏠
-              <?php endif; ?>
-            </div>
+            <a href="./listing-detail.php?id=<?php echo $listing['listing_id']; ?>" class="listing-image-link">
+              <div class="listing-image">
+                <?php if (!empty($listing['image_url'])): ?>
+                  <?php
+                  // Determine correct image path
+                  $imagePath = $listing['image_url'];
+                  if (strpos($imagePath, 'http://') !== 0 && strpos($imagePath, 'https://') !== 0) {
+                    // Local path - add root path
+                    $imagePath = '../../../' . $imagePath;
+                  }
+                  ?>
+                  <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="<?php echo htmlspecialchars($listing['title']); ?>">
+                <?php else: ?>
+                  <div class="no-image-placeholder">
+                    <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                <?php endif; ?>
+              </div>
+            </a>
             
             <div class="listing-content">
-              <div class="listing-title"><?php echo htmlspecialchars($listing['title']); ?></div>
+              <a href="./listing-detail.php?id=<?php echo $listing['listing_id']; ?>" class="listing-title-link">
+                <div class="listing-title"><?php echo htmlspecialchars($listing['title']); ?></div>
+              </a>
               
               <div class="listing-info">
                 <?php if ($listing['place_type_name']): ?>

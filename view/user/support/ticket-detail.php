@@ -3,7 +3,7 @@ session_start();
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login.php');
+    header('Location: ../login.php?returnUrl=' . urlencode($_SERVER['REQUEST_URI']));
     exit();
 }
 
@@ -89,77 +89,8 @@ $categoryMap = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi tiết yêu cầu #<?= $ticketId ?> - WeGo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/ticket-detail.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 30px 0;
-        }
-        .container {
-            max-width: 1000px;
-        }
-        .ticket-header {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .messages-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            max-height: 600px;
-            overflow-y: auto;
-        }
-        .message {
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-        }
-        .message.user {
-            background: #e3f2fd;
-            margin-left: 50px;
-        }
-        .message.admin {
-            background: #f3e5f5;
-            margin-right: 50px;
-        }
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        .message-sender {
-            font-weight: bold;
-            color: #667eea;
-        }
-        .message-time {
-            color: #666;
-            font-size: 0.85em;
-        }
-        .message-content {
-            color: #333;
-        }
-        .reply-form {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .badge-status {
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-size: 0.9em;
-        }
-        .badge-open { background: #28a745; color: white; }
-        .badge-in_progress { background: #17a2b8; color: white; }
-        .badge-resolved { background: #ffc107; color: #333; }
-        .badge-closed { background: #6c757d; color: white; }
-    </style>
 </head>
 <body>
     <div class="container">

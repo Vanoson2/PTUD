@@ -3,7 +3,7 @@ session_start();
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login.php');
+    header('Location: ../login.php?returnUrl=' . urlencode($_SERVER['REQUEST_URI']));
     exit();
 }
 
@@ -56,31 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Tạo yêu cầu hỗ trợ - WeGo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .support-container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 30px;
-        }
-        .form-section {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .header-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header-section h1 {
-            color: #667eea;
-            font-weight: bold;
-        }
-        .header-section p {
-            color: #666;
-            margin-top: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="../../css/create-ticket.css">
 </head>
 <body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     

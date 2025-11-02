@@ -28,6 +28,7 @@ $hostId = $hostInfo['host_id'];
 // Lấy dữ liệu cho form
 $placeTypes = $cHost->cGetAllPlaceTypes();
 $amenities = $cHost->cGetAllAmenities();
+$services = $cHost->cGetAllServices();
 $provinces = $cHost->cGetAllProvinces();
 
 $successMessage = '';
@@ -47,21 +48,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $selectedAmenities = $_POST['amenities'] ?? [];
   $status = $_POST['status'] ?? 'draft'; // draft hoặc pending
   
-  // Validation
-  if (empty($title) || empty($address) || $price <= 0 || $capacity <= 0) {
-    $errorMessage = 'Vui lòng điền đầy đủ thông tin bắt buộc (Tiêu đề, Địa chỉ, Giá, Sức chứa)';
-  } 
-  // Validate số lượng ảnh (tối thiểu 3, tối đa 5)
-  elseif (!isset($_FILES['images']) || empty($_FILES['images']['name'][0])) {
-    $errorMessage = 'Vui lòng upload ít nhất 3 ảnh cho phòng';
+  // Validation chi tiết
+  $errors = [];
+  
+  // Kiểm tra tiêu đề
+  if (empty($title)) {
+    $errors[] = 'Tiêu đề phòng không được để trống';
+  } elseif (strlen($title) < 10) {
+    $errors[] = 'Tiêu đề phải có ít nhất 10 ký tự';
+  } elseif (strlen($title) > 100) {
+    $errors[] = 'Tiêu đề không được vượt quá 100 ký tự';
   }
-  elseif (count(array_filter($_FILES['images']['name'])) < 3) {
-    $errorMessage = 'Vui lòng upload ít nhất 3 ảnh cho phòng';
+  
+  // Kiểm tra mô tả
+  if (!empty($description) && strlen($description) < 20) {
+    $errors[] = 'Mô tả phải có ít nhất 20 ký tự (hoặc để trống)';
   }
-  elseif (count(array_filter($_FILES['images']['name'])) > 5) {
-    $errorMessage = 'Chỉ được upload tối đa 5 ảnh';
+  
+  // Kiểm tra loại phòng
+  if (empty($placeTypeId)) {
+    $errors[] = 'Vui lòng chọn loại phòng';
   }
-  else {
+  
+  // Kiểm tra địa chỉ
+  if (empty($address)) {
+    $errors[] = 'Địa chỉ không được để trống';
+  } elseif (strlen($address) < 10) {
+    $errors[] = 'Địa chỉ phải có ít nhất 10 ký tự';
+  }
+  
+  // Kiểm tra tỉnh/thành phố
+  if (empty($provinceCode)) {
+    $errors[] = 'Vui lòng chọn Tỉnh/Thành phố';
+  }
+  
+  // Kiểm tra phường/xã
+  if (empty($wardCode)) {
+    $errors[] = 'Vui lòng chọn Phường/Xã';
+  }
+  
+  // Kiểm tra giá
+  if ($price <= 0) {
+    $errors[] = 'Giá thuê phải lớn hơn 0';
+  } elseif ($price < 50000) {
+    $errors[] = 'Giá thuê tối thiểu là 50,000đ/đêm';
+  }
+  
+  // Kiểm tra sức chứa
+  if ($capacity <= 0) {
+    $errors[] = 'Sức chứa phải lớn hơn 0';
+  } elseif ($capacity > 50) {
+    $errors[] = 'Sức chứa tối đa là 50 người';
+  }
+  
+  // Kiểm tra ảnh
+  if (!isset($_FILES['images']) || empty($_FILES['images']['name'][0])) {
+    $errors[] = 'Vui lòng upload ít nhất 3 ảnh cho phòng';
+  } else {
+    $imageCount = count(array_filter($_FILES['images']['name']));
+    if ($imageCount < 3) {
+      $errors[] = 'Vui lòng upload ít nhất 3 ảnh cho phòng';
+    } elseif ($imageCount > 5) {
+      $errors[] = 'Chỉ được upload tối đa 5 ảnh';
+    }
+  }
+  
+  // Nếu có lỗi, hiển thị tất cả
+  if (!empty($errors)) {
+    $errorMessage = '<ul class="mb-0">';
+    foreach ($errors as $error) {
+      $errorMessage .= '<li>' . htmlspecialchars($error) . '</li>';
+    }
+    $errorMessage .= '</ul>';
+  } else {
     // Tạo listing
     $listingData = [
       'title' => $title,
@@ -80,6 +139,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Lưu amenities
       if (!empty($selectedAmenities)) {
         $cHost->cSaveListingAmenities($listingId, $selectedAmenities);
+      }
+      
+      // Lưu services
+      if (!empty($_POST['services'])) {
+        $cHost->cSaveListingServices($listingId, $_POST['services']);
       }
       
       // Xử lý upload ảnh
@@ -184,7 +248,7 @@ foreach ($amenities as $amenity) {
       
       <?php if ($errorMessage): ?>
         <div class="alert alert-danger">
-          <strong>❌ Lỗi!</strong> <?php echo htmlspecialchars($errorMessage); ?>
+          <strong>❌ Lỗi!</strong> <?php echo $errorMessage; ?>
         </div>
       <?php endif; ?>
       
@@ -207,8 +271,8 @@ foreach ($amenities as $amenity) {
           
           <div class="row">
             <div class="col-md-4 mb-3">
-              <label for="place_type_id" class="form-label">Loại chỗ ở</label>
-              <select class="form-select" id="place_type_id" name="place_type_id">
+              <label for="place_type_id" class="form-label">Loại chỗ ở <span class="required">*</span></label>
+              <select class="form-select" id="place_type_id" name="place_type_id" required>
                 <option value="">-- Chọn loại --</option>
                 <?php foreach ($placeTypes as $pt): ?>
                   <option value="<?php echo $pt['place_type_id']; ?>">
@@ -221,13 +285,13 @@ foreach ($amenities as $amenity) {
             <div class="col-md-4 mb-3">
               <label for="capacity" class="form-label">Sức chứa (người) <span class="required">*</span></label>
               <input type="number" class="form-control" id="capacity" name="capacity" 
-                     min="1" max="10" placeholder="2" required>
+                     min="1" max="50" placeholder="2" required>
             </div>
             
             <div class="col-md-4 mb-3">
               <label for="price" class="form-label">Giá mỗi đêm (VND) <span class="required">*</span></label>
               <input type="number" class="form-control" id="price" name="price" 
-                     min="0" step="1000" placeholder="500000" required>
+                     min="50000" step="1000" placeholder="500000" required>
             </div>
           </div>
         </div>
@@ -244,8 +308,8 @@ foreach ($amenities as $amenity) {
           
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="province_code" class="form-label">Tỉnh/Thành phố</label>
-              <select class="form-select" id="province_code" name="province_code">
+              <label for="province_code" class="form-label">Tỉnh/Thành phố <span class="required">*</span></label>
+              <select class="form-select" id="province_code" name="province_code" required>
                 <option value="">-- Chọn tỉnh/thành --</option>
                 <?php foreach ($provinces as $province): ?>
                   <option value="<?php echo $province['code']; ?>">
@@ -256,8 +320,8 @@ foreach ($amenities as $amenity) {
             </div>
             
             <div class="col-md-6 mb-3">
-              <label for="ward_code" class="form-label">Quận/Huyện/Phường</label>
-              <select class="form-select" id="ward_code" name="ward_code" disabled>
+              <label for="ward_code" class="form-label">Quận/Huyện/Phường <span class="required">*</span></label>
+              <select class="form-select" id="ward_code" name="ward_code" disabled required>
                 <option value="">-- Chọn tỉnh trước --</option>
               </select>
             </div>
@@ -286,6 +350,43 @@ foreach ($amenities as $amenity) {
               </div>
             </div>
           <?php endforeach; ?>
+        </div>
+        
+        <!-- Dịch vụ thêm -->
+        <div class="form-section">
+          <h3 class="section-title">🛎️ Dịch vụ thêm (tùy chọn)</h3>
+          <p class="text-muted">Thêm các dịch vụ phụ phí mà khách có thể sử dụng</p>
+          
+          <?php if (!empty($services)): ?>
+            <div class="services-list">
+              <?php foreach ($services as $service): ?>
+                <div class="service-item-input">
+                  <div class="service-checkbox">
+                    <input type="checkbox" class="form-check-input service-toggle" 
+                           id="service_<?php echo $service['service_id']; ?>"
+                           data-service-id="<?php echo $service['service_id']; ?>">
+                    <label class="service-label" for="service_<?php echo $service['service_id']; ?>">
+                      <strong><?php echo htmlspecialchars($service['name']); ?></strong>
+                      <?php if ($service['description']): ?>
+                        <small class="text-muted d-block"><?php echo htmlspecialchars($service['description']); ?></small>
+                      <?php endif; ?>
+                    </label>
+                  </div>
+                  <div class="service-price-input">
+                    <div class="input-group">
+                      <input type="number" class="form-control service-price" 
+                             name="services[<?php echo $service['service_id']; ?>]" 
+                             id="price_<?php echo $service['service_id']; ?>"
+                             placeholder="Giá (VNĐ)" min="0" step="1000" disabled>
+                      <span class="input-group-text">đ</span>
+                    </div>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            </div>
+          <?php else: ?>
+            <p class="text-muted">Không có dịch vụ nào.</p>
+          <?php endif; ?>
         </div>
         
         <!-- Ảnh -->
@@ -331,6 +432,7 @@ foreach ($amenities as $amenity) {
       
       wardSelect.innerHTML = '<option value="">-- Đang tải... --</option>';
       wardSelect.disabled = true;
+      wardSelect.value = ''; // Clear current value
       
       if (!provinceCode) {
         wardSelect.innerHTML = '<option value="">-- Chọn tỉnh trước --</option>';
@@ -347,6 +449,14 @@ foreach ($amenities as $amenity) {
           option.value = ward.code;
           option.textContent = ward.name;
           wardSelect.appendChild(option);
+        });
+        
+        wardSelect.disabled = false; // Enable sau khi load xong
+      } catch (error) {
+        wardSelect.innerHTML = '<option value="">-- Lỗi tải dữ liệu --</option>';
+        console.error('Error loading wards:', error);
+      }
+    });
         });
         
         wardSelect.disabled = false;
@@ -455,17 +565,126 @@ foreach ($amenities as $amenity) {
       updatePreview();
     });
     
+    // Service checkbox toggle
+    document.querySelectorAll('.service-toggle').forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const serviceId = this.dataset.serviceId;
+        const priceInput = document.getElementById('price_' + serviceId);
+        if (this.checked) {
+          priceInput.disabled = false;
+          priceInput.required = true;
+          priceInput.focus();
+        } else {
+          priceInput.disabled = true;
+          priceInput.required = false;
+          priceInput.value = '';
+        }
+      });
+    });
+    
     // Validate form trước khi submit
     document.getElementById('listingForm').addEventListener('submit', function(e) {
+      const errors = [];
+      
+      // Validate tiêu đề
+      const title = document.getElementById('title').value.trim();
+      if (!title) {
+        errors.push('Tiêu đề phòng không được để trống');
+      } else if (title.length < 10) {
+        errors.push('Tiêu đề phải có ít nhất 10 ký tự');
+      } else if (title.length > 100) {
+        errors.push('Tiêu đề không được vượt quá 100 ký tự');
+      }
+      
+      // Validate mô tả
+      const description = document.getElementById('description').value.trim();
+      if (description && description.length < 20) {
+        errors.push('Mô tả phải có ít nhất 20 ký tự (hoặc để trống)');
+      }
+      
+      // Validate loại phòng
+      const placeType = document.getElementById('place_type_id').value;
+      if (!placeType) {
+        errors.push('Vui lòng chọn loại phòng');
+      }
+      
+      // Validate địa chỉ
+      const address = document.getElementById('address').value.trim();
+      if (!address) {
+        errors.push('Địa chỉ không được để trống');
+      } else if (address.length < 10) {
+        errors.push('Địa chỉ phải có ít nhất 10 ký tự');
+      }
+      
+      // Validate tỉnh/thành phố
+      const provinceCode = document.getElementById('province_code').value;
+      if (!provinceCode) {
+        errors.push('Vui lòng chọn Tỉnh/Thành phố');
+      }
+      
+      // Validate phường/xã
+      const wardCode = document.getElementById('ward_code').value;
+      if (!wardCode) {
+        errors.push('Vui lòng chọn Phường/Xã');
+      }
+      
+      // Validate giá
+      const price = parseFloat(document.getElementById('price').value);
+      if (!price || price <= 0) {
+        errors.push('Giá thuê phải lớn hơn 0');
+      } else if (price < 50000) {
+        errors.push('Giá thuê tối thiểu là 50,000đ/đêm');
+      }
+      
+      // Validate sức chứa
+      const capacity = parseInt(document.getElementById('capacity').value);
+      if (!capacity || capacity <= 0) {
+        errors.push('Sức chứa phải lớn hơn 0');
+      } else if (capacity > 50) {
+        errors.push('Sức chứa tối đa là 50 người');
+      }
+      
+      // Validate ảnh
       if (selectedFiles.length < minFiles) {
+        errors.push(`Vui lòng upload ít nhất ${minFiles} ảnh cho phòng`);
+      } else if (selectedFiles.length > maxFiles) {
+        errors.push(`Chỉ được upload tối đa ${maxFiles} ảnh`);
+      }
+      
+      // Nếu có lỗi, hiển thị và ngăn submit
+      if (errors.length > 0) {
         e.preventDefault();
-        alert(`Vui lòng upload ít nhất ${minFiles} ảnh cho phòng!`);
+        let errorMsg = 'Vui lòng kiểm tra lại:\n\n';
+        errors.forEach((error, index) => {
+          errorMsg += `${index + 1}. ${error}\n`;
+        });
+        alert(errorMsg);
+        
+        // Scroll đến trường đầu tiên bị lỗi
+        if (!title) {
+          document.getElementById('title').focus();
+        } else if (!placeType) {
+          document.getElementById('place_type_id').focus();
+        } else if (!address) {
+          document.getElementById('address').focus();
+        } else if (!provinceCode) {
+          document.getElementById('province_code').focus();
+        } else if (!wardCode) {
+          document.getElementById('ward_code').focus();
+        } else if (!price || price <= 0) {
+          document.getElementById('price').focus();
+        } else if (!capacity || capacity <= 0) {
+          document.getElementById('capacity').focus();
+        }
+        
         return false;
       }
-      if (selectedFiles.length > maxFiles) {
-        e.preventDefault();
-        alert(`Chỉ được upload tối đa ${maxFiles} ảnh!`);
-        return false;
+      
+      // Thêm loading state
+      const submitBtn = this.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...';
       }
     });
   </script>

@@ -69,8 +69,8 @@ class mRevenue extends mConnect {
         
         $sql = "SELECT 
                     l.listing_id,
-                    l.name as listing_name,
-                    l.price_per_night,
+                    l.title as listing_name,
+                    l.price as price_per_night,
                     COUNT(b.booking_id) as total_bookings,
                     SUM(DATEDIFF(b.check_out, b.check_in)) as total_nights,
                     SUM(i.total) as revenue,

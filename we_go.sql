@@ -235,7 +235,6 @@ CREATE TABLE `review` (
   `user_id` BIGINT UNSIGNED NOT NULL,
   `rating` TINYINT UNSIGNED NOT NULL,
   `comment` TEXT NULL,
-  `imgRating` VARCHAR(512) NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`review_id`),
@@ -244,6 +243,17 @@ CREATE TABLE `review` (
   CONSTRAINT `chk_review_rating` CHECK (`rating` BETWEEN 1 AND 5),
   CONSTRAINT `fk_review_listing` FOREIGN KEY (`listing_id`) REFERENCES `listing` (`listing_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_review_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `review_image` (
+  `image_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `review_id` BIGINT UNSIGNED NOT NULL,
+  `file_url` VARCHAR(500) NOT NULL,
+  `sort_order` SMALLINT UNSIGNED DEFAULT 0,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`image_id`),
+  KEY `ix_review_image_review` (`review_id`, `sort_order`),
+  CONSTRAINT `fk_ri_review` FOREIGN KEY (`review_id`) REFERENCES `review` (`review_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `listing_image` (

@@ -121,7 +121,16 @@ $servicesTotal = array_sum(array_column($services, 'price'));
       <!-- Listing Preview -->
       <div class="listing-preview">
         <?php if (!empty($booking['image_url'])): ?>
-          <img src="../../../<?php echo htmlspecialchars($booking['image_url']); ?>" alt="Listing" class="listing-thumbnail">
+          <?php
+          // Determine correct image path
+          $imagePath = $booking['image_url'];
+          if (strpos($imagePath, 'http://') !== 0 && strpos($imagePath, 'https://') !== 0) {
+            // Local path - add relative path
+            $imagePath = '../../../' . $imagePath;
+          }
+          // else: Keep full URL as is (Pexels)
+          ?>
+          <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="Listing" class="listing-thumbnail">
         <?php else: ?>
           <img src="../../../public/img/placeholder_listing/placeholder1.jpg" alt="Listing" class="listing-thumbnail">
         <?php endif; ?>

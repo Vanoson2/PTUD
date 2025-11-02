@@ -37,5 +37,10 @@ class cBooking {
         $mBooking = new mBooking();
         return $mBooking->mGetUserBookings($userId, $status);
     }
+    
+    public function cCancelBooking($bookingId, $userId, $cancelReason = null){
+        $mBooking = new mBooking();
+        return $mBooking->mCancelBooking($bookingId, $userId, $cancelReason);
+    }
 }
 ?>

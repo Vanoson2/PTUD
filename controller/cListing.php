@@ -51,5 +51,20 @@ include_once(__DIR__ . "/../model/mListing.php");
         $mListing = new mListing();
         return $mListing->mGetListingServices($listingId);
     }
+    
+    /**
+     * Get top provinces by booking count
+     * Returns most popular destinations based on confirmed/completed bookings
+     * 
+     * @param int $limit Number of provinces to return (default: 4)
+     * @return array Array of provinces with booking stats
+     */
+    public function cGetTopProvincesByBookings($limit = 4) {
+        $mListing = new mListing();
+        $result = $mListing->mGetTopProvincesByBookings($limit);
+        
+        // Return result or empty array if failed
+        return is_array($result) ? $result : [];
+    }
  }
 ?>

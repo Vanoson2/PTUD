@@ -78,7 +78,12 @@ $stats = $cAdmin->cGetDashboardStats();
         <i class="fas fa-tachometer-alt"></i>
         Tổng quan Dashboard
       </h1>
-      <span class="badge bg-primary"><?php echo htmlspecialchars($_SESSION['admin_name']); ?> - <?php echo strtoupper($_SESSION['admin_role']); ?></span>
+      <div style="display: flex; gap: 15px; align-items: center;">
+        <a href="admin-reports.php" class="btn btn-primary" style="white-space: nowrap;">
+          <i class="fas fa-chart-line"></i> Báo cáo chi tiết
+        </a>
+        <span class="badge bg-primary"><?php echo htmlspecialchars($_SESSION['admin_name']); ?> - <?php echo strtoupper($_SESSION['admin_role']); ?></span>
+      </div>
     </div>
     
     <div class="container">

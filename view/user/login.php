@@ -1,14 +1,26 @@
 <?php
 include_once __DIR__ . '/../../controller/cUser.php';
+include_once __DIR__ . '/../../helper/ReturnUrlHelper.php';
 
 // Start session
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 
+// Store return URL if provided (server-side backup method)
+if (isset($_GET['returnUrl'])) {
+  ReturnUrlHelper::storeReturnUrl($_GET['returnUrl']);
+}
+
 // Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
-  header('Location: ../../index.php');
+  // Check for return URL
+  $returnUrl = ReturnUrlHelper::getAndClearReturnUrl();
+  if ($returnUrl) {
+    header('Location: ' . $returnUrl);
+  } else {
+    header('Location: ../../index.php');
+  }
   exit;
 }
 
@@ -44,9 +56,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       setcookie('remember_token', $token, time() + (30 * 24 * 60 * 60), '/');
     }
     
-    // Redirect về trang trước đó hoặc trang chủ
-    $redirect = $_GET['redirect'] ?? '../../index.php';
-    header('Location: ' . $redirect);
+    // Set session flag for JavaScript to handle redirect
+    $_SESSION['login_success'] = true;
+    
+    // Check for validated return URL (server-side validation with timeout)
+    $returnUrl = ReturnUrlHelper::getAndClearReturnUrl();
+    
+    if ($returnUrl) {
+      // Redirect to original page (one-time use, already cleared from session)
+      header('Location: ' . $returnUrl);
+    } else {
+      // Default redirect to homepage (JavaScript will handle client-side returnUrl)
+      header('Location: ../../index.php');
+    }
     exit;
   } else {
     $errors = $result['errors'];

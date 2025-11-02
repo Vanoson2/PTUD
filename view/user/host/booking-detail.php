@@ -334,80 +334,8 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
   </div>
 </div>
 
-<style>
-.alert {
-  padding: 14px 16px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-}
-
-.alert svg {
-  flex-shrink: 0;
-}
-
-.alert-success {
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-}
-
-.alert-danger {
-  background: #fee;
-  color: #991b1b;
-  border: 1px solid #fecaca;
-}
-
-.status-badge-large {
-  display: inline-block;
-  padding: 12px 32px;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.status-confirmed {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.status-completed {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.status-cancelled {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.btn-complete-large {
-  width: 100%;
-  padding: 16px 32px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-.btn-complete-large:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-}
-
-.listing-thumbnail {
-  height: 200px;
-}
-</style>
+  <link rel="stylesheet" href="../../css/booking-detail.css">
+</head>
+<body>
 
 <?php include __DIR__ . '/../../partials/footer.php'; ?>

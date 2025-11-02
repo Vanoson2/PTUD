@@ -234,5 +234,44 @@ class mBooking {
             return false;
         }
     }
+    
+    // Hủy đơn đặt phòng
+    public function mCancelBooking($bookingId, $userId, $cancelReason = null) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if($conn){
+            $bookingId = intval($bookingId);
+            $userId = intval($userId);
+            $cancelReason = $cancelReason ? $conn->real_escape_string($cancelReason) : null;
+            
+            // Kiểm tra booking có thuộc về user này không và status = 'confirmed'
+            $strCheck = "SELECT booking_id, status 
+                        FROM bookings 
+                        WHERE booking_id = $bookingId 
+                        AND user_id = $userId 
+                        AND status = 'confirmed'";
+            
+            $checkResult = $conn->query($strCheck);
+            if (!$checkResult || $checkResult->num_rows === 0) {
+                return false; // Không tìm thấy hoặc đã bị hủy/hoàn thành rồi
+            }
+            
+            // Update status sang cancelled
+            $strUpdate = "UPDATE bookings 
+                         SET status = 'cancelled',
+                             cancelled_at = NOW(),
+                             cancelled_by = 'user'";
+            
+            if ($cancelReason) {
+                $strUpdate .= ", cancel_reason = '$cancelReason'";
+            }
+            
+            $strUpdate .= " WHERE booking_id = $bookingId AND user_id = $userId";
+            
+            return $conn->query($strUpdate);
+        }else{
+            return false;
+        }
+    }
 }
 ?>

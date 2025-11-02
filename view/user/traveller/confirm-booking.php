@@ -8,7 +8,7 @@ if (session_status() === PHP_SESSION_NONE) {
 if (!isset($_SESSION['user_id'])) {
   // Redirect to login with return URL
   $returnUrl = urlencode($_SERVER['REQUEST_URI']);
-  header("Location: ../login.php?redirect=$returnUrl");
+  header("Location: ../login.php?returnUrl=$returnUrl");
   exit;
 }
 
@@ -101,58 +101,7 @@ $subtotal = $listing['price'] * $nights;
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="../../css/style.css">
-  <style>
-    .booking-confirm-container {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-    .listing-card {
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 24px;
-    }
-    .listing-card img {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-    }
-    .service-checkbox {
-      padding: 16px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .service-checkbox:hover {
-      border-color: #007bff;
-      background-color: #f8f9fa;
-    }
-    .service-checkbox input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-    }
-    .price-breakdown {
-      border-top: 1px solid #ddd;
-      padding-top: 16px;
-      margin-top: 16px;
-    }
-    .total-price {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #007bff;
-    }
-    .alert-unavailable {
-      background-color: #fff3cd;
-      border: 1px solid #ffc107;
-      padding: 16px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-  </style>
+  <link rel="stylesheet" href="../../css/confirm-booking.css">
 </head>
 <body>
   <?php include(__DIR__ . '/../../partials/header.php'); ?>
@@ -291,7 +240,18 @@ $subtotal = $listing['price'] * $nights;
           <div class="p-3">
             <div class="d-flex">
               <?php if ($coverImage): ?>
-              <img src="<?php echo htmlspecialchars($coverImage); ?>" alt="Listing" class="rounded me-3">
+              <?php
+              // Determine correct image path
+              $imagePath = $coverImage;
+              if (strpos($imagePath, 'http://') !== 0 && strpos($imagePath, 'https://') !== 0) {
+                // Local path - add relative path
+                $imagePath = '../../../' . $imagePath;
+              }
+              // else: Keep full URL as is (Pexels)
+              ?>
+              <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="Listing" class="rounded me-3" style="width: 100px; height: 100px; object-fit: cover;">
+              <?php else: ?>
+              <img src="../../../public/img/placeholder_listing/placeholder1.jpg" alt="Listing" class="rounded me-3" style="width: 100px; height: 100px; object-fit: cover;">
               <?php endif; ?>
               <div class="flex-grow-1">
                 <p class="text-muted small mb-1">Hotel room in Ueno</p>

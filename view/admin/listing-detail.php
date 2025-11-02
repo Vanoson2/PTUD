@@ -54,6 +54,9 @@ $images = $mListing->mGetListingImages($listingId);
 
 // Get listing amenities
 $amenities = $mListing->mGetListingAmenities($listingId);
+
+// Get listing services
+$services = $mListing->mGetListingServices($listingId);
 ?>
 
 <!DOCTYPE html>
@@ -182,8 +185,17 @@ $amenities = $mListing->mGetListingAmenities($listingId);
           <h3>📷 Hình ảnh</h3>
           <div class="images-grid">
             <?php foreach ($images as $image): ?>
+              <?php
+              // Determine correct image path
+              $imagePath = $image['file_url'];
+              if (strpos($imagePath, 'http://') !== 0 && strpos($imagePath, 'https://') !== 0) {
+                // Local path - add relative path from admin folder
+                $imagePath = '../../' . $imagePath;
+              }
+              // else: Keep full URL as is (Pexels)
+              ?>
               <div class="image-item <?php echo $image['is_cover'] ? 'is-cover' : ''; ?>">
-                <img src="../../<?php echo htmlspecialchars($image['file_url']); ?>" alt="Listing image">
+                <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="Listing image">
                 <?php if ($image['is_cover']): ?>
                   <span class="cover-badge">⭐ Ảnh bìa</span>
                 <?php endif; ?>
@@ -238,6 +250,31 @@ $amenities = $mListing->mGetListingAmenities($listingId);
                 • <?php echo htmlspecialchars($amenity['name']); ?>
               </span>
             <?php endforeach; ?>
+          </div>
+        </div>
+      <?php endif; ?>
+
+      <!-- Services -->
+      <?php if (!empty($services) && $services->num_rows > 0): ?>
+        <div class="detail-section">
+          <h3>🛎️ Dịch vụ thêm</h3>
+          <div class="services-list">
+            <?php while($service = $services->fetch_assoc()): ?>
+              <div class="service-item-admin">
+                <div class="service-name-admin">
+                  <i class="fa-solid fa-concierge-bell"></i>
+                  <?php echo htmlspecialchars($service['name']); ?>
+                </div>
+                <?php if (!empty($service['description'])): ?>
+                  <div class="service-desc-admin">
+                    <?php echo htmlspecialchars($service['description']); ?>
+                  </div>
+                <?php endif; ?>
+                <div class="service-price-admin">
+                  <?php echo number_format($service['price'], 0, ',', '.'); ?>đ
+                </div>
+              </div>
+            <?php endwhile; ?>
           </div>
         </div>
       <?php endif; ?>
