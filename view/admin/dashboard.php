@@ -69,7 +69,7 @@ $stats = array_merge([
     <div class="sidebar-header">
       <i class="fas fa-shield-alt"></i>
       <h2>Quản trị WeGo</h2>
-      <small style="color: #94a3b8; margin-top: 5px; display: block;">
+      <small class="role-badge">
         <?php 
         if ($isSuperAdmin) echo '👑 Superadmin';
         elseif ($isManager) echo '🔧 Manager';
@@ -129,7 +129,7 @@ $stats = array_merge([
       <?php endif; ?>
       
       <!-- Logout -->
-      <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
+      <hr class="sidebar-divider">
       <a href="logout.php">
         <i class="fas fa-sign-out-alt"></i>
         <span>Đăng xuất</span>
@@ -144,8 +144,8 @@ $stats = array_merge([
         <i class="fas fa-tachometer-alt"></i>
         Tổng quan Dashboard
       </h1>
-      <div style="display: flex; gap: 15px; align-items: center;">
-        <span style="color: #666;">Xin chào, <strong><?php echo htmlspecialchars($adminName); ?></strong></span>
+      <div class="admin-header-flex">
+        <span class="greeting">Xin chào, <strong><?php echo htmlspecialchars($adminName); ?></strong></span>
         <span class="badge bg-primary"><?php echo strtoupper($adminRole); ?></span>
       </div>
     </div>
@@ -210,19 +210,19 @@ $stats = array_merge([
       
       <!-- Support Tickets -->
       <div class="col-md-4">
-        <div class="stats-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-          <div class="stats-icon" style="background: rgba(255,255,255,0.2);">🎫</div>
-          <div class="stats-number" style="color: white;"><?php echo $stats['total_tickets'] ?? 0; ?></div>
-          <div class="stats-label" style="color: white;">Tổng yêu cầu hỗ trợ</div>
+        <div class="stats-card gradient-purple">
+          <div class="stats-icon">🎫</div>
+          <div class="stats-number"><?php echo $stats['total_tickets'] ?? 0; ?></div>
+          <div class="stats-label">Tổng yêu cầu hỗ trợ</div>
         </div>
       </div>
       
       <!-- Open Tickets -->
       <div class="col-md-4">
-        <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-          <div class="stats-icon" style="background: rgba(255,255,255,0.2);">📬</div>
-          <div class="stats-number" style="color: white;"><?php echo $stats['unread_tickets'] ?? 0; ?></div>
-          <div class="stats-label" style="color: white;">Yêu cầu chưa trả lời</div>
+        <div class="stats-card gradient-pink">
+          <div class="stats-icon">📬</div>
+          <div class="stats-number"><?php echo $stats['unread_tickets'] ?? 0; ?></div>
+          <div class="stats-label">Yêu cầu chưa trả lời</div>
         </div>
       </div>
     </div>

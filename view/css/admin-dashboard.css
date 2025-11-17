@@ -78,6 +78,52 @@ body {
   border-left-color: #6366f1;
 }
 
+/* Sidebar Role Badge */
+.sidebar-header .role-badge {
+  color: #94a3b8;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Sidebar Divider */
+.sidebar-divider {
+  border-color: rgba(255,255,255,0.1);
+  margin: 15px 0;
+}
+
+/* Admin Header Flex */
+.admin-header-flex {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.admin-header-flex .greeting {
+  color: #666;
+}
+
+/* Gradient Stats Cards */
+.stats-card.gradient-purple {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.stats-card.gradient-pink {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.stats-card.gradient-purple .stats-icon,
+.stats-card.gradient-pink .stats-icon {
+  background: rgba(255,255,255,0.2);
+}
+
+.stats-card.gradient-purple .stats-number,
+.stats-card.gradient-purple .stats-label,
+.stats-card.gradient-pink .stats-number,
+.stats-card.gradient-pink .stats-label {
+  color: white;
+}
 .stats-card.users {
   border-left-color: #8b5cf6;
 }

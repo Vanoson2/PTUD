@@ -66,5 +66,10 @@ include_once(__DIR__ . "/../model/mListing.php");
         // Return result or empty array if failed
         return is_array($result) ? $result : [];
     }
+    
+    public function cSearchListingsByAmenity($amenityIds, $checkin = null, $checkout = null, $guests = 1){
+        $mListing = new mListing();
+        return $mListing->mSearchListingsByAmenity($amenityIds, $checkin, $checkout, $guests);
+    }
  }
 ?>

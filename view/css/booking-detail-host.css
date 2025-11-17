@@ -1,0 +1,141 @@
+/* Booking Detail Host - Extracted from inline styles */
+
+/* Header Section */
+.booking-detail-header {
+    margin-bottom: 30px;
+}
+
+.booking-detail-header .back-link {
+    color: #6366f1;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.booking-detail-header .back-link:hover {
+    color: #4f46e5;
+}
+
+/* Booking Success Card Override */
+.booking-success-card {
+    max-width: 100%;
+}
+
+/* Status Badge Center */
+.status-badge-center {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+/* Guest Info Section */
+.guest-info-card {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+}
+
+.guest-info-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #1f2937;
+}
+
+.guest-info-card h3 svg {
+    display: inline;
+    margin-right: 8px;
+}
+
+.guest-info-card p {
+    margin: 8px 0;
+}
+
+/* Booking Dates Layout */
+.booking-dates {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.booking-dates > div {
+    flex: 1;
+    min-width: 200px;
+}
+
+.booking-dates .date-label-small {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* Booking Details Flex */
+.booking-details-flex {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+/* Price Summary */
+.price-summary h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.price-row {
+    margin-bottom: 12px;
+}
+
+.price-row.total {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 2px solid #EBEBEB;
+}
+
+.price-row.total .price-label {
+    font-weight: 600;
+}
+
+/* Action Section */
+.action-section {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #EBEBEB;
+}
+
+/* Listing Preview Section */
+.listing-preview-section {
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 2px solid #EBEBEB;
+}
+
+.listing-preview-section h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+/* Complete Button */
+.btn-complete-large {
+    width: 100%;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-complete-large:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}

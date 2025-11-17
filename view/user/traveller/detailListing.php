@@ -260,15 +260,23 @@ $totalPrice = $listing['price'] * $nights;
                 </div>
                 <p class="review-text"><?php echo htmlspecialchars($review['comment']); ?></p>
                 
-                <?php if (!empty($review['imgRating'])): ?>
+                <?php if (!empty($review['review_images'])): ?>
                   <?php 
-                  $images = json_decode($review['imgRating'], true);
+                  $images = explode('||', $review['review_images']);
                   if ($images && is_array($images) && count($images) > 0): 
                   ?>
                     <div class="review-images">
                       <?php foreach ($images as $imageUrl): ?>
+                        <?php
+                        // Hỗ trợ cả ảnh online (http/https) và ảnh local
+                        if (strpos($imageUrl, 'http') === 0) {
+                          $displayUrl = $imageUrl;
+                        } else {
+                          $displayUrl = '../../../' . ltrim($imageUrl, '/');
+                        }
+                        ?>
                         <div class="review-image-item">
-                          <img src="../../../<?php echo htmlspecialchars($imageUrl); ?>" alt="Review image" onclick="openImageModal(this.src)">
+                          <img src="<?php echo htmlspecialchars($displayUrl); ?>" alt="Review image" onclick="openImageModal(this.src)">
                         </div>
                       <?php endforeach; ?>
                     </div>
@@ -410,9 +418,23 @@ const pricePerNight = <?php echo $listing['price']; ?>;
     // Handle booking button click - check login first
     function handleBookingClick() {
       <?php if (!isset($_SESSION['user_id'])): ?>
-        // Not logged in - redirect to login page
-        const returnUrl = encodeURIComponent(window.location.href);
-        window.location.href = '../login.php?redirect=' + returnUrl;
+        // Not logged in - save current URL and redirect to login page
+        // Build full URL with all query params
+        const currentUrl = window.location.href;
+        
+        // Method 1: Store in sessionStorage (primary method, more secure)
+        const returnData = {
+          url: currentUrl,
+          timestamp: Date.now()
+        };
+        sessionStorage.setItem('returnUrl', JSON.stringify(returnData));
+        
+        // Method 2: Also send via GET parameter (backup for browsers with disabled sessionStorage)
+        // Server will validate this URL using ReturnUrlHelper
+        const encodedUrl = encodeURIComponent(currentUrl);
+        
+        // Redirect to login with backup parameter
+        window.location.href = `../login.php?returnUrl=${encodedUrl}`;
       <?php else: ?>
         // Logged in - proceed to confirmation page
         const checkin = document.getElementById('hiddenCheckin').value;

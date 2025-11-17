@@ -5,6 +5,30 @@
   // Lấy tất cả listing card wrappers
   const listingCardWrappers = document.querySelectorAll('.listing-card-link');
   
+  // Tự động tick các checkbox tiện nghi từ URL
+  function autoCheckAmenitiesFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const amenityParam = urlParams.get('amenity');
+    
+    if (amenityParam) {
+      // Split amenity IDs (có thể là "11,12" hoặc "10")
+      const amenityIds = amenityParam.split(',');
+      
+      // Tick các checkbox tương ứng
+      amenityIds.forEach(amenityId => {
+        const checkbox = document.querySelector(`input[name="amenities[]"][value="${amenityId.trim()}"]`);
+        if (checkbox) {
+          checkbox.checked = true;
+        }
+      });
+      
+      // Trigger filter để áp dụng ngay
+      setTimeout(() => {
+        filterListings();
+      }, 100);
+    }
+  }
+  
   // Hàm lọc listings
   function filterListings() {
     // Lấy các filter đã chọn
@@ -162,8 +186,12 @@
   
   // Khởi tạo khi DOM ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', attachFilterListeners);
+    document.addEventListener('DOMContentLoaded', function() {
+      attachFilterListeners();
+      autoCheckAmenitiesFromURL();
+    });
   } else {
     attachFilterListeners();
+    autoCheckAmenitiesFromURL();
   }
 })();
