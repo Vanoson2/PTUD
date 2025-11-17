@@ -2,11 +2,6 @@
 include_once("mConnect.php");
 
 class mListing {
-    
-    // ============================================
-    // TRAVELLER METHODS (Search & View Listings)
-    // ============================================
-    
     public function mCountListingByProvince($provinceName){
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -242,10 +237,13 @@ class mListing {
         if($conn){
             $listingId = intval($listingId);
             $limit = intval($limit);
-            $strSelect = "SELECT r.*, u.full_name as user_name
+            $strSelect = "SELECT r.*, u.full_name as user_name,
+                         GROUP_CONCAT(ri.file_url ORDER BY ri.sort_order SEPARATOR '||') as review_images
                          FROM review r
                          LEFT JOIN user u ON r.user_id = u.user_id
+                         LEFT JOIN review_image ri ON r.review_id = ri.review_id
                          WHERE r.listing_id = $listingId
+                         GROUP BY r.review_id
                          ORDER BY r.created_at DESC
                          LIMIT $limit";
             
@@ -324,6 +322,10 @@ class mListing {
         
         if ($conn->query($sql)) {
             return $conn->insert_id;
+        } else {
+            // Log lỗi để debug
+            error_log("MySQL Error in mCreateListing: " . $conn->error);
+            error_log("SQL Query: " . $sql);
         }
         
         return false;
@@ -834,6 +836,80 @@ class mListing {
         
         $sql = "UPDATE listing SET status = '$newStatus' WHERE listing_id = $listingId";
         return $conn->query($sql) ? $newStatus : false;
+    }
+    
+    // Tìm kiếm listings theo amenity IDs
+    public function mSearchListingsByAmenity($amenityIds, $checkin = null, $checkout = null, $guests = 1){
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if($conn){
+            // Xử lý amenityIds (có thể là string "11,12" hoặc array)
+            if(is_string($amenityIds)){
+                $amenityIds = explode(',', $amenityIds);
+            }
+            $amenityIds = array_map('intval', $amenityIds);
+            $amenityIdsStr = implode(',', $amenityIds);
+            
+            $guests = intval($guests);
+            
+            // Build date filter
+            $dateFilter = "";
+            if ($checkin && $checkout) {
+                $checkin = $conn->real_escape_string($checkin);
+                $checkout = $conn->real_escape_string($checkout);
+                $dateFilter = "AND l.listing_id NOT IN (
+                    SELECT DISTINCT listing_id 
+                    FROM bookings 
+                    WHERE status IN ('confirmed', 'pending')
+                    AND (
+                        (check_in <= '$checkin' AND check_out > '$checkin')
+                        OR (check_in < '$checkout' AND check_out >= '$checkout')
+                        OR (check_in >= '$checkin' AND check_out <= '$checkout')
+                    )
+                )";
+            }
+            
+            // Build capacity filter
+            $capacityFilter = "AND l.capacity >= $guests";
+            
+            $strSelect = "SELECT 
+                            l.listing_id,
+                            l.title,
+                            l.description,
+                            l.price,
+                            l.capacity,
+                            l.address,
+                            l.place_type_id,
+                            pt.name as place_type_name,
+                            p.name as province_name,
+                            p.full_name as province_full_name,
+                            w.name as ward_name,
+                            w.full_name as ward_full_name,
+                            li.file_url,
+                            COALESCE(AVG(r.rating), 0) as avg_rating,
+                            COUNT(DISTINCT r.review_id) as review_count
+                         FROM listing l
+                         INNER JOIN listing_amenity la ON l.listing_id = la.listing_id
+                         LEFT JOIN place_type pt ON l.place_type_id = pt.place_type_id
+                         LEFT JOIN wards w ON l.ward_code = w.code
+                         LEFT JOIN provinces p ON w.province_code = p.code
+                         LEFT JOIN listing_image li ON l.listing_id = li.listing_id AND li.is_cover = 1
+                         LEFT JOIN review r ON l.listing_id = r.listing_id
+                         WHERE l.status = 'active'
+                         AND la.amenity_id IN ($amenityIdsStr)
+                         $capacityFilter
+                         $dateFilter
+                         GROUP BY l.listing_id
+                         ORDER BY 
+                            CASE WHEN COUNT(DISTINCT r.review_id) > 0 THEN 0 ELSE 1 END,
+                            avg_rating DESC,
+                            l.created_at DESC";
+            
+            $result = $conn->query($strSelect);
+            return $result;
+        }else{
+            return false;
+        }
     }
 }
 ?>

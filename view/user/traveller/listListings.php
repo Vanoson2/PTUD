@@ -9,6 +9,7 @@ $location = $_GET['location'] ?? '';
 $checkin = $_GET['checkin'] ?? '';
 $checkout = $_GET['checkout'] ?? '';
 $guests = $_GET['guests'] ?? 1;
+$amenityFilter = $_GET['amenity'] ?? ''; // Lọc theo amenity IDs (VD: "11,12")
 
 // Calculate number of nights
 $nights = 0;
@@ -44,7 +45,17 @@ if ($amenitiesResult) {
 // Fetch listings from database based on search location
 $listings = [];
 $cListing = new cListing();
-if (!empty($location)) {
+
+// Ưu tiên tìm theo amenity nếu có
+if (!empty($amenityFilter)) {
+  // Tìm theo amenity
+  $listingsResult = $cListing->cSearchListingsByAmenity($amenityFilter, $checkin, $checkout, $guests);
+  if ($listingsResult) {
+    while ($row = $listingsResult->fetch_assoc()) {
+      $listings[] = $row;
+    }
+  }
+} elseif (!empty($location)) {
   // Phân biệt 2 loại search:
   // 1. Từ địa điểm nổi tiếng (source=featured) → Chỉ tìm theo tỉnh
   // 2. Từ form tìm kiếm (source rỗng) → Tìm linh hoạt với filters
@@ -84,7 +95,24 @@ $totalResults = count($listings);
   <div class="search-results-header">
     <div class="search-info">
       <h1 class="search-results-title">
-        <?php echo $totalResults; ?>+ chỗ ở tại <?php echo htmlspecialchars($location); ?>
+        <?php 
+        if (!empty($amenityFilter)) {
+          // Lấy tên amenity từ database
+          $amenityNames = [];
+          $amenityIds = explode(',', $amenityFilter);
+          foreach ($amenityIds as $amenityId) {
+            foreach ($amenities as $amenity) {
+              if ($amenity['amenity_id'] == $amenityId) {
+                $amenityNames[] = $amenity['name'];
+                break;
+              }
+            }
+          }
+          echo $totalResults . '+ chỗ ở với tiện nghi: ' . htmlspecialchars(implode(', ', $amenityNames));
+        } else {
+          echo $totalResults . '+ chỗ ở tại ' . htmlspecialchars($location);
+        }
+        ?>
       </h1>
       <div class="search-results-info">
         <span><?php echo date('d/m', strtotime($checkin)); ?> - <?php echo date('d/m', strtotime($checkout)); ?></span>

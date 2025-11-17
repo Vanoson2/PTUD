@@ -207,7 +207,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }, 2000);
       </script>";
     } else {
+      // Thêm debug info
       $errorMessage = 'Có lỗi xảy ra khi tạo phòng. Vui lòng thử lại.';
+      // Log để debug
+      error_log("Create listing failed for host_id: " . $hostId);
+      error_log("Listing data: " . print_r($listingData, true));
     }
   }
 }
@@ -462,14 +466,6 @@ foreach ($amenities as $amenity) {
       } catch (error) {
         wardSelect.innerHTML = '<option value="">-- Lỗi tải dữ liệu --</option>';
         console.error('Error loading wards:', error);
-      }
-    });
-        });
-        
-        wardSelect.disabled = false;
-      } catch (error) {
-        console.error('Error loading wards:', error);
-        wardSelect.innerHTML = '<option value="">-- Lỗi tải dữ liệu --</option>';
       }
     });
     

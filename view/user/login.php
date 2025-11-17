@@ -169,6 +169,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
 </div>
 
+<script>
+// Handle return URL after login
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if coming from a page that needs redirect back
+  const returnData = sessionStorage.getItem('returnUrl');
+  
+  if (returnData) {
+    try {
+      const data = JSON.parse(returnData);
+      const now = Date.now();
+      const maxAge = 30 * 60 * 1000; // 30 minutes in milliseconds
+      
+      // Validate timestamp (not expired)
+      if (now - data.timestamp < maxAge) {
+        // Validate URL (prevent open redirect)
+        const returnUrl = new URL(data.url);
+        const currentOrigin = window.location.origin;
+        
+        // Only allow redirect to same origin
+        if (returnUrl.origin === currentOrigin) {
+          // Store validated URL for use after login
+          sessionStorage.setItem('validatedReturnUrl', data.url);
+        } else {
+          // Different origin - clear it
+          sessionStorage.removeItem('returnUrl');
+        }
+      } else {
+        // Expired - clear it
+        sessionStorage.removeItem('returnUrl');
+      }
+    } catch (e) {
+      // Invalid JSON - clear it
+      sessionStorage.removeItem('returnUrl');
+    }
+  }
+  
+  // Handle "Đăng ký ngay" link - preserve returnUrl
+  const registerLink = document.getElementById('registerLink');
+  if (registerLink && returnData) {
+    registerLink.addEventListener('click', function(e) {
+      // sessionStorage will persist, no need to pass via URL
+      // But also pass via GET as backup (server will validate)
+      const validatedUrl = sessionStorage.getItem('validatedReturnUrl');
+      if (validatedUrl) {
+        e.preventDefault();
+        const encodedUrl = encodeURIComponent(validatedUrl);
+        window.location.href = `./register.php?returnUrl=${encodedUrl}`;
+      }
+    });
+  }
+});
+
+// After successful login, redirect to returnUrl if exists
+window.addEventListener('load', function() {
+  // Check if just logged in (by checking if redirected with success message)
+  const urlParams = new URLSearchParams(window.location.search);
+  
+  // This will be handled by PHP redirect on successful login
+  // But we keep this as backup for client-side stored URLs
+  setTimeout(function() {
+    const validatedUrl = sessionStorage.getItem('validatedReturnUrl');
+    if (validatedUrl && document.body.classList.contains('login-success')) {
+      // Clear the stored URL
+      sessionStorage.removeItem('validatedReturnUrl');
+      sessionStorage.removeItem('returnUrl');
+      
+      // Redirect
+      window.location.href = validatedUrl;
+    }
+  }, 100);
+});
+</script>
+
 <script defer src="../../public/js/login-validation.js?v=<?php echo time(); ?>"></script>
 
 <?php include __DIR__ . '/../partials/footer.php'; ?>

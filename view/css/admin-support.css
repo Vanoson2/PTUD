@@ -12,6 +12,10 @@
   margin: 0 0 10px 0;
 }
 
+.header-section .subtitle {
+  color: #6B7280;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -41,6 +45,16 @@
 
 .stat-card.closed {
   border-left-color: #6B7280;
+}
+
+.stat-card.gradient-purple {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.stat-card.gradient-purple .stat-number,
+.stat-card.gradient-purple .stat-label {
+  color: white;
 }
 
 .stat-number {
@@ -84,6 +98,10 @@
   border-color: #4F46E5;
 }
 
+.filter-tab.service-request {
+  border-left: 3px solid #667eea;
+}
+
 .tickets-table {
   background: white;
   border-radius: 12px;
@@ -94,6 +112,20 @@
 table {
   width: 100%;
   border-collapse: collapse;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+}
+
+.empty-state i {
+  font-size: 48px;
+  color: #ccc;
+}
+
+.user-email-small {
+  color: #9CA3AF;
 }
 
 thead {

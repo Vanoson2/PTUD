@@ -74,8 +74,9 @@ class cHost {
             $errors['title'] = 'Vui lòng nhập tiêu đề';
         }
         
-        if (empty($data['description'])) {
-            $errors['description'] = 'Vui lòng nhập mô tả';
+        // Description không bắt buộc, chỉ validate nếu có
+        if (!empty($data['description']) && strlen($data['description']) < 20) {
+            $errors['description'] = 'Mô tả phải có ít nhất 20 ký tự (hoặc để trống)';
         }
         
         // Check both 'price' and 'price_per_night' for compatibility

@@ -80,6 +80,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
 
 <link rel="stylesheet" href="../../css/host-dashboard.css?v=<?php echo time(); ?>">
 <link rel="stylesheet" href="../../css/booking-success.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../css/booking-detail-host.css?v=<?php echo time(); ?>">
 
 <div class="host-container">
   <div class="host-wrapper">
@@ -139,8 +140,8 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
     
     <!-- Main Content -->
     <main class="host-main">
-      <div class="booking-detail-header" style="margin-bottom: 30px;">
-        <a href="./host-bookings.php" style="color: #6366f1; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+      <div class="booking-detail-header">
+        <a href="./host-bookings.php" class="back-link">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
           </svg>
@@ -168,11 +169,11 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
         </div>
       <?php endif; ?>
       
-      <div class="booking-success-card" style="max-width: 100%;">
+      <div class="booking-success-card">
         <div class="booking-info-card">
           
           <!-- Status Badge -->
-          <div style="text-align: center; margin-bottom: 24px;">
+          <div class="status-badge-center">
             <?php
             $statusClass = '';
             $statusText = '';
@@ -197,45 +198,45 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
           </div>
           
           <!-- Guest Info -->
-          <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 24px;">
-            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: #1f2937;">
-              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="display: inline; margin-right: 8px;">
+          <div class="guest-info-card">
+            <h3>
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
               </svg>
               Thông tin khách
             </h3>
-            <p style="margin: 8px 0;"><strong>Tên:</strong> <?php echo htmlspecialchars($booking['guest_name']); ?></p>
-            <p style="margin: 8px 0;"><strong>Email:</strong> <?php echo htmlspecialchars($booking['guest_email']); ?></p>
-            <p style="margin: 8px 0;"><strong>SĐT:</strong> <?php echo htmlspecialchars($booking['guest_phone']); ?></p>
+            <p><strong>Tên:</strong> <?php echo htmlspecialchars($booking['guest_name']); ?></p>
+            <p><strong>Email:</strong> <?php echo htmlspecialchars($booking['guest_email']); ?></p>
+            <p><strong>SĐT:</strong> <?php echo htmlspecialchars($booking['guest_phone']); ?></p>
           </div>
           
           <!-- Booking Dates -->
-          <div class="booking-dates" style="display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 200px;">
+          <div class="booking-dates">
+            <div>
               <div class="date-item">
                 <svg class="calendar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
                 <div>
-                  <div style="font-size: 13px; color: #6b7280;">Nhận phòng</div>
+                  <div class="date-label-small">Nhận phòng</div>
                   <div class="date-label"><?php echo date('d/m/Y', strtotime($booking['check_in'])); ?></div>
                 </div>
               </div>
             </div>
-            <div style="flex: 1; min-width: 200px;">
+            <div>
               <div class="date-item">
                 <svg class="calendar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
                 <div>
-                  <div style="font-size: 13px; color: #6b7280;">Trả phòng</div>
+                  <div class="date-label-small">Trả phòng</div>
                   <div class="date-label"><?php echo date('d/m/Y', strtotime($booking['check_out'])); ?></div>
                 </div>
               </div>
             </div>
           </div>
           
-          <div style="display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap;">
+          <div class="booking-details-flex">
             <div>
               <strong>Số đêm:</strong> <?php echo $nights; ?> đêm
             </div>
@@ -258,7 +259,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
           
           <!-- Price Summary -->
           <div class="price-summary">
-            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Chi tiết giá</h3>
+            <h3>Chi tiết giá</h3>
             
             <?php
             $listingPrice = $booking['total_amount'];
@@ -272,29 +273,29 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
             $pricePerNight = $nights > 0 ? $subtotal / $nights : 0;
             ?>
             
-            <div class="price-row" style="margin-bottom: 12px;">
+            <div class="price-row">
               <span class="price-label"><?php echo number_format($pricePerNight, 0, ',', '.'); ?> VND x <?php echo $nights; ?> đêm</span>
               <span class="price-label"><?php echo number_format($subtotal, 0, ',', '.'); ?> VND</span>
             </div>
             
             <?php if (count($services) > 0): ?>
               <?php foreach ($services as $service): ?>
-                <div class="price-row" style="margin-bottom: 12px;">
+                <div class="price-row">
                   <span class="price-label"><?php echo htmlspecialchars($service['name']); ?></span>
                   <span class="price-label"><?php echo number_format($service['price'], 0, ',', '.'); ?> VND</span>
                 </div>
               <?php endforeach; ?>
             <?php endif; ?>
             
-            <div class="price-row" style="margin-top: 16px; padding-top: 16px; border-top: 2px solid #EBEBEB;">
-              <span class="price-label" style="font-weight: 600;">Tổng cộng</span>
+            <div class="price-row total">
+              <span class="price-label">Tổng cộng</span>
               <span class="price-amount"><?php echo number_format($booking['total_amount'], 0, ',', '.'); ?> VND</span>
             </div>
           </div>
           
           <!-- Action Buttons -->
           <?php if ($booking['status'] === 'confirmed'): ?>
-            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #EBEBEB;">
+            <div class="action-section">
               <form method="POST" onsubmit="return confirm('Xác nhận khách đã trả phòng?');">
                 <input type="hidden" name="new_status" value="completed">
                 <button type="submit" name="update_status" class="btn-complete-large">
@@ -305,8 +306,8 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
           <?php endif; ?>
           
           <!-- Listing Preview -->
-          <div style="margin-top: 32px; padding-top: 32px; border-top: 2px solid #EBEBEB;">
-            <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Thông tin chỗ ở</h3>
+          <div class="listing-preview-section">
+            <h3>Thông tin chỗ ở</h3>
             <div class="listing-preview">
               <?php if (!empty($booking['listing_image'])): ?>
                 <img src="../../../<?php echo htmlspecialchars($booking['listing_image']); ?>" alt="Listing" class="listing-thumbnail">

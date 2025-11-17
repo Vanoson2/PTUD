@@ -4,7 +4,7 @@
             $host="localhost";
             $name="admin";        // XAMPP default username
             $pass="124";            // XAMPP default password (empty)
-            $db="we_go";
+            $db="we_go(version2.0)";
             return mysqli_connect($host,$name,$pass,$db);
         }
         public function mDongKetNoi($conn){

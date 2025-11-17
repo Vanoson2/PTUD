@@ -189,7 +189,7 @@ $statusLabels = [
           <a href="support.php?status=closed" class="filter-tab <?php echo $filterStatus === 'closed' ? 'active' : ''; ?>">
             Đã đóng (<?php echo $closedCount; ?>)
           </a>
-          <a href="support.php?category=de_xuat_dich_vu" class="filter-tab <?php echo $filterCategory === 'de_xuat_dich_vu' ? 'active' : ''; ?>" style="border-left: 3px solid #667eea;">
+          <a href="support.php?category=de_xuat_dich_vu" class="filter-tab service-request <?php echo $filterCategory === 'de_xuat_dich_vu' ? 'active' : ''; ?>">
             <i class="fas fa-lightbulb"></i> Đề xuất dịch vụ (<?php echo $serviceRequestCount; ?>)
           </a>
         </div>

@@ -1,14 +1,26 @@
 <?php
 include_once __DIR__ . '/../../controller/cUser.php';
+include_once __DIR__ . '/../../helper/ReturnUrlHelper.php';
 
 // Start session
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 
+// Store returnUrl if provided
+if (isset($_GET['returnUrl'])) {
+  ReturnUrlHelper::storeReturnUrl($_GET['returnUrl']);
+}
+
 // Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
-  header('Location: ../../index.php');
+  // Check for return URL
+  $returnUrl = ReturnUrlHelper::getAndClearReturnUrl();
+  if ($returnUrl) {
+    header('Location: ' . $returnUrl);
+  } else {
+    header('Location: ../../index.php');
+  }
   exit;
 }
 
@@ -193,11 +205,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </form>
       
       <div class="auth-footer">
-        <p>Đã có tài khoản? <a href="./login.php">Đăng nhập</a></p>
+        <p>Đã có tài khoản? <a href="./login.php" id="loginLink">Đăng nhập</a></p>
       </div>
     <?php endif; ?>
   </div>
 </div>
+
+<script>
+// Handle return URL preservation
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if coming from a page that needs redirect back
+  const returnData = sessionStorage.getItem('returnUrl');
+  
+  if (returnData) {
+    try {
+      const data = JSON.parse(returnData);
+      const now = Date.now();
+      const maxAge = 30 * 60 * 1000; // 30 minutes
+      
+      // Validate timestamp
+      if (now - data.timestamp < maxAge) {
+        // Validate URL
+        const returnUrl = new URL(data.url);
+        const currentOrigin = window.location.origin;
+        
+        if (returnUrl.origin === currentOrigin) {
+          sessionStorage.setItem('validatedReturnUrl', data.url);
+        } else {
+          sessionStorage.removeItem('returnUrl');
+        }
+      } else {
+        sessionStorage.removeItem('returnUrl');
+      }
+    } catch (e) {
+      sessionStorage.removeItem('returnUrl');
+    }
+  }
+  
+  // Handle "Đăng nhập" link - preserve returnUrl
+  const loginLink = document.getElementById('loginLink');
+  if (loginLink && returnData) {
+    loginLink.addEventListener('click', function(e) {
+      const validatedUrl = sessionStorage.getItem('validatedReturnUrl');
+      if (validatedUrl) {
+        e.preventDefault();
+        const encodedUrl = encodeURIComponent(validatedUrl);
+        window.location.href = `./login.php?returnUrl=${encodedUrl}`;
+      }
+    });
+  }
+});
+</script>
 
 <script defer src="../../public/js/register-validation.js?v=<?php echo time(); ?>"></script>
 
