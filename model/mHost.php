@@ -52,10 +52,12 @@ class mHost {
             ];
         }
         
+        // Lấy error message trước khi đóng connection
+        $errorMessage = $conn->error;
         $p->mDongKetNoi($conn);
         return [
             'success' => false,
-            'message' => 'Không thể tạo đơn đăng ký: ' . $conn->error,
+            'message' => 'Không thể tạo đơn đăng ký: ' . $errorMessage,
             'application_id' => null
         ];
     }

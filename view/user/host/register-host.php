@@ -270,6 +270,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 class="form-control <?php echo isset($errors['phone']) ? 'is-invalid' : ''; ?>" 
                 value="<?php echo htmlspecialchars($user['phone']); ?>"
                 placeholder="0912345678"
+                readonly
                 required
               >
               <?php if (isset($errors['phone'])): ?>

@@ -343,5 +343,47 @@ class mUser {
             return ['success' => false, 'message' => 'Lỗi khi cập nhật thông tin'];
         }
     }
+    
+    public function mChangePassword($userId, $currentPassword, $newPassword) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return ['success' => false, 'message' => 'Không thể kết nối database'];
+        }
+        
+        // Get current password hash
+        $userId = (int)$userId;
+        $sql = "SELECT password FROM user WHERE user_id = $userId";
+        $result = $conn->query($sql);
+        
+        if (!$result || $result->num_rows === 0) {
+            $p->mDongKetNoi($conn);
+            return ['success' => false, 'message' => 'Không tìm thấy người dùng'];
+        }
+        
+        $user = $result->fetch_assoc();
+        
+        // Verify current password
+        if (!password_verify($currentPassword, $user['password'])) {
+            $p->mDongKetNoi($conn);
+            return ['success' => false, 'message' => 'Mật khẩu hiện tại không đúng'];
+        }
+        
+        // Hash new password
+        $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $newPasswordHash = $conn->real_escape_string($newPasswordHash);
+        
+        // Update password
+        $updateSql = "UPDATE user SET password = '$newPasswordHash', updated_at = NOW() WHERE user_id = $userId";
+        
+        if ($conn->query($updateSql)) {
+            $p->mDongKetNoi($conn);
+            return ['success' => true, 'message' => 'Đổi mật khẩu thành công'];
+        } else {
+            $p->mDongKetNoi($conn);
+            return ['success' => false, 'message' => 'Lỗi khi cập nhật mật khẩu'];
+        }
+    }
 }
 ?>
