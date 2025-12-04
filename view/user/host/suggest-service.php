@@ -1,84 +1,30 @@
 <?php
-session_start();
-
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login.php?returnUrl=' . urlencode($_SERVER['REQUEST_URI']));
-    exit();
-}
-
-// Kiểm tra user có phải Host không
-require_once __DIR__ . '/../../../model/mHost.php';
-$mHost = new mHost();
-$hostInfo = $mHost->mGetHostByUserId($_SESSION['user_id']);
-
-if (!$hostInfo) {
-    header('Location: ../../../index.php');
-    exit();
-}
-
+require_once __DIR__ . '/../../../helper/auth.php';
 require_once __DIR__ . '/../../../controller/cSupport.php';
-require_once __DIR__ . '/../../../model/mEmailPHPMailer.php';
+
+requireLogin();
+requireHost();
+$userId = getCurrentUserId();
 
 $message = '';
 $messageType = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userId = $_SESSION['user_id'];
     $serviceName = trim($_POST['service_name'] ?? '');
     $description = trim($_POST['description'] ?? '');
     
-    // Validate
-    $errors = [];
-    if (empty($serviceName)) {
-        $errors[] = 'Vui lòng nhập tên dịch vụ';
-    } elseif (mb_strlen($serviceName) < 3) {
-        $errors[] = 'Tên dịch vụ phải có ít nhất 3 ký tự';
-    }
+    $cSupport = new cSupport();
+    $result = $cSupport->cSuggestService($userId, $serviceName, $description);
     
-    if (empty($description)) {
-        $errors[] = 'Vui lòng nhập mô tả dịch vụ';
-    } elseif (mb_strlen($description) < 10) {
-        $errors[] = 'Mô tả dịch vụ phải có ít nhất 10 ký tự';
-    }
-    
-    if (empty($errors)) {
-        $title = "Đề xuất dịch vụ mới: " . $serviceName;
-        $content = "**Tên dịch vụ đề xuất:** " . $serviceName . "\n\n";
-        $content .= "**Mô tả chi tiết:**\n" . $description;
-        
-        $cSupport = new cSupport();
-        $result = $cSupport->cCreateTicket($userId, $title, $content, 'de_xuat_dich_vu', 'normal');
-        
-        if ($result['success']) {
-            // Gửi email thông báo cho admin
-            $emailModel = new mEmailPHPMailer();
-            $emailModel->sendSupportTicketNotification(
-                $result['ticket_id'],
-                $_SESSION['full_name'] ?? 'Host',
-                $_SESSION['email'] ?? '',
-                $title,
-                $content,
-                'de_xuat_dich_vu',
-                'normal'
-            );
-            
-            $message = 'Đề xuất dịch vụ của bạn đã được gửi thành công! Admin sẽ xem xét và phản hồi sớm.';
-            $messageType = 'success';
-            
-            // Redirect to ticket detail after 3 seconds
-            header("refresh:3;url=../support/ticket-detail.php?ticket_id=" . $result['ticket_id']);
-        } else {
-            $message = $result['message'];
-            $messageType = 'danger';
-        }
+    if ($result['success']) {
+        $message = 'Cảm ơn bạn đã đề xuất dịch vụ mới! Chúng tôi sẽ xem xét và phản hồi sớm nhất.';
+        $messageType = 'success';
+        // Clear form
+        $serviceName = '';
+        $description = '';
     } else {
-        $message = '<ul class="mb-0">';
-        foreach ($errors as $error) {
-            $message .= '<li>' . htmlspecialchars($error) . '</li>';
-        }
-        $message .= '</ul>';
-        $messageType = 'danger';
+        $message = $result['message'];
+        $messageType = 'error';
     }
 }
 ?>
@@ -91,126 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Đề xuất dịch vụ mới - WeGo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 0;
-        }
-        
-        .suggest-container {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-        
-        .suggest-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-        }
-        
-        .suggest-header {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-        
-        .suggest-header h1 {
-            color: #667eea;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
-        .suggest-header p {
-            color: #6c757d;
-            font-size: 15px;
-            margin: 0;
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-        }
-        
-        .form-control, .form-select {
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-size: 15px;
-            transition: all 0.3s;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.1);
-        }
-        
-        textarea.form-control {
-            min-height: 150px;
-            resize: vertical;
-        }
-        
-        .btn-submit {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            padding: 14px 40px;
-            font-size: 16px;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .info-box {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-            border-radius: 8px;
-            padding: 15px 20px;
-            margin-bottom: 25px;
-        }
-        
-        .info-box i {
-            color: #667eea;
-            margin-right: 8px;
-        }
-        
-        .info-box p {
-            margin: 0;
-            color: #495057;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-        
-        .back-link {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-            border-radius: 10px;
-            padding: 10px 20px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            transition: all 0.3s;
-            margin-bottom: 20px;
-        }
-        
-        .back-link:hover {
-            background: #667eea;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="../../css/host-suggest-service.css">
 </head>
 <body>
     
@@ -220,8 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </a>
         
         <?php if ($message): ?>
-            <div class="alert alert-<?= $messageType ?> alert-dismissible fade show" role="alert">
-                <?= $message ?>
+            <div class="alert alert-<?= $messageType === 'success' ? 'success' : 'danger' ?> alert-dismissible fade show" role="alert">
+                <?= htmlspecialchars($message) ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>

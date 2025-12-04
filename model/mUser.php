@@ -385,5 +385,201 @@ class mUser {
             return ['success' => false, 'message' => 'Lỗi khi cập nhật mật khẩu'];
         }
     }
+
+    /**
+     * Generate password reset token for user
+     * @param string $email User's email
+     * @return array Result with success status and token or error message
+     */
+    public function mGeneratePasswordResetToken($email) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return ['success' => false, 'message' => 'Không thể kết nối database'];
+        }
+        
+        $email = $conn->real_escape_string($email);
+        
+        // Check if user exists and is verified
+        $sql = "SELECT user_id, reset_version FROM user WHERE email = '$email' AND is_email_verified = 1 LIMIT 1";
+        $result = $conn->query($sql);
+        
+        if ($result->num_rows === 0) {
+            $p->mDongKetNoi($conn);
+            return ['success' => false, 'message' => 'Email không tồn tại hoặc chưa được xác thực'];
+        }
+        
+        $user = $result->fetch_assoc();
+        $userId = $user['user_id'];
+        $resetVersion = $user['reset_version'] + 1; // Increment reset version
+        
+        // Generate reset token using user_id and reset_version
+        $token = bin2hex(random_bytes(32));
+        $expiresAt = date('Y-m-d H:i:s', strtotime('+1 hour')); // Token expires in 1 hour
+        
+        // Update reset version and store token with expiry in verification_code_expires
+        $updateSql = "UPDATE user SET 
+                     reset_version = $resetVersion,
+                     verification_code_expires = '$expiresAt'
+                     WHERE user_id = $userId";
+        
+        if ($conn->query($updateSql)) {
+            $p->mDongKetNoi($conn);
+            return [
+                'success' => true, 
+                'token' => $token . '_' . $userId . '_' . $resetVersion,
+                'user_id' => $userId,
+                'message' => 'Token được tạo thành công'
+            ];
+        } else {
+            $p->mDongKetNoi($conn);
+            return ['success' => false, 'message' => 'Lỗi khi tạo token'];
+        }
+    }
+
+    /**
+     * Verify password reset token
+     * @param string $token Reset token in format: randomstring_userid_version
+     * @return array Result with success status and user info
+     */
+    public function mVerifyResetToken($token) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return ['success' => false, 'message' => 'Không thể kết nối database'];
+        }
+        
+        // Parse token: randomstring_userid_version
+        $parts = explode('_', $token);
+        if (count($parts) !== 3) {
+            $p->mDongKetNoi($conn);
+            return ['success' => false, 'message' => 'Token không hợp lệ'];
+        }
+        
+        $randomString = $parts[0];
+        $userId = intval($parts[1]);
+        $resetVersion = intval($parts[2]);
+        
+        $now = date('Y-m-d H:i:s');
+        
+        // Check if token matches and not expired
+        $sql = "SELECT user_id, email, full_name, reset_version, verification_code_expires
+                FROM user 
+                WHERE user_id = $userId
+                AND reset_version = $resetVersion
+                AND verification_code_expires > '$now'
+                AND is_email_verified = 1
+                LIMIT 1";
+        
+        $result = $conn->query($sql);
+        
+        if ($result->num_rows === 0) {
+            $p->mDongKetNoi($conn);
+            return ['success' => false, 'message' => 'Token không hợp lệ hoặc đã hết hạn'];
+        }
+        
+        $user = $result->fetch_assoc();
+        $p->mDongKetNoi($conn);
+        
+        return [
+            'success' => true,
+            'user' => $user,
+            'message' => 'Token hợp lệ'
+        ];
+    }
+
+    /**
+     * Reset user password with token
+     * @param string $token Reset token
+     * @param string $newPassword New password
+     * @return array Result with success status and message
+     */
+    public function mResetPasswordWithToken($token, $newPassword) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return ['success' => false, 'message' => 'Không thể kết nối database'];
+        }
+        
+        // Parse token: randomstring_userid_version
+        $parts = explode('_', $token);
+        if (count($parts) !== 3) {
+            $p->mDongKetNoi($conn);
+            return ['success' => false, 'message' => 'Token không hợp lệ'];
+        }
+        
+        $userId = intval($parts[1]);
+        $resetVersion = intval($parts[2]);
+        $now = date('Y-m-d H:i:s');
+        
+        // Verify token first
+        $sql = "SELECT user_id, reset_version
+                FROM user 
+                WHERE user_id = $userId
+                AND reset_version = $resetVersion
+                AND verification_code_expires > '$now'
+                LIMIT 1";
+        
+        $result = $conn->query($sql);
+        
+        if ($result->num_rows === 0) {
+            $p->mDongKetNoi($conn);
+            return ['success' => false, 'message' => 'Token không hợp lệ hoặc đã hết hạn'];
+        }
+        
+        // Hash new password
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        
+        // Update password, increment reset_version again, and clear expiry
+        $newResetVersion = $resetVersion + 1;
+        $updateSql = "UPDATE user SET 
+                     password_hash = '$hashedPassword',
+                     reset_version = $newResetVersion,
+                     verification_code_expires = NULL
+                     WHERE user_id = $userId";
+        
+        if ($conn->query($updateSql)) {
+            $p->mDongKetNoi($conn);
+            return ['success' => true, 'message' => 'Đặt lại mật khẩu thành công'];
+        } else {
+            $p->mDongKetNoi($conn);
+            return ['success' => false, 'message' => 'Lỗi khi cập nhật mật khẩu'];
+        }
+    }
+
+    /**
+     * Resend verification code with email sending
+     * @param int $userId User ID
+     * @param string $email User email
+     * @return array ['success' => bool, 'message' => string]
+     */
+    public function mResendVerificationCode($userId, $email) {
+        // Generate new code
+        $newCode = $this->mGenerateVerifyCode($userId);
+        
+        if (!$newCode) {
+            return ['success' => false, 'message' => 'Có lỗi xảy ra. Vui lòng thử lại.'];
+        }
+
+        // Get user for full name
+        $user = $this->mGetUserById($userId);
+        if (!$user) {
+            return ['success' => false, 'message' => 'Người dùng không tồn tại'];
+        }
+
+        // Send email
+        include_once __DIR__ . '/mEmailPHPMailer.php';
+        $mEmail = new mEmailPHPMailer();
+        $emailSent = $mEmail->sendVerificationCode($email, $user['full_name'], $newCode);
+        
+        if (!$emailSent) {
+            return ['success' => false, 'message' => 'Không thể gửi mã. Vui lòng thử lại sau.'];
+        }
+
+        return ['success' => true, 'message' => 'Đã gửi mã xác thực'];
+    }
 }
 ?>

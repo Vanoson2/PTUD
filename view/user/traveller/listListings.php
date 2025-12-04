@@ -80,9 +80,9 @@ $totalResults = count($listings);
 <?php include __DIR__ . '/../../partials/header.php'; ?>
 
 <!-- Page-specific CSS and JavaScript -->
-<link rel="stylesheet" href="../../../view/css/search-form.css?v=<?php echo time(); ?>">
-<link rel="stylesheet" href="../../../view/css/listListing.css?v=<?php echo time(); ?>">
-<link rel="stylesheet" href="../../../view/css/listing-search.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../../view/css/components-search-form.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../../view/css/traveller-list-listings.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../../view/css/pages-listing-search.css?v=<?php echo time(); ?>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10ns/vn.js"></script>

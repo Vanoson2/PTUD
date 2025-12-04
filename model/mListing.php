@@ -376,11 +376,17 @@ class mListing {
                        pt.name as place_type_name,
                        u.full_name as host_name,
                        u.full_name as host_full_name,
-                       u.email as host_email
+                       u.email as host_email,
+                       w.name as ward_name,
+                       w.full_name as ward_full_name,
+                       pr.name as province_name,
+                       pr.full_name as province_full_name
                 FROM listing l
                 LEFT JOIN place_type pt ON l.place_type_id = pt.place_type_id
                 LEFT JOIN host h ON l.host_id = h.host_id
                 LEFT JOIN user u ON h.user_id = u.user_id
+                LEFT JOIN wards w ON l.ward_code = w.code
+                LEFT JOIN provinces pr ON w.province_code = pr.code
                 WHERE l.listing_id = $listingId";
         
         $result = $conn->query($sql);
@@ -630,6 +636,22 @@ class mListing {
         return $wards;
     }
     
+    public function mGetWardInfo($wardCode) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if (!$conn) return null;
+        
+        $wardCode = $conn->real_escape_string($wardCode);
+        $sql = "SELECT code, name, full_name, province_code FROM wards WHERE code = '$wardCode' LIMIT 1";
+        $result = $conn->query($sql);
+        
+        if ($result && $result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+        
+        return null;
+    }
+    
     public function mIsListingOwner($listingId, $hostId) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -650,11 +672,17 @@ class mListing {
                        pt.name as place_type_name,
                        u.full_name as host_name,
                        u.full_name as user_name,
+                       w.name as ward_name,
+                       w.full_name as ward_full_name,
+                       pr.name as province_name,
+                       pr.full_name as province_full_name,
                        (SELECT file_url FROM listing_image WHERE listing_id = l.listing_id AND is_cover = 1 LIMIT 1) as cover_image
                 FROM listing l
                 LEFT JOIN place_type pt ON l.place_type_id = pt.place_type_id
                 LEFT JOIN host h ON l.host_id = h.host_id
-                LEFT JOIN user u ON h.user_id = u.user_id";
+                LEFT JOIN user u ON h.user_id = u.user_id
+                LEFT JOIN wards w ON l.ward_code = w.code
+                LEFT JOIN provinces pr ON w.province_code = pr.code";
         
         // Build WHERE clause
         if ($status) {
@@ -786,7 +814,7 @@ class mListing {
             return []; // Return empty array if no results
         }
         
-        return false;
+        return []; // Return empty array instead of false
     }
     
     public function mSetCoverImage($listingId, $imageId) {

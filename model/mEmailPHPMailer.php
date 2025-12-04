@@ -278,7 +278,7 @@ class mEmailPHPMailer {
                             <p>" . nl2br(htmlspecialchars($content)) . "</p>
                         </div>
                         
-                        <a href='http://localhost/PTUD/view/admin/support.php?ticket_id=$ticketId' class='btn'>Xem & Trả lời</a>
+                        <a href='http://localhost/view/user/admin/support.php?ticket_id=$ticketId' class='btn'>Xem & Trả lời</a>
                     </div>
                     <div class='footer'>
                         <p>Email này được gửi tự động từ hệ thống WeGo Travel</p>
@@ -288,6 +288,113 @@ class mEmailPHPMailer {
             </html>";
             
             $mail->AltBody = "Yêu cầu hỗ trợ mới #$ticketId\n\nTừ: $userName ($userEmail)\nDanh mục: $categoryText\nĐộ ưu tiên: $priorityText\nTiêu đề: $title\n\nNội dung:\n$content";
+            
+            $mail->send();
+            return true;
+            
+        } catch (Exception $e) {
+            error_log("PHPMailer Error: {$mail->ErrorInfo}");
+            return false;
+        }
+    }
+    
+    /**
+     * Gửi email xác nhận ticket cho khách vãng lai
+     */
+    public function sendGuestTicketConfirmation($guestEmail, $guestName, $ticketId, $title, $content) {
+        try {
+            $mail = new PHPMailer(true);
+            
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host = $this->smtpHost;
+            $mail->SMTPAuth = true;
+            $mail->Username = $this->smtpUsername;
+            $mail->Password = $this->smtpPassword;
+            
+            if ($this->smtpSecure === 'ssl') {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            } else {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            }
+            
+            $mail->Port = $this->smtpPort;
+            $mail->CharSet = $this->config['charset'];
+            
+            // Recipients
+            $mail->setFrom($this->fromEmail, $this->fromName);
+            $mail->addAddress($guestEmail, $guestName);
+            
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = "[WeGo] Xác nhận yêu cầu hỗ trợ #$ticketId";
+            
+            $mail->Body = "
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset='UTF-8'>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                    .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
+                    .ticket-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea; }
+                    .ticket-id { font-size: 24px; font-weight: bold; color: #667eea; }
+                    .info-row { margin: 10px 0; padding: 10px 0; border-bottom: 1px solid #e9ecef; }
+                    .info-label { font-weight: bold; color: #6c757d; display: inline-block; width: 100px; }
+                    .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px solid #e9ecef; color: #6c757d; font-size: 14px; }
+                    .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px; }
+                </style>
+            </head>
+            <body>
+                <div class='container'>
+                    <div class='header'>
+                        <h1 style='margin: 0;'>✓ Yêu Cầu Đã Nhận</h1>
+                        <p style='margin: 10px 0 0 0; opacity: 0.9;'>Cảm ơn bạn đã liên hệ với WeGo</p>
+                    </div>
+                    
+                    <div class='content'>
+                        <p>Xin chào <strong>{$guestName}</strong>,</p>
+                        
+                        <p>Chúng tôi đã nhận được yêu cầu hỗ trợ của bạn và sẽ phản hồi trong thời gian sớm nhất.</p>
+                        
+                        <div class='ticket-box'>
+                            <div class='ticket-id'>Mã yêu cầu: #{$ticketId}</div>
+                            <div class='info-row'>
+                                <span class='info-label'>Tiêu đề:</span>
+                                <span>" . htmlspecialchars($title) . "</span>
+                            </div>
+                            <div class='info-row'>
+                                <span class='info-label'>Nội dung:</span>
+                                <div style='margin-top: 10px; padding: 15px; background: #f8f9fa; border-radius: 4px;'>
+                                    " . nl2br(htmlspecialchars($content)) . "
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class='note'>
+                            <strong>📧 Lưu ý:</strong> Chúng tôi sẽ phản hồi qua email này trong vòng <strong>24-48 giờ</strong>. 
+                            Vui lòng kiểm tra cả hộp thư spam/junk.
+                        </div>
+                        
+                        <p>Nếu cần hỗ trợ khẩn cấp, vui lòng liên hệ:</p>
+                        <ul>
+                            <li>📞 Hotline: 1900-xxxx (8:00 - 22:00 hàng ngày)</li>
+                            <li>📧 Email: support@wego.vn</li>
+                        </ul>
+                        
+                        <div class='footer'>
+                            <p><strong>WeGo - Nền tảng chia sẻ chỗ ở</strong></p>
+                            <p>Email này được gửi tự động, vui lòng không reply.</p>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+            ";
+            
+            $mail->AltBody = "Xác nhận yêu cầu hỗ trợ #$ticketId\n\nXin chào $guestName,\n\nChúng tôi đã nhận được yêu cầu hỗ trợ của bạn:\n\nTiêu đề: $title\nNội dung: $content\n\nChúng tôi sẽ phản hồi trong vòng 24-48 giờ qua email này.\n\nTrân trọng,\nWeGo Support Team";
             
             $mail->send();
             return true;
@@ -368,7 +475,7 @@ class mEmailPHPMailer {
                         </div>
                         
                         <p>Bạn có thể tiếp tục trao đổi bằng cách trả lời tin nhắn này hoặc truy cập:</p>
-                        <a href='http://localhost/PTUD/view/user/support/ticket-detail.php?ticket_id=$ticketId' class='btn'>Xem chi tiết</a>
+                        <a href='http://localhost/view/user/support/ticket-detail.php?ticket_id=$ticketId' class='btn'>Xem chi tiết</a>
                     </div>
                     <div class='footer'>
                         <p>Cảm ơn bạn đã sử dụng dịch vụ WeGo Travel!</p>

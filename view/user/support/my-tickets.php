@@ -1,5 +1,9 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+}
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -27,7 +31,7 @@ $counts = $cSupport->cGetUserTicketCounts($userId);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yêu cầu hỗ trợ của tôi - WeGo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../css/my-tickets.css">
+    <link rel="stylesheet" href="../../css/support-my-tickets.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>

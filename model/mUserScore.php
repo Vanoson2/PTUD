@@ -1,0 +1,382 @@
+<?php
+/**
+ * Model xử lý Trust Score System (Hệ thống điểm tín nhiệm)
+ */
+
+include_once(__DIR__ . "/mConnect.php");
+
+class mUserScore {
+    
+    /**
+     * Lấy điểm tín nhiệm hiện tại của user
+     */
+    public function mGetUserScore($userId) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) return null;
+        
+        $userId = intval($userId);
+        $sql = "SELECT trust_score, is_verified, verified_phone, verified_id, 
+                       verification_docs, last_score_update
+                FROM user 
+                WHERE user_id = $userId";
+        
+        $result = $conn->query($sql);
+        
+        if ($result && $result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Cập nhật điểm tín nhiệm
+     * @param int $userId
+     * @param int $scoreChange Số điểm thay đổi (+/-)
+     * @param string $reason Lý do
+     * @param string $reasonDetail Chi tiết
+     * @param string $relatedType booking|review|listing|verification|admin_action|auto|other
+     * @param int $relatedId ID liên quan
+     * @param int $adminId ID admin (nếu là admin action)
+     * @return array
+     */
+    public function mUpdateUserScore($userId, $scoreChange, $reason, $reasonDetail = null, $relatedType = null, $relatedId = null, $adminId = null) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return [
+                'success' => false,
+                'message' => 'Không thể kết nối database'
+            ];
+        }
+        
+        $userId = intval($userId);
+        $scoreChange = intval($scoreChange);
+        
+        // Lấy điểm hiện tại
+        $currentScore = $this->mGetUserScore($userId);
+        
+        if (!$currentScore) {
+            return [
+                'success' => false,
+                'message' => 'Không tìm thấy user'
+            ];
+        }
+        
+        $oldScore = $currentScore['trust_score'];
+        $newScore = max(0, min(100, $oldScore + $scoreChange)); // Giới hạn 0-100
+        
+        // Update điểm trong bảng user
+        $sqlUpdate = "UPDATE user 
+                      SET trust_score = $newScore,
+                          last_score_update = NOW()
+                      WHERE user_id = $userId";
+        
+        if (!$conn->query($sqlUpdate)) {
+            return [
+                'success' => false,
+                'message' => 'Không thể cập nhật điểm'
+            ];
+        }
+        
+        // Lưu vào lịch sử
+        $reason = $conn->real_escape_string($reason);
+        $reasonDetail = $reasonDetail ? "'" . $conn->real_escape_string($reasonDetail) . "'" : 'NULL';
+        $relatedType = $relatedType ? "'" . $conn->real_escape_string($relatedType) . "'" : 'NULL';
+        $relatedId = $relatedId ? intval($relatedId) : 'NULL';
+        $adminId = $adminId ? intval($adminId) : 'NULL';
+        
+        $sqlHistory = "INSERT INTO user_score_history 
+                       (user_id, score_change, old_score, new_score, reason, reason_detail, related_type, related_id, admin_id)
+                       VALUES 
+                       ($userId, $scoreChange, $oldScore, $newScore, '$reason', $reasonDetail, $relatedType, $relatedId, $adminId)";
+        
+        $conn->query($sqlHistory);
+        
+        return [
+            'success' => true,
+            'message' => 'Cập nhật điểm thành công',
+            'old_score' => $oldScore,
+            'new_score' => $newScore,
+            'change' => $scoreChange
+        ];
+    }
+    
+    /**
+     * Cộng điểm dựa trên action type từ bảng config
+     */
+    public function mAddScoreByAction($userId, $actionType, $reasonDetail = null, $relatedType = null, $relatedId = null) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) return ['success' => false, 'message' => 'Không thể kết nối database'];
+        
+        // Lấy score change từ config
+        $actionType = $conn->real_escape_string($actionType);
+        $sql = "SELECT score_change, description FROM score_config WHERE action_type = '$actionType' AND is_active = 1";
+        $result = $conn->query($sql);
+        
+        if (!$result || $result->num_rows === 0) {
+            return ['success' => false, 'message' => 'Không tìm thấy cấu hình action'];
+        }
+        
+        $config = $result->fetch_assoc();
+        $scoreChange = $config['score_change'];
+        $reason = $config['description'];
+        
+        return $this->mUpdateUserScore($userId, $scoreChange, $reason, $reasonDetail, $relatedType, $relatedId);
+    }
+    
+    /**
+     * Lấy lịch sử thay đổi điểm
+     */
+    public function mGetScoreHistory($userId, $limit = 20) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) return [];
+        
+        $userId = intval($userId);
+        $limit = intval($limit);
+        
+        $sql = "SELECT * FROM user_score_history 
+                WHERE user_id = $userId 
+                ORDER BY created_at DESC 
+                LIMIT $limit";
+        
+        $result = $conn->query($sql);
+        $history = [];
+        
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $history[] = $row;
+            }
+        }
+        
+        return $history;
+    }
+    
+    /**
+     * Kiểm tra và cập nhật điểm theo thời gian hoạt động
+     */
+    public function mCheckAccountAgeBonus($userId) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) return false;
+        
+        $userId = intval($userId);
+        
+        // Lấy ngày tạo tài khoản
+        $sql = "SELECT created_at FROM user WHERE user_id = $userId";
+        $result = $conn->query($sql);
+        
+        if (!$result || $result->num_rows === 0) return false;
+        
+        $user = $result->fetch_assoc();
+        $createdDate = new DateTime($user['created_at']);
+        $now = new DateTime();
+        $diff = $now->diff($createdDate);
+        $months = $diff->y * 12 + $diff->m;
+        
+        // Kiểm tra xem đã nhận bonus chưa
+        $checkSql = "SELECT * FROM user_score_history 
+                     WHERE user_id = $userId 
+                     AND reason IN ('Tài khoản hoạt động > 6 tháng', 'Tài khoản hoạt động > 1 năm')";
+        $checkResult = $conn->query($checkSql);
+        $received = [];
+        
+        if ($checkResult) {
+            while ($row = $checkResult->fetch_assoc()) {
+                $received[] = $row['reason'];
+            }
+        }
+        
+        // Tặng điểm nếu chưa nhận
+        if ($months >= 6 && !in_array('Tài khoản hoạt động > 6 tháng', $received)) {
+            $this->mAddScoreByAction($userId, 'account_6_months', 'Thưởng tự động cho tài khoản 6 tháng');
+        }
+        
+        if ($months >= 12 && !in_array('Tài khoản hoạt động > 1 năm', $received)) {
+            $this->mAddScoreByAction($userId, 'account_1_year', 'Thưởng tự động cho tài khoản 1 năm');
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Cập nhật trạng thái xác thực
+     * @return array ['success' => bool, 'message' => string]
+     */
+    public function mUpdateVerificationStatus($userId, $type, $status, $docs = null) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return ['success' => false, 'message' => 'Không thể kết nối database'];
+        }
+        
+        $userId = intval($userId);
+        $status = intval($status);
+        
+        $column = '';
+        $action = '';
+        
+        switch ($type) {
+            case 'phone':
+                $column = 'verified_phone';
+                $action = 'verify_phone';
+                break;
+            case 'id':
+                $column = 'verified_id';
+                $action = 'verify_id';
+                break;
+            case 'email':
+                // Email verification is in is_email_verified
+                $column = 'is_email_verified';
+                $action = 'verify_email';
+                break;
+            default:
+                return ['success' => false, 'message' => 'Loại xác thực không hợp lệ'];
+        }
+        
+        // Update verification status
+        $sql = "UPDATE user SET $column = $status";
+        
+        if ($docs && $type === 'id') {
+            $docsJson = json_encode($docs);
+            $docsJson = $conn->real_escape_string($docsJson);
+            $sql .= ", verification_docs = '$docsJson'";
+        }
+        
+        $sql .= " WHERE user_id = $userId";
+        
+        if ($conn->query($sql) && $status == 1) {
+            // Cộng điểm khi xác thực thành công
+            $this->mAddScoreByAction($userId, $action, "Xác thực $type thành công", 'verification');
+            
+            // Kiểm tra nếu đã verify đủ thì set is_verified = 1
+            $checkSql = "SELECT is_email_verified, verified_phone, verified_id FROM user WHERE user_id = $userId";
+            $result = $conn->query($checkSql);
+            
+            if ($result) {
+                $user = $result->fetch_assoc();
+                if ($user['is_email_verified'] && $user['verified_phone'] && $user['verified_id']) {
+                    $conn->query("UPDATE user SET is_verified = 1 WHERE user_id = $userId");
+                }
+            }
+            
+            return ['success' => true, 'message' => 'Cập nhật xác thực thành công'];
+        }
+        
+        return ['success' => false, 'message' => 'Không thể cập nhật trạng thái xác thực'];
+    }
+    
+    /**
+     * Lấy level/rank dựa trên điểm
+     */
+    public function mGetUserLevel($score) {
+        if ($score >= 90) {
+            return [
+                'level' => 'Xuất sắc',
+                'icon' => '🏆',
+                'color' => 'gold',
+                'description' => 'Người dùng đáng tin cậy cao'
+            ];
+        } elseif ($score >= 80) {
+            return [
+                'level' => 'Tốt',
+                'icon' => '⭐',
+                'color' => 'success',
+                'description' => 'Người dùng đáng tin cậy'
+            ];
+        } elseif ($score >= 60) {
+            return [
+                'level' => 'Trung bình',
+                'icon' => '✓',
+                'color' => 'info',
+                'description' => 'Người dùng bình thường'
+            ];
+        } elseif ($score >= 40) {
+            return [
+                'level' => 'Thấp',
+                'icon' => '⚠️',
+                'color' => 'warning',
+                'description' => 'Cần cải thiện'
+            ];
+        } else {
+            return [
+                'level' => 'Nguy hiểm',
+                'icon' => '🚫',
+                'color' => 'danger',
+                'description' => 'Nguy cơ bị khóa'
+            ];
+        }
+    }
+    
+    /**
+     * Lấy gợi ý cải thiện điểm
+     */
+    public function mGetImprovementSuggestions($userId) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) return [];
+        
+        $userId = intval($userId);
+        
+        // Lấy trạng thái hiện tại
+        $sql = "SELECT is_email_verified, verified_phone, verified_id FROM user WHERE user_id = $userId";
+        $result = $conn->query($sql);
+        
+        if (!$result || $result->num_rows === 0) return [];
+        
+        $user = $result->fetch_assoc();
+        $suggestions = [];
+        
+        if (!$user['is_email_verified']) {
+            $suggestions[] = [
+                'action' => 'Xác thực email',
+                'points' => '+5',
+                'icon' => '📧'
+            ];
+        }
+        
+        if (!$user['verified_phone']) {
+            $suggestions[] = [
+                'action' => 'Xác thực số điện thoại',
+                'points' => '+5',
+                'icon' => '📱'
+            ];
+        }
+        
+        if (!$user['verified_id']) {
+            $suggestions[] = [
+                'action' => 'Xác thực CCCD/CMND',
+                'points' => '+10',
+                'icon' => '🆔'
+            ];
+        }
+        
+        // Check if has bookings
+        $bookingSql = "SELECT COUNT(*) as count FROM bookings WHERE user_id = $userId";
+        $bookingResult = $conn->query($bookingSql);
+        if ($bookingResult && $bookingResult->num_rows > 0) {
+            $row = $bookingResult->fetch_assoc();
+            $bookingCount = (int)$row['count'];
+            if ($bookingCount == 0) {
+                $suggestions[] = [
+                    'action' => 'Hoàn thành booking đầu tiên',
+                    'points' => '+5',
+                    'icon' => '🏠'
+                ];
+            }
+        }
+        
+        return $suggestions;
+    }
+}
+?>

@@ -1,10 +1,14 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+}
 $rootPath = '../../../';
 
 // Check if user is logged in and is a host
 if (!isset($_SESSION['user_id'])) {
-  header('Location: ' . $rootPath . 'view/user/login.php');
+  header('Location: ' . $rootPath . 'view/user/traveller/login.php');
   exit();
 }
 

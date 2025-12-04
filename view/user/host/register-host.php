@@ -1,31 +1,23 @@
 <?php
-include_once __DIR__ . '/../../../controller/cUser.php';
-include_once __DIR__ . '/../../../controller/cHost.php';
+require_once __DIR__ . '/../../../helper/auth.php';
+require_once __DIR__ . '/../../../controller/cUser.php';
+require_once __DIR__ . '/../../../controller/cHost.php';
 
-// Start session
-if (session_status() === PHP_SESSION_NONE) {
-  session_start();
-}
+requireLogin();
+$userId = getCurrentUserId();
 
-// Kiểm tra đăng nhập
-if (!isset($_SESSION['user_id'])) {
-  header('Location: ../login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']));
-  exit;
-}
-
-$userId = $_SESSION['user_id'];
 $cUser = new cUser();
-$user = $cUser->cGetUserById($userId);
+$user = $cUser->cGetUserProfile($userId);
 
 if (!$user) {
-  session_destroy();
-  header('Location: ../login.php');
+  logoutUser();
+  header('Location: ../traveller/login.php');
   exit;
 }
 
 // Kiểm tra email đã xác thực chưa
 if ($user['is_email_verified'] != 1) {
-  header('Location: ../verify-code.php?user_id=' . $userId . '&email=' . urlencode($user['email']));
+  header('Location: ../traveller/verify-code.php?user_id=' . $userId . '&email=' . urlencode($user['email']));
   exit;
 }
 
@@ -35,7 +27,6 @@ $successMessage = '';
 // Xử lý form submit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $idNumber = trim($_POST['id_number'] ?? '');
-  $idType = $_POST['id_type'] ?? 'CMND';
   $address = trim($_POST['address'] ?? '');
   $phone = trim($_POST['phone'] ?? $user['phone']);
   $bankAccount = trim($_POST['bank_account'] ?? '');
@@ -43,137 +34,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $taxCode = trim($_POST['tax_code'] ?? '');
   $acceptTerms = isset($_POST['accept_terms']);
   
-  // Validation
-  if (empty($idNumber)) {
-    $errors['id_number'] = 'Vui lòng nhập số CMND/CCCD';
-  } elseif (strlen($idNumber) < 9 || strlen($idNumber) > 12) {
-    $errors['id_number'] = 'Số CMND/CCCD không hợp lệ';
-  }
+  // Prepare files data for Controller validation
+  $filesData = [
+    'id_card_front' => $_FILES['id_front'] ?? [],
+    'id_card_back' => $_FILES['id_back'] ?? [],
+    'business_license' => $_FILES['business_license'] ?? []
+  ];
   
-  if (empty($address)) {
-    $errors['address'] = 'Vui lòng nhập địa chỉ';
-  }
-  
-  if (empty($phone)) {
-    $errors['phone'] = 'Vui lòng nhập số điện thoại';
-  } elseif (!preg_match('/^[0-9]{10,11}$/', $phone)) {
-    $errors['phone'] = 'Số điện thoại không hợp lệ';
-  }
-  
-  if (empty($bankAccount)) {
-    $errors['bank_account'] = 'Vui lòng nhập số tài khoản ngân hàng';
-  }
-  
-  if (empty($bankName)) {
-    $errors['bank_name'] = 'Vui lòng nhập tên ngân hàng';
-  }
-  
-  // Validate mã số thuế
-  if (empty($taxCode)) {
-    $errors['tax_code'] = 'Vui lòng nhập mã số thuế';
-  } elseif (!preg_match('/^[0-9]{10,13}$/', $taxCode)) {
-    $errors['tax_code'] = 'Mã số thuế không hợp lệ (10-13 số)';
-  }
-  
+  // Validate accept terms first
   if (!$acceptTerms) {
     $errors['accept_terms'] = 'Bạn phải đồng ý với điều khoản và chính sách';
   }
   
-  // Validate ảnh CCCD
-  $idFrontImage = '';
-  $idBackImage = '';
-  $businessLicenseImage = '';
-  
-  if (!isset($_FILES['id_front']) || $_FILES['id_front']['error'] === UPLOAD_ERR_NO_FILE) {
-    $errors['id_front'] = 'Vui lòng upload ảnh mặt trước CCCD/CMND';
-  } elseif ($_FILES['id_front']['error'] === UPLOAD_ERR_OK) {
-    $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-    $maxSize = 5 * 1024 * 1024; // 5MB
-    
-    if (!in_array($_FILES['id_front']['type'], $allowedTypes)) {
-      $errors['id_front'] = 'Chỉ chấp nhận file ảnh JPG, JPEG, PNG';
-    } elseif ($_FILES['id_front']['size'] > $maxSize) {
-      $errors['id_front'] = 'Kích thước ảnh không được vượt quá 5MB';
-    } else {
-      // Tạo tên file theo format userId_img01
-      $extension = pathinfo($_FILES['id_front']['name'], PATHINFO_EXTENSION);
-      $idFrontImage = $userId . '_img01.' . $extension;
-    }
-  }
-  
-  if (!isset($_FILES['id_back']) || $_FILES['id_back']['error'] === UPLOAD_ERR_NO_FILE) {
-    $errors['id_back'] = 'Vui lòng upload ảnh mặt sau CCCD/CMND';
-  } elseif ($_FILES['id_back']['error'] === UPLOAD_ERR_OK) {
-    $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-    $maxSize = 5 * 1024 * 1024; // 5MB
-    
-    if (!in_array($_FILES['id_back']['type'], $allowedTypes)) {
-      $errors['id_back'] = 'Chỉ chấp nhận file ảnh JPG, JPEG, PNG';
-    } elseif ($_FILES['id_back']['size'] > $maxSize) {
-      $errors['id_back'] = 'Kích thước ảnh không được vượt quá 5MB';
-    } else {
-      // Tạo tên file theo format userId_img02
-      $extension = pathinfo($_FILES['id_back']['name'], PATHINFO_EXTENSION);
-      $idBackImage = $userId . '_img02.' . $extension;
-    }
-  }
-  
-  if (!isset($_FILES['business_license']) || $_FILES['business_license']['error'] === UPLOAD_ERR_NO_FILE) {
-    $errors['business_license'] = 'Vui lòng upload ảnh giấy phép kinh doanh';
-  } elseif ($_FILES['business_license']['error'] === UPLOAD_ERR_OK) {
-    $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-    $maxSize = 5 * 1024 * 1024; // 5MB
-    
-    if (!in_array($_FILES['business_license']['type'], $allowedTypes)) {
-      $errors['business_license'] = 'Chỉ chấp nhận file ảnh JPG, JPEG, PNG';
-    } elseif ($_FILES['business_license']['size'] > $maxSize) {
-      $errors['business_license'] = 'Kích thước ảnh không được vượt quá 5MB';
-    } else {
-      // Tạo tên file theo format userId_img03
-      $extension = pathinfo($_FILES['business_license']['name'], PATHINFO_EXTENSION);
-      $businessLicenseImage = $userId . '_img03.' . $extension;
-    }
-  }
-  
-  // Nếu không có lỗi, upload files và lưu thông tin
+  // Call Controller for validation
   if (empty($errors)) {
-    $uploadDir = __DIR__ . '/../../../public/uploads/host/';
     $cHost = new cHost();
+    $result = $cHost->cRegisterHost($userId, $idNumber, $address, $phone, $bankAccount, $bankName, $taxCode, $filesData);
     
-    // Tạo host application
-    $fullName = $user['full_name'];
-    $result = $cHost->cCreateHostApplication($userId, $fullName, $taxCode);
-    
-    if (!$result['success']) {
-      $errors['general'] = $result['message'];
-    } else {
-      $applicationId = $result['application_id'];
+    if ($result['success']) {
+      // Get validated data
+      $validatedData = $result['data'];
+      $idCardImages = $validatedData['id_card_images'];
       
-      // Upload ảnh CCCD mặt trước
-      if ($idFrontImage && move_uploaded_file($_FILES['id_front']['tmp_name'], $uploadDir . $idFrontImage)) {
-        $fileUrl = 'public/uploads/host/' . $idFrontImage;
-        $cHost->cSaveHostDocument($applicationId, 'cccd_front', $fileUrl, $_FILES['id_front']['type'], $_FILES['id_front']['size']);
-        
-        // Upload ảnh CCCD mặt sau
-        if ($idBackImage && move_uploaded_file($_FILES['id_back']['tmp_name'], $uploadDir . $idBackImage)) {
-          $fileUrl = 'public/uploads/host/' . $idBackImage;
-          $cHost->cSaveHostDocument($applicationId, 'cccd_back', $fileUrl, $_FILES['id_back']['type'], $_FILES['id_back']['size']);
-          
-          // Upload ảnh giấy phép kinh doanh
-          if ($businessLicenseImage && move_uploaded_file($_FILES['business_license']['tmp_name'], $uploadDir . $businessLicenseImage)) {
-            $fileUrl = 'public/uploads/host/' . $businessLicenseImage;
-            $cHost->cSaveHostDocument($applicationId, 'business_license', $fileUrl, $_FILES['business_license']['type'], $_FILES['business_license']['size']);
-            
-            $successMessage = 'Đăng ký host thành công! Chúng tôi sẽ xem xét hồ sơ của bạn trong vòng 24-48h.';
-          } else {
-            $errors['general'] = 'Không thể upload ảnh giấy phép kinh doanh';
-          }
-        } else {
-          $errors['general'] = 'Không thể upload ảnh CCCD mặt sau';
-        }
-      } else {
-        $errors['general'] = 'Không thể upload ảnh CCCD mặt trước';
+      // Upload business license
+      $uploadDir = __DIR__ . '/../../../public/uploads/host/';
+      if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
       }
+      
+      $businessLicenseImage = '';
+      if (!empty($_FILES['business_license']['name'])) {
+        $extension = pathinfo($_FILES['business_license']['name'], PATHINFO_EXTENSION);
+        $businessLicenseImage = $userId . '_img03.' . $extension;
+        move_uploaded_file($_FILES['business_license']['tmp_name'], $uploadDir . $businessLicenseImage);
+      }
+      
+      // Create host application
+      $fullName = $user['full_name'];
+      $appResult = $cHost->cCreateHostApplication($userId, $fullName, $taxCode);
+      
+      if ($appResult['success']) {
+        // Successfully created host application
+        // Note: User info update should be handled by Controller/Model in production
+        $successMessage = 'Đăng ký host thành công! Vui lòng chờ admin phê duyệt.';
+        header('refresh:3;url=./my-listings.php');
+      } else {
+        $errors['general'] = $appResult['message'];
+      }
+    } else {
+      $errors = $result['errors'] ?? ['general' => $result['message']];
     }
   }
 }
@@ -181,8 +90,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php include __DIR__ . '/../../partials/header.php'; ?>
 
-<link rel="stylesheet" href="../../css/auth.css?v=<?php echo time(); ?>">
-<link rel="stylesheet" href="../../css/register-host.css">
+<link rel="stylesheet" href="../../css/traveller-auth.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../css/host-register.css">
 
 <div class="register-host-container">
   <div class="container">

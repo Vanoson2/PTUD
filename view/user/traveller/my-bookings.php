@@ -45,8 +45,8 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
 
 <?php include __DIR__ . '/../../partials/header.php'; ?>
 
-<link rel="stylesheet" href="../../css/profile.css?v=<?php echo time(); ?>">
-<link rel="stylesheet" href="../../css/my-bookings.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../css/traveller-profile.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../css/traveller-my-bookings.css?v=<?php echo time(); ?>">
 
 <?php include __DIR__ . '/../partials/profile-layout-start.php'; ?>
 

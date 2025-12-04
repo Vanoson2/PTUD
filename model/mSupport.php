@@ -3,6 +3,54 @@ include_once(__DIR__ . "/mConnect.php");
 
 class mSupport {
     
+    // Guest: Tạo ticket mới (không cần đăng nhập)
+    public function mCreateGuestTicket($guestName, $guestEmail, $guestPhone, $title, $content, $category = 'khac', $priority = 'normal') {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return [
+                'success' => false,
+                'message' => 'Không thể kết nối database'
+            ];
+        }
+        
+        $guestName = $conn->real_escape_string($guestName);
+        $guestEmail = $conn->real_escape_string($guestEmail);
+        $guestPhone = $guestPhone ? $conn->real_escape_string($guestPhone) : null;
+        $title = $conn->real_escape_string($title);
+        $content = $conn->real_escape_string($content);
+        $category = $conn->real_escape_string($category);
+        $priority = $conn->real_escape_string($priority);
+        
+        $phoneValue = $guestPhone ? "'$guestPhone'" : 'NULL';
+        
+        $sql = "INSERT INTO support_ticket (user_id, guest_name, guest_email, guest_phone, title, content, category, priority, status, last_message_at, last_message_by) 
+                VALUES (NULL, '$guestName', '$guestEmail', $phoneValue, '$title', '$content', '$category', '$priority', 'open', NOW(), 'user')";
+        
+        if ($conn->query($sql)) {
+            $ticketId = $conn->insert_id;
+            
+            // Insert first message (no user_id for guest)
+            $msgSql = "INSERT INTO support_message (ticket_id, sender_type, user_id, content) 
+                       VALUES ($ticketId, 'user', NULL, '$content')";
+            $conn->query($msgSql);
+            
+            $p->mDongKetNoi($conn);
+            return [
+                'success' => true,
+                'message' => 'Đã gửi yêu cầu hỗ trợ thành công. Chúng tôi sẽ phản hồi qua email.',
+                'ticket_id' => $ticketId
+            ];
+        }
+        
+        $p->mDongKetNoi($conn);
+        return [
+            'success' => false,
+            'message' => 'Không thể tạo yêu cầu: ' . $conn->error
+        ];
+    }
+    
     // User: Tạo ticket mới
     public function mCreateTicket($userId, $title, $content, $category = 'khac', $priority = 'normal') {
         $p = new mConnect();

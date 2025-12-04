@@ -19,8 +19,10 @@ if (empty($bookingId)) {
 
 // Include controllers
 include_once(__DIR__ . '/../../../controller/cBooking.php');
+include_once(__DIR__ . '/../../../controller/cUser.php');
 
 $cBooking = new cBooking();
+$cUser = new cUser();
 
 // Get booking details
 $bookingResult = $cBooking->cGetBookingById($bookingId);
@@ -35,6 +37,13 @@ $booking = $bookingResult->fetch_assoc();
 if ($booking['user_id'] != $_SESSION['user_id']) {
   header('Location: ../../../index.php');
   exit;
+}
+
+// Award points for first booking (check from database, not session)
+$bookingCount = $cBooking->cCountUserBookings($_SESSION['user_id']);
+if ($bookingCount == 1) {
+  // This is user's first booking - award bonus points
+  $cUser->cAddScoreByAction($_SESSION['user_id'], 'first_booking', 'booking', $bookingId);
 }
 
 // Get booking services
@@ -55,7 +64,7 @@ $servicesTotal = array_sum(array_column($services, 'price'));
 ?>
 
 <!-- Page-specific CSS -->
-<link rel="stylesheet" href="../../css/booking-success.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../css/traveller-booking-success.css?v=<?php echo time(); ?>">
 
 <?php include __DIR__ . '/../../partials/header.php'; ?>
 

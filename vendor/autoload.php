@@ -7,19 +7,21 @@
 
 spl_autoload_register(function ($class) {
     // Chỉ load các class PHPMailer
-    if (strpos($class, 'PHPMailer\\PHPMailer\\') === 0) {
-        // Remove namespace prefix
-        $class = str_replace('PHPMailer\\PHPMailer\\', '', $class);
-        
-        // Build file path
-        $file = __DIR__ . '/phpmailer/phpmailer/' . $class . '.php';
-        
-        // Include if exists
-        if (file_exists($file)) {
-            require_once $file;
-            return true;
-        }
+    if (strpos($class, 'PHPMailer\\PHPMailer\\') !== 0) {
+        return false;
     }
+    
+    // Remove namespace prefix để lấy tên class
+    $className = str_replace('PHPMailer\\PHPMailer\\', '', $class);
+    
+    // Build file path
+    $file = __DIR__ . '/PHPMailer/' . $className . '.php';
+    
+    // Include if exists
+    if (file_exists($file)) {
+        require_once $file;
+        return true;
+    }   
     
     return false;
 });

@@ -199,9 +199,10 @@ class mHost {
             $updateSql = "UPDATE host SET status = 'approved', legal_name = '$businessName', tax_code = '$taxCode' WHERE user_id = $userId";
             $success = $conn->query($updateSql);
         } else {
-            // Tạo host mới
+            // Tạo host mới - lưu tax_code nếu có
+            $taxCodeValue = !empty($taxCode) ? "'$taxCode'" : "NULL";
             $insertSql = "INSERT INTO host (user_id, legal_name, tax_code, status, created_at) 
-                          VALUES ($userId, '$businessName', Null , 'approved', CURRENT_TIMESTAMP)";
+                          VALUES ($userId, '$businessName', $taxCodeValue, 'approved', CURRENT_TIMESTAMP)";
             $success = $conn->query($insertSql);
         }
         

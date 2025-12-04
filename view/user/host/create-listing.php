@@ -1,23 +1,16 @@
 <?php
-session_start();
-include_once __DIR__ . '/../../../controller/cHost.php';
+// Include Authentication Helper and Controller
+require_once __DIR__ . '/../../../helper/auth.php';
+require_once __DIR__ . '/../../../controller/cHost.php';
 
-// Kiểm tra đăng nhập
-if (!isset($_SESSION['user_id'])) {
-  header('Location: ../login.php');
-  exit;
-}
+// Use helper for authentication
+requireLogin();
+requireHost();
 
-$userId = $_SESSION['user_id'];
+$userId = getCurrentUserId();
 $cHost = new cHost();
 
-// Kiểm tra user có phải là host không
-if (!$cHost->cIsUserHost($userId)) {
-  header('Location: ../host/become-host.php');
-  exit;
-}
-
-// Lấy host_id
+// Get host_id
 $hostInfo = $cHost->cGetHostByUserId($userId);
 if (!$hostInfo) {
   header('Location: ./become-host.php');
@@ -25,7 +18,7 @@ if (!$hostInfo) {
 }
 $hostId = $hostInfo['host_id'];
 
-// Lấy dữ liệu cho form
+// Get data for form
 $placeTypes = $cHost->cGetAllPlaceTypes();
 $amenities = $cHost->cGetAllAmenities();
 $services = $cHost->cGetAllServices();
@@ -34,184 +27,33 @@ $provinces = $cHost->cGetAllProvinces();
 $successMessage = '';
 $errorMessage = '';
 
-// Xử lý form submit
+// Handle form submission - Delegate to Controller
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Validate inputs
-  $title = trim($_POST['title'] ?? '');
-  $description = trim($_POST['description'] ?? '');
-  $placeTypeId = intval($_POST['place_type_id'] ?? 0);
-  $address = trim($_POST['address'] ?? '');
-  $provinceCode = trim($_POST['province_code'] ?? '');
-  $wardCode = trim($_POST['ward_code'] ?? '');
-  $price = floatval($_POST['price'] ?? 0);
-  $capacity = intval($_POST['capacity'] ?? 0);
-  $selectedAmenities = $_POST['amenities'] ?? [];
-  $status = $_POST['status'] ?? 'draft'; // draft hoặc pending
+  // Add user_id to POST data for image naming
+  $_POST['user_id'] = $userId;
   
-  // Validation chi tiết
-  $errors = [];
+  // Process through Controller (handles ALL validation and business logic)
+  $result = $cHost->cProcessCreateListing($hostId, $_POST, $_FILES);
   
-  // Kiểm tra tiêu đề
-  if (empty($title)) {
-    $errors[] = 'Tiêu đề phòng không được để trống';
-  } elseif (strlen($title) < 10) {
-    $errors[] = 'Tiêu đề phải có ít nhất 10 ký tự';
-  } elseif (strlen($title) > 100) {
-    $errors[] = 'Tiêu đề không được vượt quá 100 ký tự';
-  }
-  
-  // Kiểm tra mô tả
-  if (!empty($description) && strlen($description) < 20) {
-    $errors[] = 'Mô tả phải có ít nhất 20 ký tự (hoặc để trống)';
-  }
-  
-  // Kiểm tra loại phòng
-  if (empty($placeTypeId)) {
-    $errors[] = 'Vui lòng chọn loại phòng';
-  }
-  
-  // Kiểm tra địa chỉ
-  if (empty($address)) {
-    $errors[] = 'Địa chỉ không được để trống';
-  } elseif (strlen($address) < 10) {
-    $errors[] = 'Địa chỉ phải có ít nhất 10 ký tự';
-  }
-  
-  // Kiểm tra tỉnh/thành phố
-  if (empty($provinceCode)) {
-    $errors[] = 'Vui lòng chọn Tỉnh/Thành phố';
-  }
-  
-  // Kiểm tra phường/xã
-  if (empty($wardCode)) {
-    $errors[] = 'Vui lòng chọn Phường/Xã';
-  }
-  
-  // Kiểm tra giá
-  if ($price <= 0) {
-    $errors[] = 'Giá thuê phải lớn hơn 0';
-  } elseif ($price < 50000) {
-    $errors[] = 'Giá thuê tối thiểu là 50,000đ/đêm';
-  }
-  
-  // Kiểm tra sức chứa
-  if ($capacity <= 0) {
-    $errors[] = 'Sức chứa phải lớn hơn 0';
-  } elseif ($capacity > 50) {
-    $errors[] = 'Sức chứa tối đa là 50 người';
-  }
-  
-  // Kiểm tra ảnh
-  if (!isset($_FILES['images']) || empty($_FILES['images']['name'][0])) {
-    $errors[] = 'Vui lòng upload ít nhất 3 ảnh cho phòng';
-  } else {
-    $imageCount = count(array_filter($_FILES['images']['name']));
-    if ($imageCount < 3) {
-      $errors[] = 'Vui lòng upload ít nhất 3 ảnh cho phòng';
-    } elseif ($imageCount > 5) {
-      $errors[] = 'Chỉ được upload tối đa 5 ảnh';
-    }
-  }
-  
-  // Nếu có lỗi, hiển thị tất cả
-  if (!empty($errors)) {
-    $errorMessage = '<ul class="mb-0">';
-    foreach ($errors as $error) {
-      $errorMessage .= '<li>' . htmlspecialchars($error) . '</li>';
-    }
-    $errorMessage .= '</ul>';
-  } else {
-    // Tạo listing
-    $listingData = [
-      'title' => $title,
-      'description' => $description,
-      'address' => $address,
-      'ward_code' => $wardCode ?: null,
-      'place_type_id' => $placeTypeId ?: null,
-      'price' => $price,
-      'capacity' => $capacity,
-      'status' => $status
-    ];
+  if ($result['success']) {
+    $successMessage = $result['message'];
     
-    $listingId = $cHost->cCreateListing($hostId, $listingData);
-    
-    if ($listingId) {
-      // Lưu amenities
-      if (!empty($selectedAmenities)) {
-        $cHost->cSaveListingAmenities($listingId, $selectedAmenities);
+    // Redirect after 2 seconds
+    echo "<script>
+      setTimeout(function() {
+        window.location.href = './my-listings.php';
+      }, 2000);
+    </script>";
+  } else {
+    // Display errors
+    if (!empty($result['errors'])) {
+      $errorMessage = '<ul class="mb-0">';
+      foreach ($result['errors'] as $error) {
+        $errorMessage .= '<li>' . htmlspecialchars($error) . '</li>';
       }
-      
-      // Lưu services
-      if (!empty($_POST['services'])) {
-        $cHost->cSaveListingServices($listingId, $_POST['services']);
-      }
-      
-      // Xử lý upload ảnh
-      if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
-        $uploadDir = __DIR__ . '/../../../public/uploads/listings/';
-        if (!is_dir($uploadDir)) {
-          mkdir($uploadDir, 0755, true);
-        }
-        
-        $coverIndex = intval($_POST['cover_index'] ?? 0);
-        $uploadedCount = 0;
-        $imageCounter = 1;
-        
-        foreach ($_FILES['images']['tmp_name'] as $index => $tmpName) {
-          if (empty($tmpName)) continue;
-          
-          $fileName = $_FILES['images']['name'][$index];
-          $fileSize = $_FILES['images']['size'][$index];
-          $fileMimeType = $_FILES['images']['type'][$index];
-          $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-          
-          // Validate file type (chỉ cho phép PNG, JPG, JPEG)
-          $allowedTypes = ['jpg', 'jpeg', 'png'];
-          $allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-          
-          if (!in_array($fileType, $allowedTypes) || !in_array($fileMimeType, $allowedMimeTypes)) {
-            continue;
-          }
-          
-          // Validate file size (tối đa 5MB)
-          $maxSize = 5 * 1024 * 1024; // 5MB
-          if ($fileSize > $maxSize) {
-            continue;
-          }
-          
-          // Generate filename theo format: userId_img01, userId_img02, ...
-          $imageNumber = str_pad($imageCounter, 2, '0', STR_PAD_LEFT);
-          $newFileName = $userId . '_img' . $imageNumber . '.' . $fileType;
-          $targetPath = $uploadDir . $newFileName;
-          
-          if (move_uploaded_file($tmpName, $targetPath)) {
-            $fileUrl = 'public/uploads/listings/' . $newFileName;
-            $isCover = ($index === $coverIndex);
-            $cHost->cUploadListingImage($listingId, $fileUrl, $isCover, $index);
-            $uploadedCount++;
-            $imageCounter++;
-          }
-        }
-      }
-      
-      if ($status === 'draft') {
-        $successMessage = 'Tạo phòng thành công! Bạn có thể chỉnh sửa hoặc gửi duyệt sau.';
-      } else {
-        $successMessage = 'Tạo phòng và gửi duyệt thành công! Chúng tôi sẽ xem xét trong vòng 24-48h.';
-      }
-      
-      // Redirect sau 2 giây
-      echo "<script>
-        setTimeout(function() {
-          window.location.href = './my-listings.php';
-        }, 2000);
-      </script>";
+      $errorMessage .= '</ul>';
     } else {
-      // Thêm debug info
-      $errorMessage = 'Có lỗi xảy ra khi tạo phòng. Vui lòng thử lại.';
-      // Log để debug
-      error_log("Create listing failed for host_id: " . $hostId);
-      error_log("Listing data: " . print_r($listingData, true));
+      $errorMessage = $result['message'];
     }
   }
 }
@@ -230,7 +72,7 @@ foreach ($amenities as $amenity) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đăng phòng mới - WeGo Host</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../../css/create-listing.css?v=<?php echo time(); ?>">
+  <link rel="stylesheet" href="../../css/host-create-listing.css?v=<?php echo time(); ?>">
 </head>
 <body>
 </head>

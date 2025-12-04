@@ -73,7 +73,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
 <?php include __DIR__ . '/../../partials/header.php'; ?>
 
 <link rel="stylesheet" href="../../css/host-dashboard.css?v=<?php echo time(); ?>">
-<link rel="stylesheet" href="../../css/my-bookings.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../css/traveller-my-bookings.css?v=<?php echo time(); ?>">
 
 <div class="host-container">
   <div class="host-wrapper">

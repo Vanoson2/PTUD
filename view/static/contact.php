@@ -1,9 +1,82 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+}
+
+// Xử lý form submit
+$message = '';
+$messageType = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../../controller/cSupport.php';
+    require_once __DIR__ . '/../../model/mEmailPHPMailer.php';
+    
+    $guestName = trim($_POST['name'] ?? '');
+    $guestEmail = trim($_POST['email'] ?? '');
+    $guestPhone = trim($_POST['phone'] ?? '');
+    $category = $_POST['subject'] ?? 'khac';
+    $content = trim($_POST['message'] ?? '');
+    
+    // Map subject to category
+    $categoryMap = [
+        'booking' => 'dat_phong',
+        'payment' => 'dat_phong',
+        'host' => 'nha_cung_cap',
+        'technical' => 'khac',
+        'feedback' => 'khac',
+        'other' => 'khac'
+    ];
+    $category = $categoryMap[$category] ?? 'khac';
+    
+    // Generate title from subject
+    $titleMap = [
+        'booking' => 'Vấn đề về đặt chỗ',
+        'payment' => 'Vấn đề thanh toán',
+        'host' => 'Trở thành chủ nhà',
+        'technical' => 'Lỗi kỹ thuật',
+        'feedback' => 'Góp ý',
+        'other' => 'Khác'
+    ];
+    $title = $titleMap[$_POST['subject'] ?? 'other'] ?? 'Yêu cầu hỗ trợ';
+    
+    $cSupport = new cSupport();
+    $result = $cSupport->cCreateGuestTicket($guestName, $guestEmail, $guestPhone, $title, $content, $category, 'normal');
+    
+    if ($result['success']) {
+        // Gửi email xác nhận cho guest
+        $emailModel = new mEmailPHPMailer();
+        $emailModel->sendGuestTicketConfirmation(
+            $guestEmail,
+            $guestName,
+            $result['ticket_id'],
+            $title,
+            $content
+        );
+        
+        // Gửi email thông báo cho admin
+        $emailModel->sendSupportTicketNotification(
+            $result['ticket_id'],
+            $guestName,
+            $guestEmail,
+            $title,
+            $content,
+            $category,
+            'normal'
+        );
+        
+        $message = $result['message'] . ' Mã yêu cầu: #' . $result['ticket_id'];
+        $messageType = 'success';
+    } else {
+        $message = $result['message'];
+        $messageType = 'danger';
+    }
+}
 ?>
 <?php include __DIR__ . '/../partials/header.php'; ?>
 
-<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/shared-style.css">
 
 <div class="container py-5">
   <div class="row">
@@ -48,25 +121,38 @@ session_start();
       <div class="card">
         <div class="card-body">
           <h3 class="card-title mb-4">Gửi Tin Nhắn Cho Chúng Tôi</h3>
-          <form>
+          
+          <?php if ($message): ?>
+            <div class="alert alert-<?php echo $messageType; ?> alert-dismissible fade show" role="alert">
+              <?php echo htmlspecialchars($message); ?>
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          <?php endif; ?>
+          
+          <form method="POST" action="">
             <div class="mb-3">
               <label for="name" class="form-label">Họ và tên <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="name" required>
+              <input type="text" class="form-control" id="name" name="name" required
+                     value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>">
             </div>
             
             <div class="mb-3">
               <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-              <input type="email" class="form-control" id="email" required>
+              <input type="email" class="form-control" id="email" name="email" required
+                     value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>">
+              <small class="text-muted">Chúng tôi sẽ phản hồi qua email này</small>
             </div>
             
             <div class="mb-3">
               <label for="phone" class="form-label">Số điện thoại</label>
-              <input type="tel" class="form-control" id="phone">
+              <input type="tel" class="form-control" id="phone" name="phone"
+                     value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>"
+                     placeholder="0123456789">
             </div>
             
             <div class="mb-3">
               <label for="subject" class="form-label">Chủ đề <span class="text-danger">*</span></label>
-              <select class="form-select" id="subject" required>
+              <select class="form-select" id="subject" name="subject" required>
                 <option value="">Chọn chủ đề...</option>
                 <option value="booking">Vấn đề về đặt chỗ</option>
                 <option value="payment">Vấn đề thanh toán</option>
@@ -79,10 +165,14 @@ session_start();
             
             <div class="mb-3">
               <label for="message" class="form-label">Nội dung <span class="text-danger">*</span></label>
-              <textarea class="form-control" id="message" rows="5" required></textarea>
+              <textarea class="form-control" id="message" name="message" rows="5" required
+                        placeholder="Vui lòng mô tả chi tiết vấn đề của bạn..."><?php echo htmlspecialchars($_POST['message'] ?? ''); ?></textarea>
+              <small class="text-muted">Tối thiểu 10 ký tự</small>
             </div>
             
-            <button type="submit" class="btn btn-primary">Gửi tin nhắn</button>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-send-fill me-2"></i>Gửi tin nhắn
+            </button>
           </form>
         </div>
       </div>
