@@ -1,44 +1,40 @@
 <?php
-include_once __DIR__ . '/../../../controller/cUser.php';
-include_once __DIR__ . '/../../../controller/cHost.php';
+// Include Authentication Helper and Controllers
+require_once __DIR__ . '/../../../helper/auth.php';
+require_once __DIR__ . '/../../../controller/cUser.php';
+require_once __DIR__ . '/../../../controller/cHost.php';
 
-// Start session
-if (session_status() === PHP_SESSION_NONE) {
-  session_start();
-}
+// Use helper for authentication
+requireLogin();
 
-// Kiểm tra đăng nhập
-if (!isset($_SESSION['user_id'])) {
-  header('Location: ../login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']));
-  exit;
-}
-
-$userId = $_SESSION['user_id'];
+$userId = getCurrentUserId();
 $cUser = new cUser();
 $cHost = new cHost();
-$user = $cUser->cGetUserById($userId);
+
+// Get user profile through Controller
+$user = $cUser->cGetUserProfile($userId);
 
 if (!$user) {
-  session_destroy();
-  header('Location: ../login.php');
+  logoutUser();
+  header('Location: ../traveller/login.php');
   exit;
 }
 
-// Kiểm tra xem user đã là host chưa
+// Check if user is already a host
 $isHost = $cHost->cIsUserHost($userId);
 
-// Kiểm tra có application pending không
+// Check for pending application
 $application = $cHost->cGetUserHostApplication($userId);
 $hasPendingApplication = ($application && $application['status'] === 'pending');
 
-// Nếu đã là host hoặc có application pending, redirect
+// If already a host or has pending application, redirect
 if ($isHost) {
-  header('Location: ../../../index.php?msg=already_host');
+  header('Location: ./my-listings.php?msg=already_host');
   exit;
 }
 
 if ($hasPendingApplication) {
-  // Hiển thị thông báo đang chờ duyệt
+  // Show pending message
   $pendingMessage = 'Bạn đã gửi đơn đăng ký host vào ngày ' . date('d/m/Y', strtotime($application['created_at'])) . '. Chúng tôi đang xem xét hồ sơ của bạn.';
 }
 
@@ -46,7 +42,7 @@ if ($hasPendingApplication) {
 
 <?php include __DIR__ . '/../../partials/header.php'; ?>
 
-<link rel="stylesheet" href="../../css/become-host.css">
+<link rel="stylesheet" href="../../css/host-become-host.css">
 
 <div class="become-host-container">
   <div class="container">

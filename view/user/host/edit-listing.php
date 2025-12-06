@@ -1,44 +1,36 @@
 <?php
-session_start();
-include_once __DIR__ . '/../../../controller/cHost.php';
-include_once __DIR__ . '/../../../model/mListing.php';
+require_once __DIR__ . '/../../../helper/auth.php';
+require_once __DIR__ . '/../../../controller/cHost.php';
+require_once __DIR__ . '/../../../model/mListing.php';
 
-// Kiểm tra đăng nhập
-if (!isset($_SESSION['user_id'])) {
-  header('Location: ../login.php');
-  exit;
-}
+// Yêu cầu đăng nhập và là host
+requireLogin();
+requireHost();
 
-$userId = $_SESSION['user_id'];
+$userId = getCurrentUserId();
 $cHost = new cHost();
 $mListing = new mListing();
-
-// Kiểm tra user có phải là host không
-if (!$cHost->cIsUserHost($userId)) {
-  header('Location: ../host/become-host.php');
-  exit;
-}
 
 // Lấy host_id
 $hostInfo = $cHost->cGetHostByUserId($userId);
 if (!$hostInfo) {
-  header('Location: ./become-host.php');
-  exit;
+    header('Location: /view/user/host/become-host.php');
+    exit;
 }
 $hostId = $hostInfo['host_id'];
 
 // Lấy listing_id từ URL
 $listingId = intval($_GET['id'] ?? 0);
 if (!$listingId) {
-  header('Location: ./my-listings.php');
-  exit;
+    header('Location: /view/user/host/my-listings.php');
+    exit;
 }
 
 // Lấy thông tin listing và verify ownership
 $listing = $mListing->mGetListingById($listingId);
 if (!$listing || $listing['host_id'] != $hostId) {
-  header('Location: ./my-listings.php');
-  exit;
+    header('Location: /view/user/host/my-listings.php');
+    exit;
 }
 
 // Lấy dữ liệu cho form
@@ -54,59 +46,64 @@ $existingImages = $mListing->mGetListingImages($listingId);
 $currentAmenities = $mListing->mGetListingAmenities($listingId);
 $currentAmenityIds = [];
 if (is_array($currentAmenities)) {
-  foreach ($currentAmenities as $amenity) {
-    $currentAmenityIds[] = $amenity['amenity_id'];
-  }
+    foreach ($currentAmenities as $amenity) {
+        $currentAmenityIds[] = $amenity['amenity_id'];
+    }
 }
 
 // Lấy services hiện tại
 $currentServices = $mListing->mGetListingServices($listingId);
 $currentServicePrices = [];
 if ($currentServices && $currentServices->num_rows > 0) {
-  while ($service = $currentServices->fetch_assoc()) {
-    $currentServicePrices[$service['service_id']] = $service['price'];
-  }
+    while ($service = $currentServices->fetch_assoc()) {
+        $currentServicePrices[$service['service_id']] = $service['price'];
+    }
 }
 
 // Lấy ward_code từ listing
 $currentWardCode = $listing['ward_code'] ?? '';
 
+// Lấy province_code từ ward_code
+$currentProvinceCode = '';
+if (!empty($currentWardCode)) {
+    $wardInfo = $mListing->mGetWardInfo($currentWardCode);
+    if ($wardInfo) {
+        $currentProvinceCode = $wardInfo['province_code'];
+    }
+}
+
 $successMessage = '';
 $errorMessage = '';
 
-// Xử lý form submit
+// Xử lý form submit - CONTROLLER HANDLES ALL VALIDATION
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Validate inputs
-  $title = trim($_POST['title'] ?? '');
-  $description = trim($_POST['description'] ?? '');
-  $placeTypeId = intval($_POST['place_type_id'] ?? 0);
-  $address = trim($_POST['address'] ?? '');
-  $provinceCode = trim($_POST['province_code'] ?? '');
-  $wardCode = trim($_POST['ward_code'] ?? '');
-  $price = floatval($_POST['price'] ?? 0);
-  $capacity = intval($_POST['capacity'] ?? 0);
-  $selectedAmenities = $_POST['amenities'] ?? [];
-  $status = $_POST['status'] ?? $listing['status']; // Giữ nguyên status cũ nếu không chọn
-  
-  // Validation
-  if (empty($title) || empty($address) || $price <= 0 || $capacity <= 0) {
-    $errorMessage = 'Vui lòng điền đầy đủ thông tin bắt buộc (Tiêu đề, Địa chỉ, Giá, Sức chứa)';
-  } else {
-    // Cập nhật listing
-    $listingData = [
-      'title' => $title,
-      'description' => $description,
-      'address' => $address,
-      'ward_code' => $wardCode ?: null,
-      'place_type_id' => $placeTypeId ?: null,
-      'price' => $price,
-      'capacity' => $capacity,
-      'status' => $status
-    ];
+    // Get form data
+    $title = trim($_POST['title'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $placeTypeId = intval($_POST['place_type_id'] ?? 0);
+    $address = trim($_POST['address'] ?? '');
+    $wardCode = trim($_POST['ward_code'] ?? '');
+    $price = floatval($_POST['price'] ?? 0);
+    $capacity = intval($_POST['capacity'] ?? 0);
+    $selectedAmenities = $_POST['amenities'] ?? [];
+    $status = $_POST['status'] ?? $listing['status'];
     
-    $updateResult = $cHost->cUpdateListing($listingId, $listingData);
+    // Call Controller with validation
+    $result = $cHost->cUpdateListing(
+        $listingId, 
+        $hostId, 
+        $title, 
+        $description, 
+        $address, 
+        $wardCode, 
+        $placeTypeId, 
+        $price, 
+        $capacity, 
+        $status, 
+        $selectedAmenities
+    );
     
-    if ($updateResult) {
+    if ($result['success']) {
       // Cập nhật amenities
       if (!empty($selectedAmenities)) {
         $cHost->cSaveListingAmenities($listingId, $selectedAmenities);
@@ -115,95 +112,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cHost->cSaveListingAmenities($listingId, []);
       }
       
-      // Cập nhật services
-      if (isset($_POST['services'])) {
-        $cHost->cSaveListingServices($listingId, $_POST['services']);
-      }
-      
-      // Xử lý upload ảnh mới (nếu có)
-      if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
-        $uploadDir = __DIR__ . '/../../../public/uploads/listings/';
-        if (!is_dir($uploadDir)) {
-          mkdir($uploadDir, 0755, true);
+        // Cập nhật services
+        if (isset($_POST['services'])) {
+            $cHost->cSaveListingServices($listingId, $_POST['services']);
         }
         
-        $coverIndex = intval($_POST['cover_index'] ?? 0);
-        $imageCounter = count($existingImages) + 1;
+        // Xử lý upload ảnh mới (nếu có)
+        if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
+            $uploadDir = __DIR__ . '/../../../public/uploads/listings/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            
+            $coverIndex = intval($_POST['cover_index'] ?? 0);
+            $imageCounter = count($existingImages) + 1;
+            
+            foreach ($_FILES['images']['tmp_name'] as $index => $tmpName) {
+                if (empty($tmpName)) continue;
+                
+                $fileName = $_FILES['images']['name'][$index];
+                $fileSize = $_FILES['images']['size'][$index];
+                $fileMimeType = $_FILES['images']['type'][$index];
+                $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                
+                // Validate file type
+                $allowedTypes = ['jpg', 'jpeg', 'png'];
+                $allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                
+                if (!in_array($fileType, $allowedTypes) || !in_array($fileMimeType, $allowedMimeTypes)) {
+                    continue;
+                }
+                
+                // Validate file size (tối đa 5MB)
+                $maxSize = 5 * 1024 * 1024;
+                if ($fileSize > $maxSize) {
+                    continue;
+                }
+                
+                // Generate filename
+                $imageNumber = str_pad($imageCounter, 2, '0', STR_PAD_LEFT);
+                $newFileName = $userId . '_img' . $imageNumber . '_' . time() . '.' . $fileType;
+                $targetPath = $uploadDir . $newFileName;
+                
+                if (move_uploaded_file($tmpName, $targetPath)) {
+                    $fileUrl = 'public/uploads/listings/' . $newFileName;
+                    $isCover = ($index === $coverIndex) && count($existingImages) === 0;
+                    $displayOrder = count($existingImages) + $index;
+                    $cHost->cUploadListingImage($listingId, $fileUrl, $isCover, $displayOrder);
+                    $imageCounter++;
+                }
+            }
+        }
         
-        foreach ($_FILES['images']['tmp_name'] as $index => $tmpName) {
-          if (empty($tmpName)) continue;
-          
-          $fileName = $_FILES['images']['name'][$index];
-          $fileSize = $_FILES['images']['size'][$index];
-          $fileMimeType = $_FILES['images']['type'][$index];
-          $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-          
-          // Validate file type
-          $allowedTypes = ['jpg', 'jpeg', 'png'];
-          $allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-          
-          if (!in_array($fileType, $allowedTypes) || !in_array($fileMimeType, $allowedMimeTypes)) {
-            continue;
-          }
-          
-          // Validate file size (tối đa 5MB)
-          $maxSize = 5 * 1024 * 1024;
-          if ($fileSize > $maxSize) {
-            continue;
-          }
-          
-          // Generate filename
-          $imageNumber = str_pad($imageCounter, 2, '0', STR_PAD_LEFT);
-          $newFileName = $userId . '_img' . $imageNumber . '_' . time() . '.' . $fileType;
-          $targetPath = $uploadDir . $newFileName;
-          
-          if (move_uploaded_file($tmpName, $targetPath)) {
-            $fileUrl = 'public/uploads/listings/' . $newFileName;
-            $isCover = ($index === $coverIndex) && count($existingImages) === 0;
-            $displayOrder = count($existingImages) + $index;
-            $cHost->cUploadListingImage($listingId, $fileUrl, $isCover, $displayOrder);
-            $imageCounter++;
-          }
+        // Xử lý xóa ảnh cũ (nếu có)
+        if (isset($_POST['delete_images'])) {
+            $deleteImages = $_POST['delete_images'];
+            foreach ($deleteImages as $imageId) {
+                $mListing->mDeleteListingImage(intval($imageId), $listingId);
+            }
         }
-      }
-      
-      // Xử lý xóa ảnh cũ (nếu có)
-      if (isset($_POST['delete_images'])) {
-        $deleteImages = $_POST['delete_images'];
-        foreach ($deleteImages as $imageId) {
-          $mListing->mDeleteListingImage(intval($imageId), $listingId);
+        
+        // Xử lý set cover image mới
+        if (isset($_POST['new_cover_image'])) {
+            $newCoverId = intval($_POST['new_cover_image']);
+            $mListing->mSetCoverImage($listingId, $newCoverId);
         }
-      }
-      
-      // Xử lý set cover image mới
-      if (isset($_POST['new_cover_image'])) {
-        $newCoverId = intval($_POST['new_cover_image']);
-        $mListing->mSetCoverImage($listingId, $newCoverId);
-      }
-      
-      $successMessage = 'Cập nhật phòng thành công!';
-      
-      // Reload listing data
-      $listing = $mListing->mGetListingById($listingId);
-      $existingImages = $mListing->mGetListingImages($listingId);
-      
-      // Redirect sau 1.5 giây
-      echo "<script>
-        setTimeout(function() {
-          window.location.href = './listing-detail.php?id=" . $listingId . "';
-        }, 1500);
-      </script>";
+        
+        $successMessage = $result['message'];
+        
+        // Reload listing data
+        $listing = $mListing->mGetListingById($listingId);
+        $existingImages = $mListing->mGetListingImages($listingId);
+        
+        // Redirect sau 1.5 giây
+        echo "<script>
+            setTimeout(function() {
+                window.location.href = './listing-detail.php?id=" . $listingId . "';
+            }, 1500);
+        </script>";
     } else {
-      $errorMessage = 'Có lỗi xảy ra khi cập nhật phòng. Vui lòng thử lại.';
+        $errorMessage = $result['message'];
     }
-  }
 }
 
 // Group amenities by group_name
 $amenitiesByGroup = [];
 foreach ($amenities as $amenity) {
-  $group = $amenity['group_name'] ?: 'Khác';
-  $amenitiesByGroup[$group][] = $amenity;
+    $group = $amenity['group_name'] ?: 'Khác';
+    $amenitiesByGroup[$group][] = $amenity;
 }
 ?>
 <!DOCTYPE html>
@@ -214,73 +210,8 @@ foreach ($amenities as $amenity) {
   <title>Chỉnh sửa phòng - <?php echo htmlspecialchars($listing['title']); ?></title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="../../css/create-listing.css?v=<?php echo time(); ?>">
-  <style>
-    .existing-images {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-    .existing-image-item {
-      position: relative;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      overflow: hidden;
-      aspect-ratio: 4/3;
-    }
-    .existing-image-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .existing-image-item.is-cover {
-      border-color: #10b981;
-      border-width: 3px;
-    }
-    .cover-badge {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-      color: white;
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    .image-actions {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      display: flex;
-      gap: 8px;
-    }
-    .btn-delete-image {
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.875rem;
-    }
-    .btn-set-cover {
-      background: #10b981;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.875rem;
-    }
-    .btn-delete-image:hover {
-      background: #dc2626;
-    }
-    .btn-set-cover:hover {
-      background: #059669;
-    }
-  </style>
+  <link rel="stylesheet" href="../../css/host-create-listing.css?v=<?php echo time(); ?>">
+  <link rel="stylesheet" href="../../css/host-edit-listing.css">
 </head>
 <body>
   <div class="container">
@@ -399,7 +330,8 @@ foreach ($amenities as $amenity) {
                 <option value="">-- Chọn tỉnh/thành phố --</option>
                 <?php foreach ($provinces as $province): ?>
                   <option value="<?php echo $province['code']; ?>" 
-                          data-province-code="<?php echo $province['code']; ?>">
+                          data-province-code="<?php echo $province['code']; ?>"
+                          <?php echo ($currentProvinceCode === $province['code']) ? 'selected' : ''; ?>>
                     <?php echo htmlspecialchars($province['name']); ?>
                   </option>
                 <?php endforeach; ?>
@@ -537,19 +469,13 @@ foreach ($amenities as $amenity) {
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Load wards when page loads (if ward_code exists)
+    // Load wards when page loads (if province and ward exist)
     document.addEventListener('DOMContentLoaded', function() {
+      const currentProvinceCode = '<?php echo $currentProvinceCode; ?>';
       const currentWardCode = '<?php echo $currentWardCode; ?>';
-      if (currentWardCode) {
-        // Find province from ward
-        fetch(`../../../controller/cHost.php?action=getProvinceByWard&ward_code=${currentWardCode}`)
-          .then(response => response.json())
-          .then(data => {
-            if (data.success && data.province_code) {
-              document.getElementById('province_code').value = data.province_code;
-              loadWards(data.province_code, currentWardCode);
-            }
-          });
+      
+      if (currentProvinceCode) {
+        loadWards(currentProvinceCode, currentWardCode);
       }
     });
     

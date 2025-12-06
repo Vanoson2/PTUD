@@ -79,8 +79,8 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
 <?php include __DIR__ . '/../../partials/header.php'; ?>
 
 <link rel="stylesheet" href="../../css/host-dashboard.css?v=<?php echo time(); ?>">
-<link rel="stylesheet" href="../../css/booking-success.css?v=<?php echo time(); ?>">
-<link rel="stylesheet" href="../../css/booking-detail-host.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../css/traveller-booking-success.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../css/host-booking-detail.css?v=<?php echo time(); ?>">
 
 <div class="host-container">
   <div class="host-wrapper">
@@ -335,7 +335,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
   </div>
 </div>
 
-  <link rel="stylesheet" href="../../css/booking-detail.css">
+  <link rel="stylesheet" href="../../css/shared-booking-detail.css">
 </head>
 <body>
 

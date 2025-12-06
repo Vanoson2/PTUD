@@ -1,5 +1,9 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+}
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');
@@ -43,7 +47,6 @@ $statusConfig = [
     <title>Trạng thái đơn đăng ký Host - We Go</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="../../css/application-status.css">
 </head>
 <body>
     <?php include __DIR__ . '/../../partials/header.php'; ?>

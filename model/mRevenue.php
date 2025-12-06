@@ -16,7 +16,7 @@ class mRevenue extends mConnect {
      * @return array
      */
     public function mGetHostTotalRevenue($hostId, $startDate = null, $endDate = null) {
-        $conn = $this->connect();
+        $conn = $this->mMoKetNoi();
         
         $sql = "SELECT 
                     COUNT(DISTINCT b.booking_id) as total_bookings,
@@ -65,7 +65,7 @@ class mRevenue extends mConnect {
      * @return array
      */
     public function mGetRevenueByListing($hostId, $startDate = null, $endDate = null) {
-        $conn = $this->connect();
+        $conn = $this->mMoKetNoi();
         
         $sql = "SELECT 
                     l.listing_id,
@@ -119,7 +119,7 @@ class mRevenue extends mConnect {
      * @return array
      */
     public function mGetMonthlyRevenue($hostId, $year) {
-        $conn = $this->connect();
+        $conn = $this->mMoKetNoi();
         
         $sql = "SELECT 
                     MONTH(b.created_at) as month,
@@ -171,7 +171,7 @@ class mRevenue extends mConnect {
      * @return array
      */
     public function mGetBookingStatistics($hostId) {
-        $conn = $this->connect();
+        $conn = $this->mMoKetNoi();
         
         $sql = "SELECT 
                     COUNT(CASE WHEN b.status = 'confirmed' THEN 1 END) as confirmed_bookings,
@@ -203,7 +203,7 @@ class mRevenue extends mConnect {
      * @return array
      */
     public function mGetSystemTotalRevenue($startDate = null, $endDate = null) {
-        $conn = $this->connect();
+        $conn = $this->mMoKetNoi();
         
         $sql = "SELECT 
                     COUNT(DISTINCT b.booking_id) as total_bookings,
@@ -252,7 +252,7 @@ class mRevenue extends mConnect {
      * @return array
      */
     public function mGetRevenueByHost($startDate = null, $endDate = null, $limit = 10) {
-        $conn = $this->connect();
+        $conn = $this->mMoKetNoi();
         
         $sql = "SELECT 
                     h.host_id,
@@ -310,7 +310,7 @@ class mRevenue extends mConnect {
      * @return array
      */
     public function mGetSystemMonthlyRevenue($year) {
-        $conn = $this->connect();
+        $conn = $this->mMoKetNoi();
         
         $sql = "SELECT 
                     MONTH(b.created_at) as month,

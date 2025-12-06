@@ -1,0 +1,121 @@
+/* Admin Management Page Styles */
+
+.role-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.role-superadmin {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.role-manager {
+    background: #0d6efd;
+    color: white;
+}
+
+.role-support {
+    background: #6c757d;
+    color: white;
+}
+
+.admin-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.create-admin-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.create-admin-card h3 {
+    color: white;
+    margin-bottom: 20px;
+}
+
+.create-admin-card .form-label {
+    color: white;
+    font-weight: 600;
+}
+
+.create-admin-card .form-control,
+.create-admin-card .form-select {
+    border: 2px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    backdrop-filter: blur(10px);
+}
+
+.create-admin-card .form-control::placeholder {
+    color: rgba(255,255,255,0.6);
+}
+
+.create-admin-card .form-control:focus,
+.create-admin-card .form-select:focus {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border-color: white;
+}
+
+.create-admin-card .form-select option {
+    color: #333;
+    background: white;
+}
+
+.admin-table {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.admin-table thead {
+    background: #f8f9fa;
+}
+
+.admin-table th {
+    padding: 15px;
+    font-weight: 600;
+    color: #495057;
+    border: none;
+}
+
+.admin-table td {
+    padding: 15px;
+    vertical-align: middle;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn-action {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    margin: 0 2px;
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+    padding: 15px 20px;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+}

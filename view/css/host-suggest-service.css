@@ -1,0 +1,120 @@
+/* Suggest Service Page Styles */
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 40px 0;
+}
+
+.suggest-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.suggest-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+.suggest-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.suggest-header h1 {
+    color: #667eea;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.suggest-header p {
+    color: #6c757d;
+    font-size: 15px;
+    margin: 0;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.1);
+}
+
+textarea.form-control {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: 14px 40px;
+    font-size: 16px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.info-box {
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+}
+
+.info-box i {
+    color: #667eea;
+    margin-right: 8px;
+}
+
+.info-box p {
+    margin: 0;
+    color: #495057;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.back-link {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+    margin-bottom: 20px;
+}
+
+.back-link:hover {
+    background: #667eea;
+    color: white;
+}

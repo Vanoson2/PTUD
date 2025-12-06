@@ -3,6 +3,34 @@ include_once(__DIR__ . '/mConnect.php');
 
 class mBooking {
     
+    /**
+     * Count total bookings of a user (for first booking check)
+     * @param int $userId User ID
+     * @return int Number of confirmed/completed bookings
+     */
+    public function mCountUserBookings($userId) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if (!$conn) return 0;
+        
+        $userId = intval($userId);
+        $sql = "SELECT COUNT(*) as total 
+                FROM bookings 
+                WHERE user_id = $userId 
+                AND status IN ('confirmed', 'completed')";
+        
+        $result = $conn->query($sql);
+        $count = 0;
+        
+        if ($result) {
+            $row = $result->fetch_assoc();
+            $count = (int)$row['total'];
+        }
+        
+        $p->mDongKetNoi($conn);
+        return $count;
+    }
+    
     // Kiểm tra user có đơn đặt nào khác trùng ngày không
     public function mCheckUserBookingConflict($userId, $checkIn, $checkOut, $excludeListingId = null){
         $p = new mConnect();
@@ -245,7 +273,7 @@ class mBooking {
             $cancelReason = $cancelReason ? $conn->real_escape_string($cancelReason) : null;
             
             // Kiểm tra booking có thuộc về user này không và status = 'confirmed'
-            $strCheck = "SELECT booking_id, status 
+            $strCheck = "SELECT booking_id, status, check_in 
                         FROM bookings 
                         WHERE booking_id = $bookingId 
                         AND user_id = $userId 
@@ -253,8 +281,10 @@ class mBooking {
             
             $checkResult = $conn->query($strCheck);
             if (!$checkResult || $checkResult->num_rows === 0) {
-                return false; // Không tìm thấy hoặc đã bị hủy/hoàn thành rồi
+                return ['success' => false, 'message' => 'Không tìm thấy booking hoặc không thể hủy'];
             }
+            
+            $booking = $checkResult->fetch_assoc();
             
             // Update status sang cancelled
             $strUpdate = "UPDATE bookings 
@@ -268,9 +298,18 @@ class mBooking {
             
             $strUpdate .= " WHERE booking_id = $bookingId AND user_id = $userId";
             
-            return $conn->query($strUpdate);
+            $success = $conn->query($strUpdate);
+            
+            if ($success) {
+                return [
+                    'success' => true, 
+                    'message' => 'Hủy booking thành công',
+                    'booking' => $booking
+                ];
+            }
+            return ['success' => false, 'message' => 'Không thể hủy booking'];
         }else{
-            return false;
+            return ['success' => false, 'message' => 'Lỗi kết nối database'];
         }
     }
 }

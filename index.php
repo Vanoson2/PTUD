@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['checkin']) || isset($_
 <?php include __DIR__ . '/view/partials/header.php'; ?>
 
 <!-- Page-specific CSS and JavaScript for Home page -->
-<link rel="stylesheet" href="./view/css/home.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="./view/css/pages-home.css?v=<?php echo time(); ?>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10ns/vn.js"></script>
@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
             Hãy phản hồi cho chúng tôi biết
           </a>
         <?php else: ?>
-          <a href="./view/user/login.php" class="promo-btn" style="text-decoration: none; display: inline-block;">
+          <a href="./view/user/traveller/login.php" class="promo-btn" style="text-decoration: none; display: inline-block;">
             Đăng nhập để gửi phản hồi
           </a>
         <?php endif; ?>

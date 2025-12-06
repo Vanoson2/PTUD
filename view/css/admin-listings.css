@@ -248,6 +248,13 @@ body {
   color: #6b7280;
 }
 
+.listing-address {
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.5;
+  max-width: 200px;
+}
+
 .host-info {
   line-height: 1.4;
 }

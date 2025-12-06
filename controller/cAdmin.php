@@ -466,5 +466,77 @@ class cAdmin {
         $mAdmin = new mAdmin();
         return $mAdmin->mUpdateTicketStatus($ticketId, $status);
     }
+    
+    // ========== ADMIN MANAGEMENT (SUPERADMIN ONLY) ==========
+    
+    public function cGetAllAdmins() {
+        $mAdmin = new mAdmin();
+        return $mAdmin->mGetAllAdmins();
+    }
+    
+    public function cCreateAdmin($username, $password, $fullName, $role) {
+        // Validate inputs
+        if (empty($username) || empty($password) || empty($fullName) || empty($role)) {
+            return ['success' => false, 'message' => 'Vui lòng điền đầy đủ thông tin'];
+        }
+        
+        // Validate username (alphanumeric, underscore, 3-50 chars)
+        if (!preg_match('/^[a-zA-Z0-9_]{3,50}$/', $username)) {
+            return ['success' => false, 'message' => 'Tên đăng nhập không hợp lệ (3-50 ký tự, chỉ chữ, số, dấu gạch dưới)'];
+        }
+        
+        // Validate password (min 6 chars)
+        if (strlen($password) < 6) {
+            return ['success' => false, 'message' => 'Mật khẩu phải có ít nhất 6 ký tự'];
+        }
+        
+        // Validate role
+        $validRoles = ['superadmin', 'manager', 'support'];
+        if (!in_array($role, $validRoles)) {
+            return ['success' => false, 'message' => 'Vai trò không hợp lệ'];
+        }
+        
+        $mAdmin = new mAdmin();
+        return $mAdmin->mCreateAdmin($username, $password, $fullName, $role);
+    }
+    
+    public function cUpdateAdminRole($adminId, $newRole) {
+        $adminId = (int)$adminId;
+        if ($adminId <= 0) {
+            return ['success' => false, 'message' => 'ID admin không hợp lệ'];
+        }
+        
+        $validRoles = ['superadmin', 'manager', 'support'];
+        if (!in_array($newRole, $validRoles)) {
+            return ['success' => false, 'message' => 'Vai trò không hợp lệ'];
+        }
+        
+        $mAdmin = new mAdmin();
+        return $mAdmin->mUpdateAdminRole($adminId, $newRole);
+    }
+    
+    public function cDeleteAdmin($adminId) {
+        $adminId = (int)$adminId;
+        if ($adminId <= 0) {
+            return ['success' => false, 'message' => 'ID admin không hợp lệ'];
+        }
+        
+        $mAdmin = new mAdmin();
+        return $mAdmin->mDeleteAdmin($adminId);
+    }
+    
+    public function cResetAdminPassword($adminId, $newPassword) {
+        $adminId = (int)$adminId;
+        if ($adminId <= 0) {
+            return ['success' => false, 'message' => 'ID admin không hợp lệ'];
+        }
+        
+        if (strlen($newPassword) < 6) {
+            return ['success' => false, 'message' => 'Mật khẩu phải có ít nhất 6 ký tự'];
+        }
+        
+        $mAdmin = new mAdmin();
+        return $mAdmin->mResetAdminPassword($adminId, $newPassword);
+    }
 }
 ?>

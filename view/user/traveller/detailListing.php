@@ -68,7 +68,7 @@ $totalPrice = $listing['price'] * $nights;
 ?>
 <?php include __DIR__ . '/../../partials/header.php'; ?>
 <!-- Page-specific CSS -->
-<link rel="stylesheet" href="../../../view/css/detailListing.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../../view/css/traveller-detail-listing.css?v=<?php echo time(); ?>">
 
 <div class="detail-container">
   <!-- Breadcrumb -->
@@ -474,6 +474,14 @@ const pricePerNight = <?php echo $listing['price']; ?>;
         });
       }
     });
+    
+    // Handle "Show all amenities" button
+    const showAllAmenitiesBtn = document.querySelector('.btn-show-all');
+    if (showAllAmenitiesBtn && showAllAmenitiesBtn.textContent.includes('tiện nghi')) {
+      showAllAmenitiesBtn.addEventListener('click', function() {
+        document.getElementById('amenitiesModal').classList.add('active');
+      });
+    }
   </script>
 </body>
 </html>
@@ -482,6 +490,26 @@ const pricePerNight = <?php echo $listing['price']; ?>;
 <div class="image-modal" id="imageModal" onclick="closeImageModal()">
   <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
   <img class="image-modal-content" id="modalImage">
+</div>
+
+<!-- Amenities Modal -->
+<div class="amenities-modal" id="amenitiesModal">
+  <div class="amenities-modal-content">
+    <span class="amenities-modal-close" onclick="document.getElementById('amenitiesModal').classList.remove('active')">&times;</span>
+    <h2>Tất cả tiện nghi</h2>
+    <div class="amenities-modal-grid">
+      <?php if (!empty($amenitiesIds)): ?>
+        <?php foreach ($amenitiesIds as $amenityId): ?>
+          <?php if (isset($allAmenities[$amenityId])): ?>
+            <div class="amenity-item">
+              <i class="fa-solid fa-check"></i>
+              <span><?php echo htmlspecialchars($allAmenities[$amenityId]['name']); ?></span>
+            </div>
+          <?php endif; ?>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </div>
+  </div>
 </div>
 
 <?php include __DIR__ . '/../../partials/footer.php'; ?>

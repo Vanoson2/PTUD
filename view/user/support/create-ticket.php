@@ -1,30 +1,28 @@
 <?php
-session_start();
-
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login.php?returnUrl=' . urlencode($_SERVER['REQUEST_URI']));
-    exit();
-}
-
+// Include Authentication Helper and Controller
+require_once __DIR__ . '/../../../helper/auth.php';
 require_once __DIR__ . '/../../../controller/cSupport.php';
 require_once __DIR__ . '/../../../model/mEmailPHPMailer.php';
 
+// Use helper for authentication
+requireLogin();
+
+$userId = getCurrentUserId();
 $message = '';
 $messageType = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userId = $_SESSION['user_id'];
     $title = trim($_POST['title'] ?? '');
     $content = trim($_POST['content'] ?? '');
     $category = $_POST['category'] ?? 'khac';
     $priority = $_POST['priority'] ?? 'normal';
     
+    // Delegate to Controller (handles validation)
     $cSupport = new cSupport();
     $result = $cSupport->cCreateTicket($userId, $title, $content, $category, $priority);
     
     if ($result['success']) {
-        // Gửi email thông báo cho admin
+        // Send email notification to admin
         $emailModel = new mEmailPHPMailer();
         $emailModel->sendSupportTicketNotification(
             $result['ticket_id'],
@@ -56,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Tạo yêu cầu hỗ trợ - WeGo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../../css/create-ticket.css">
+    <link rel="stylesheet" href="../../css/support-create-ticket.css">
 </head>
 <body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     

@@ -1,9 +1,13 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+}
 ?>
 <?php include __DIR__ . '/../partials/header.php'; ?>
 
-<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/shared-style.css">
 
 <div class="container py-5">
   <div class="row">

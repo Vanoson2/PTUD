@@ -605,10 +605,12 @@ class mAdmin {
             $total = (int)$row['total'];
         }
         
-        // Get tickets
-        $sql = "SELECT st.*, u.full_name, u.email
+        // Get tickets - Support both logged-in users and guests
+        $sql = "SELECT st.*, 
+                       u.full_name, u.email,
+                       st.guest_name, st.guest_email, st.guest_phone
                 FROM support_ticket st
-                INNER JOIN user u ON st.user_id = u.user_id
+                LEFT JOIN user u ON st.user_id = u.user_id
                 $whereClause
                 ORDER BY st.last_message_at DESC, st.created_at DESC
                 LIMIT $limit OFFSET $offset";
@@ -641,9 +643,12 @@ class mAdmin {
             return null;
         }
         
-        $sql = "SELECT st.*, u.full_name, u.email, u.phone
+        // Support both user tickets and guest tickets
+        $sql = "SELECT st.*, 
+                       u.full_name, u.email, u.phone,
+                       st.guest_name, st.guest_email, st.guest_phone
                 FROM support_ticket st
-                INNER JOIN user u ON st.user_id = u.user_id
+                LEFT JOIN user u ON st.user_id = u.user_id
                 WHERE st.ticket_id = $ticketId
                 LIMIT 1";
         
@@ -790,6 +795,160 @@ class mAdmin {
             'success' => false,
             'message' => 'Không thể cập nhật: ' . $conn->error
         ];
+    }
+    
+    // ========== ADMIN MANAGEMENT (SUPERADMIN ONLY) ==========
+    
+    public function mGetAllAdmins() {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return [];
+        }
+        
+        $sql = "SELECT admin_id, username, full_name, role 
+                FROM admin 
+                ORDER BY 
+                    CASE role 
+                        WHEN 'superadmin' THEN 1
+                        WHEN 'manager' THEN 2
+                        WHEN 'support' THEN 3
+                    END,
+                    full_name ASC";
+        
+        $result = $conn->query($sql);
+        $admins = [];
+        
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $admins[] = $row;
+            }
+        }
+        
+        $p->mDongKetNoi($conn);
+        return $admins;
+    }
+    
+    public function mCreateAdmin($username, $password, $fullName, $role) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return ['success' => false, 'message' => 'Không thể kết nối database'];
+        }
+        
+        // Check username exists
+        $username = $conn->real_escape_string($username);
+        $checkSql = "SELECT admin_id FROM admin WHERE username = '$username' LIMIT 1";
+        $checkResult = $conn->query($checkSql);
+        
+        if ($checkResult && $checkResult->num_rows > 0) {
+            $p->mDongKetNoi($conn);
+            return ['success' => false, 'message' => 'Tên đăng nhập đã tồn tại'];
+        }
+        
+        // Hash password
+        $passwordHash = md5($password);
+        $fullName = $conn->real_escape_string($fullName);
+        $role = $conn->real_escape_string($role);
+        
+        $sql = "INSERT INTO admin (username, password_hash, full_name, role) 
+                VALUES ('$username', '$passwordHash', '$fullName', '$role')";
+        
+        if ($conn->query($sql)) {
+            $adminId = $conn->insert_id;
+            $p->mDongKetNoi($conn);
+            return [
+                'success' => true, 
+                'message' => 'Tạo tài khoản admin thành công',
+                'admin_id' => $adminId
+            ];
+        }
+        
+        $errorMessage = $conn->error;
+        $p->mDongKetNoi($conn);
+        return ['success' => false, 'message' => 'Lỗi khi tạo admin: ' . $errorMessage];
+    }
+    
+    public function mUpdateAdminRole($adminId, $newRole) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return ['success' => false, 'message' => 'Không thể kết nối database'];
+        }
+        
+        $adminId = (int)$adminId;
+        $newRole = $conn->real_escape_string($newRole);
+        
+        $sql = "UPDATE admin SET role = '$newRole' WHERE admin_id = $adminId";
+        
+        if ($conn->query($sql)) {
+            $p->mDongKetNoi($conn);
+            return ['success' => true, 'message' => 'Cập nhật quyền thành công'];
+        }
+        
+        $errorMessage = $conn->error;
+        $p->mDongKetNoi($conn);
+        return ['success' => false, 'message' => 'Lỗi khi cập nhật: ' . $errorMessage];
+    }
+    
+    public function mDeleteAdmin($adminId) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return ['success' => false, 'message' => 'Không thể kết nối database'];
+        }
+        
+        $adminId = (int)$adminId;
+        
+        // Check if admin is superadmin (cannot delete)
+        $checkSql = "SELECT role FROM admin WHERE admin_id = $adminId LIMIT 1";
+        $checkResult = $conn->query($checkSql);
+        
+        if ($checkResult && $checkResult->num_rows > 0) {
+            $admin = $checkResult->fetch_assoc();
+            if ($admin['role'] === 'superadmin') {
+                $p->mDongKetNoi($conn);
+                return ['success' => false, 'message' => 'Không thể xóa tài khoản Superadmin'];
+            }
+        }
+        
+        $sql = "DELETE FROM admin WHERE admin_id = $adminId";
+        
+        if ($conn->query($sql)) {
+            $p->mDongKetNoi($conn);
+            return ['success' => true, 'message' => 'Xóa tài khoản admin thành công'];
+        }
+        
+        $errorMessage = $conn->error;
+        $p->mDongKetNoi($conn);
+        return ['success' => false, 'message' => 'Lỗi khi xóa: ' . $errorMessage];
+    }
+    
+    public function mResetAdminPassword($adminId, $newPassword) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return ['success' => false, 'message' => 'Không thể kết nối database'];
+        }
+        
+        $adminId = (int)$adminId;
+        $passwordHash = md5($newPassword);
+        
+        $sql = "UPDATE admin SET password_hash = '$passwordHash' WHERE admin_id = $adminId";
+        
+        if ($conn->query($sql)) {
+            $p->mDongKetNoi($conn);
+            return ['success' => true, 'message' => 'Đặt lại mật khẩu thành công'];
+        }
+        
+        $errorMessage = $conn->error;
+        $p->mDongKetNoi($conn);
+        return ['success' => false, 'message' => 'Lỗi khi đặt lại mật khẩu: ' . $errorMessage];
     }
 }
 ?>
