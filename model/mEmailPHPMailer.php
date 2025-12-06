@@ -277,8 +277,14 @@ class mEmailPHPMailer {
                             <p><span class='label'>Nội dung:</span></p>
                             <p>" . nl2br(htmlspecialchars($content)) . "</p>
                         </div>
-                        
-                        <a href='http://localhost/view/user/admin/support.php?ticket_id=$ticketId' class='btn'>Xem & Trả lời</a>
+                        "; 
+            
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'];
+            $supportUrl = $protocol . '://' . $host . '/view/user/admin/support.php?ticket_id=' . $ticketId;
+            
+            $mail->Body .= "
+                        <a href='$supportUrl' class='btn'>Xem & Trả lời</a>
                     </div>
                     <div class='footer'>
                         <p>Email này được gửi tự động từ hệ thống WeGo Travel</p>
@@ -474,8 +480,14 @@ class mEmailPHPMailer {
                             <p>" . nl2br(htmlspecialchars($replyContent)) . "</p>
                         </div>
                         
-                        <p>Bạn có thể tiếp tục trao đổi bằng cách trả lời tin nhắn này hoặc truy cập:</p>
-                        <a href='http://localhost/view/user/support/ticket-detail.php?ticket_id=$ticketId' class='btn'>Xem chi tiết</a>
+                        <p>Bạn có thể tiếp tục trao đổi bằng cách trả lời tin nhắn này hoặc truy cập:</p>"; 
+            
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'];
+            $ticketUrl = $protocol . '://' . $host . '/view/user/support/ticket-detail.php?ticket_id=' . $ticketId;
+            
+            $mail->Body .= "
+                        <a href='$ticketUrl' class='btn'>Xem chi tiết</a>
                     </div>
                     <div class='footer'>
                         <p>Cảm ơn bạn đã sử dụng dịch vụ WeGo Travel!</p>

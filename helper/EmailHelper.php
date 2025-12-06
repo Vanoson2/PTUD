@@ -159,7 +159,9 @@ class EmailHelper {
             $this->mail->clearAddresses();
             $this->mail->addAddress($toEmail, $toName);
             
-            $resetLink = 'http://localhost/PTUD/index.php?action=reset-password&token=' . $resetToken;
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'];
+            $resetLink = $protocol . '://' . $host . '/index.php?action=reset-password&token=' . $resetToken;
             
             $this->mail->isHTML(true);
             $this->mail->Subject = 'Đặt lại mật khẩu WeGo';
