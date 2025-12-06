@@ -49,14 +49,14 @@ define('MOMO_RETURN_URL', $baseUrl . '/payment/momo-return.php');
 define('MOMO_REQUEST_TYPE', 'captureWallet'); // captureWallet hoặc payWithATM
 define('MOMO_PARTNER_NAME', 'WeGo Travel');
 define('MOMO_STORE_ID', 'WeGoStore');
-define('MOMO_LANG', 'vi'); // vi hoặc en
+define('MOMO_LANG', 'vi'); 
 
 // Timeout (giây)
 define('MOMO_TIMEOUT', 30);
 define('MOMO_CONNECT_TIMEOUT', 30);
 
-// Log config (cho debug)
-define('MOMO_ENABLE_LOG', true);
+// Log config (cho debug - chỉ enable trong test environment)
+define('MOMO_ENABLE_LOG', MOMO_ENVIRONMENT === 'test');
 define('MOMO_LOG_PATH', __DIR__ . '/../logs/momo_payment.log');
 
 /**

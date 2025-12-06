@@ -89,10 +89,16 @@ class mUserScore {
         $relatedId = $relatedId ? intval($relatedId) : 'NULL';
         $adminId = $adminId ? intval($adminId) : 'NULL';
         
+        // Combine reason and reasonDetail into single reason field
+        $fullReason = $reason;
+        if ($reasonDetail) {
+            $fullReason .= ' - ' . $conn->real_escape_string($reasonDetail);
+        }
+        
         $sqlHistory = "INSERT INTO user_score_history 
-                       (user_id, score_change, old_score, new_score, reason, reason_detail, related_type, related_id, admin_id)
+                       (user_id, score_change, old_score, new_score, reason, related_type, related_id, admin_id)
                        VALUES 
-                       ($userId, $scoreChange, $oldScore, $newScore, '$reason', $reasonDetail, $relatedType, $relatedId, $adminId)";
+                       ($userId, $scoreChange, $oldScore, $newScore, '$fullReason', $relatedType, $relatedId, $adminId)";
         
         $conn->query($sqlHistory);
         

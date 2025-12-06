@@ -226,3 +226,528 @@ Data: {
     "amount": "1680000"
 }
 --------------------------------------------------------------------------------
+[2025-12-06 09:12:08] Create payment request
+Data: {
+    "bookingId": 308,
+    "orderId": "WEGO_308_1765008728",
+    "amount": "1400000.00"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 09:12:09] Create payment response
+Data: {
+    "resultCode": 20,
+    "message": "Bad format request."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 09:14:29] Create payment request
+Data: {
+    "bookingId": 309,
+    "orderId": "WEGO_309_1765008869",
+    "amount": "1285000.00"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 09:14:29] Create payment response
+Data: {
+    "resultCode": 20,
+    "message": "Bad format request."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 09:15:09] Create payment request
+Data: {
+    "bookingId": 310,
+    "orderId": "WEGO_310_1765008909",
+    "amount": "1895000.00"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 09:15:10] Create payment response
+Data: {
+    "resultCode": 20,
+    "message": "Bad format request."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 09:18:58] Create payment request
+Data: {
+    "bookingId": 311,
+    "orderId": "WEGO_311_1765009138",
+    "amount": "1915000.00"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 09:18:58] Create payment response
+Data: {
+    "resultCode": 20,
+    "message": "Bad format request."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 09:20:38] Create payment request
+Data: {
+    "bookingId": 312,
+    "orderId": "WEGO_312_1765009238",
+    "amount": "2170000.00"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 09:20:38] Create payment response
+Data: {
+    "resultCode": 20,
+    "message": "Bad format request."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 09:21:45] Create payment request
+Data: {
+    "bookingId": 313,
+    "orderId": "WEGO_313_1765009305",
+    "amount": 1975000
+}
+--------------------------------------------------------------------------------
+[2025-12-06 09:21:45] Create payment response
+Data: {
+    "resultCode": 0,
+    "message": "Thành công."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:02:02] Return URL accessed
+Data: {
+    "GET": {
+        "partnerCode": "MOMOBKUN20180529",
+        "orderId": "WEGO_313_1765009305",
+        "requestId": "1765009305_313",
+        "amount": "1975000",
+        "orderInfo": "WeGo - BK2025120693345B - Biệt thự trung tâm - Sơn La #427",
+        "orderType": "momo_wallet",
+        "transId": "4624069104",
+        "resultCode": "0",
+        "message": "Thành công.",
+        "payType": "aio_qr",
+        "responseTime": "1765011718498",
+        "extraData": "{\"booking_id\":313,\"booking_code\":\"BK2025120693345B\",\"user_name\":\"huytrong13\",\"user_email\":\"hytrongbeou@gmail.com\"}",
+        "signature": "f62bfda9718b108ee7044aa01b7c273affa8b25d57428e84fc8f03e942ce75fd"
+    },
+    "session_user_id": "86"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:02:02] Verify signature
+Data: {
+    "isValid": true,
+    "resultCode": "0"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:02:02] Return URL - Payment successful
+Data: {
+    "bookingId": 313,
+    "orderId": "WEGO_313_1765009305",
+    "transId": "4624069104",
+    "amount": "1975000"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:02:43] Create payment request
+Data: {
+    "bookingId": 314,
+    "orderId": "WEGO_314_1765011763",
+    "amount": 2020000
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:02:43] Create payment response
+Data: {
+    "resultCode": 0,
+    "message": "Thành công."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:03:35] Return URL accessed
+Data: {
+    "GET": {
+        "partnerCode": "MOMOBKUN20180529",
+        "orderId": "WEGO_314_1765011763",
+        "requestId": "1765011763_314",
+        "amount": "2020000",
+        "orderInfo": "WeGo - BK202512063499A3 - Homestay có ban công - Cao Bằng #173",
+        "orderType": "momo_wallet",
+        "transId": "4624079048",
+        "resultCode": "0",
+        "message": "Thành công.",
+        "payType": "aio_qr",
+        "responseTime": "1765011812808",
+        "extraData": "{\"booking_id\":314,\"booking_code\":\"BK202512063499A3\",\"user_name\":\"huytrong13\",\"user_email\":\"hytrongbeou@gmail.com\"}",
+        "signature": "41090cb28cb6046e79e9865144f29c15d75f2e4fe62ff99224f7a066c112cabc"
+    },
+    "session_user_id": "86"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:03:35] Verify signature
+Data: {
+    "isValid": true,
+    "resultCode": "0"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:03:35] Return URL - Payment successful
+Data: {
+    "bookingId": 314,
+    "orderId": "WEGO_314_1765011763",
+    "transId": "4624079048",
+    "amount": "2020000"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:04:41] Create payment request
+Data: {
+    "bookingId": 315,
+    "orderId": "WEGO_315_1765011881",
+    "amount": 2185000
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:04:42] Create payment response
+Data: {
+    "resultCode": 0,
+    "message": "Thành công."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:07:02] Return URL accessed
+Data: {
+    "GET": {
+        "partnerCode": "MOMOBKUN20180529",
+        "orderId": "WEGO_315_1765011881",
+        "requestId": "1765011881_315",
+        "amount": "2185000",
+        "orderInfo": "WeGo - BK202512069E5566 - Studio trung tâm - Hà Nội #32",
+        "orderType": "momo_wallet",
+        "transId": "1765012018010",
+        "resultCode": "1006",
+        "message": "Giao dịch bị từ chối bởi người dùng.",
+        "payType": "",
+        "responseTime": "1765012019287",
+        "extraData": "{\"booking_id\":315,\"booking_code\":\"BK202512069E5566\",\"user_name\":\"huytrong13\",\"user_email\":\"hytrongbeou@gmail.com\"}",
+        "signature": "c43d812200b6e207a228d860cfe863ff79e4a0895076543e5b7d6f81f08b7d68"
+    },
+    "session_user_id": "86"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:07:02] Verify signature
+Data: {
+    "isValid": true,
+    "resultCode": "1006"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:07:02] Return URL - Payment failed
+Data: {
+    "bookingId": 315,
+    "orderId": "WEGO_315_1765011881",
+    "resultCode": "1006",
+    "message": "Giao dịch bị từ chối bởi người dùng."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:07:02] Return URL accessed
+Data: {
+    "GET": {
+        "partnerCode": "MOMOBKUN20180529",
+        "orderId": "WEGO_315_1765011881",
+        "requestId": "1765011881_315",
+        "amount": "2185000",
+        "orderInfo": "WeGo - BK202512069E5566 - Studio trung tâm - Hà Nội #32",
+        "orderType": "momo_wallet",
+        "transId": "1765012018010",
+        "resultCode": "1006",
+        "message": "Giao dịch bị từ chối bởi người dùng.",
+        "payType": "",
+        "responseTime": "1765012019287",
+        "extraData": "{\"booking_id\":315,\"booking_code\":\"BK202512069E5566\",\"user_name\":\"huytrong13\",\"user_email\":\"hytrongbeou@gmail.com\"}",
+        "signature": "c43d812200b6e207a228d860cfe863ff79e4a0895076543e5b7d6f81f08b7d68"
+    },
+    "session_user_id": "86"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:07:02] Verify signature
+Data: {
+    "isValid": true,
+    "resultCode": "1006"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:07:02] Return URL - Payment failed
+Data: {
+    "bookingId": 315,
+    "orderId": "WEGO_315_1765011881",
+    "resultCode": "1006",
+    "message": "Giao dịch bị từ chối bởi người dùng."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:07:13] Create payment request
+Data: {
+    "bookingId": "315",
+    "orderId": "WEGO_315_1765012033",
+    "amount": 2185000
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:07:13] Create payment response
+Data: {
+    "resultCode": 0,
+    "message": "Thành công."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:07:15] Create payment request
+Data: {
+    "bookingId": "315",
+    "orderId": "WEGO_315_1765012035",
+    "amount": 2185000
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:07:15] Create payment response
+Data: {
+    "resultCode": 0,
+    "message": "Thành công."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:09:43] Create payment request
+Data: {
+    "bookingId": 316,
+    "orderId": "WEGO_316_1765012183",
+    "amount": 2445000
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:09:43] Create payment response
+Data: {
+    "resultCode": 0,
+    "message": "Thành công."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:19:09] Return URL accessed
+Data: {
+    "GET": {
+        "partnerCode": "MOMOBKUN20180529",
+        "orderId": "WEGO_316_1765012183",
+        "requestId": "1765012183_316",
+        "amount": "2445000",
+        "orderInfo": "WeGo - BK202512067589A6 - Nhà riêng sân vườn - Sơn La #415",
+        "orderType": "momo_wallet",
+        "transId": "4624061470",
+        "resultCode": "0",
+        "message": "Thành công.",
+        "payType": "aio_qr",
+        "responseTime": "1765012746243",
+        "extraData": "{\"booking_id\":316,\"booking_code\":\"BK202512067589A6\",\"user_name\":\"huytrong13\",\"user_email\":\"hytrongbeou@gmail.com\"}",
+        "signature": "3a273fbfd8138c8ddc392d7bff24749d53450c0b81248d67e3814550f356bb5e"
+    },
+    "session_user_id": "86"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:19:09] Verify signature
+Data: {
+    "isValid": true,
+    "resultCode": "0"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:19:09] Return URL - Payment successful
+Data: {
+    "bookingId": 316,
+    "orderId": "WEGO_316_1765012183",
+    "transId": "4624061470",
+    "amount": "2445000"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 10:19:09] Return URL - Booking status updated to confirmed
+Data: {
+    "bookingId": 316,
+    "transId": "4624061470"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 12:28:30] Create payment request
+Data: {
+    "bookingId": 317,
+    "orderId": "WEGO_317_1765020510",
+    "amount": 1740000
+}
+--------------------------------------------------------------------------------
+[2025-12-06 12:28:31] Create payment response
+Data: {
+    "resultCode": 0,
+    "message": "Thành công."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 12:30:38] Return URL accessed
+Data: {
+    "GET": {
+        "partnerCode": "MOMOBKUN20180529",
+        "orderId": "WEGO_317_1765020510",
+        "requestId": "1765020510_317",
+        "amount": "1740000",
+        "orderInfo": "WeGo - BK20251206EBF359 - Homestay có ban công - Sơn La #434",
+        "orderType": "momo_wallet",
+        "transId": "1765020635500",
+        "resultCode": "1006",
+        "message": "Giao dịch bị từ chối bởi người dùng.",
+        "payType": "",
+        "responseTime": "1765020635708",
+        "extraData": "{\"booking_id\":317,\"booking_code\":\"BK20251206EBF359\",\"user_name\":\"huytrong13\",\"user_email\":\"hytrongbeou@gmail.com\"}",
+        "signature": "d0f87fd6e61f1aa7f076eae1606f7b175ad2a6384abaa77183d39d2545ae7e23"
+    },
+    "session_user_id": "86"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 12:30:38] Verify signature
+Data: {
+    "isValid": true,
+    "resultCode": "1006"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 12:30:38] Return URL - Payment failed
+Data: {
+    "bookingId": 317,
+    "orderId": "WEGO_317_1765020510",
+    "resultCode": "1006",
+    "message": "Giao dịch bị từ chối bởi người dùng."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 12:35:32] Create payment request
+Data: {
+    "bookingId": 318,
+    "orderId": "WEGO_318_1765020932",
+    "amount": 1915000
+}
+--------------------------------------------------------------------------------
+[2025-12-06 12:35:33] Create payment response
+Data: {
+    "resultCode": 0,
+    "message": "Thành công."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 13:29:48] Return URL accessed
+Data: {
+    "GET": {
+        "partnerCode": "MOMOBKUN20180529",
+        "orderId": "WEGO_318_1765020932",
+        "requestId": "1765020932_318",
+        "amount": "1915000",
+        "orderInfo": "WeGo - BK202512064D8905 - Homestay có ban công - Cao Bằng #173",
+        "orderType": "momo_wallet",
+        "transId": "4624173900",
+        "resultCode": "0",
+        "message": "Thành công.",
+        "payType": "aio_qr",
+        "responseTime": "1765024185294",
+        "extraData": "{\"booking_id\":318,\"booking_code\":\"BK202512064D8905\",\"user_name\":\"huytrong13\",\"user_email\":\"hytrongbeou@gmail.com\"}",
+        "signature": "403dc8f8ad418894962b78862dd509968ffbee92cfff734f826b706fd622b982"
+    },
+    "session_user_id": "86"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 13:29:48] Verify signature
+Data: {
+    "isValid": true,
+    "resultCode": "0"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 13:29:48] Return URL - Payment successful
+Data: {
+    "bookingId": 318,
+    "orderId": "WEGO_318_1765020932",
+    "transId": "4624173900",
+    "amount": "1915000"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 13:29:48] Return URL - Booking status updated to confirmed
+Data: {
+    "bookingId": 318,
+    "transId": "4624173900"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 15:17:30] Create payment request
+Data: {
+    "bookingId": 319,
+    "orderId": "WEGO_319_1765030650",
+    "amount": 1760000
+}
+--------------------------------------------------------------------------------
+[2025-12-06 15:17:31] Create payment response
+Data: {
+    "resultCode": 0,
+    "message": "Thành công."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 15:27:41] Return URL accessed
+Data: {
+    "GET": {
+        "partnerCode": "MOMOBKUN20180529",
+        "orderId": "WEGO_319_1765030650",
+        "requestId": "1765030650_319",
+        "amount": "1760000",
+        "orderInfo": "WeGo - BK20251206ADF9C6 - Homestay có ban công - Cao Bằng #173",
+        "orderType": "momo_wallet",
+        "transId": "4624229218",
+        "resultCode": "0",
+        "message": "Thành công.",
+        "payType": "aio_qr",
+        "responseTime": "1765031258362",
+        "extraData": "{\"booking_id\":319,\"booking_code\":\"BK20251206ADF9C6\",\"user_name\":\"huytrong13\",\"user_email\":\"hytrongbeou@gmail.com\"}",
+        "signature": "ecd1f98a49d8b96b92fb40752ed4e8a4bbd2b98b937083bd418bb0282b52253f"
+    },
+    "session_user_id": "86"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 15:27:41] Verify signature
+Data: {
+    "isValid": true,
+    "resultCode": "0"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 15:27:41] Return URL - Payment successful
+Data: {
+    "bookingId": 319,
+    "orderId": "WEGO_319_1765030650",
+    "transId": "4624229218",
+    "amount": "1760000"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 15:27:41] Return URL - Booking status updated to confirmed
+Data: {
+    "bookingId": 319,
+    "transId": "4624229218"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 15:41:19] Create payment request
+Data: {
+    "bookingId": 320,
+    "orderId": "WEGO_320_1765032079",
+    "amount": 1055000
+}
+--------------------------------------------------------------------------------
+[2025-12-06 15:41:21] Create payment response
+Data: {
+    "resultCode": 0,
+    "message": "Thành công."
+}
+--------------------------------------------------------------------------------
+[2025-12-06 15:46:32] Return URL accessed
+Data: {
+    "GET": {
+        "partnerCode": "MOMOBKUN20180529",
+        "orderId": "WEGO_320_1765032079",
+        "requestId": "1765032079_320",
+        "amount": "1055000",
+        "orderInfo": "WeGo - BK20251206F1AADC - Căn hộ gần biển - Sơn La #405",
+        "orderType": "momo_wallet",
+        "transId": "4624250489",
+        "resultCode": "0",
+        "message": "Thành công.",
+        "payType": "aio_qr",
+        "responseTime": "1765032389906",
+        "extraData": "{\"booking_id\":320,\"booking_code\":\"BK20251206F1AADC\",\"user_name\":\"huytrong13\",\"user_email\":\"hytrongbeou@gmail.com\"}",
+        "signature": "0af171183efa95258bac49d2c4ec512123cde14f594c1a1397a5fd01dbef8dea"
+    },
+    "session_user_id": "86"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 15:46:32] Verify signature
+Data: {
+    "isValid": true,
+    "resultCode": "0"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 15:46:32] Return URL - Payment successful
+Data: {
+    "bookingId": 320,
+    "orderId": "WEGO_320_1765032079",
+    "transId": "4624250489",
+    "amount": "1055000"
+}
+--------------------------------------------------------------------------------
+[2025-12-06 15:46:32] Return URL - Booking status updated to confirmed
+Data: {
+    "bookingId": 320,
+    "transId": "4624250489"
+}
+--------------------------------------------------------------------------------
