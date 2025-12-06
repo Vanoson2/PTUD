@@ -115,11 +115,11 @@ class mBooking {
             
             $code = $this->generateBookingCode();
             
-            // ⚠️ Tạo booking với status='pending' cho đến khi thanh toán thành công
+            // Tạo booking với status='confirmed'
             $strInsert = "INSERT INTO bookings 
                          (code, user_id, listing_id, check_in, check_out, guests, total_amount, note, status)
                          VALUES 
-                         ('$code', $userId, $listingId, '$checkIn', '$checkOut', $guests, $totalAmount, $note, 'pending')";
+                         ('$code', $userId, $listingId, '$checkIn', '$checkOut', $guests, $totalAmount, $note, 'confirmed')";
             
             if($conn->query($strInsert)){
                 // Return booking_id vừa tạo

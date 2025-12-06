@@ -155,9 +155,18 @@ class cBooking {
             $this->cAddBookingServices($bookingId, $servicesData);
         }
 
+        // Get booking code
+        $bookingResult = $this->cGetBookingById($bookingId);
+        $bookingCode = '';
+        if ($bookingResult && $bookingResult->num_rows > 0) {
+            $booking = $bookingResult->fetch_assoc();
+            $bookingCode = $booking['code'];
+        }
+
         return [
             'success' => true,
             'booking_id' => $bookingId,
+            'booking_code' => $bookingCode,
             'message' => 'Đơn đặt chỗ đã được tạo thành công',
             'redirect' => null
         ];

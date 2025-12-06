@@ -48,6 +48,13 @@ if ($booking['user_id'] != $userId) {
     exit;
 }
 
+// Check if booking is cancelled
+if ($booking['status'] === 'cancelled') {
+    $_SESSION['error'] = 'Đơn đặt chỗ đã bị hủy, không thể thanh toán';
+    header('Location: my-bookings.php');
+    exit;
+}
+
 // Check if booking is already paid
 if ($booking['payment_status'] === 'paid') {
     $_SESSION['success'] = 'Đơn đặt chỗ này đã được thanh toán';
@@ -55,9 +62,9 @@ if ($booking['payment_status'] === 'paid') {
     exit;
 }
 
-// Check if booking is cancelled
-if ($booking['status'] === 'cancelled') {
-    $_SESSION['error'] = 'Đơn đặt chỗ đã bị hủy, không thể thanh toán';
+// Check if payment_status is not unpaid (e.g., pending means waiting for MoMo callback)
+if ($booking['payment_status'] !== 'unpaid' && $booking['payment_status'] !== 'pending') {
+    $_SESSION['info'] = 'Trạng thái thanh toán: ' . $booking['payment_status'];
     header('Location: my-bookings.php');
     exit;
 }

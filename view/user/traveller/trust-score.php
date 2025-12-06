@@ -14,11 +14,14 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 $currentPage = 'trust-score'; // For sidebar active state
-$rootPath = '../../';
+$rootPath = '../../../';
 $showVerifyButton = false;
 
-// Lấy thông tin điểm tín nhiệm
+// Lấy thông tin user
 $cUser = new cUser();
+$user = $cUser->cGetUserById($userId);
+
+// Lấy thông tin điểm tín nhiệm
 $scoreResult = $cUser->cGetUserScore($userId);
 $historyResult = $cUser->cGetScoreHistory($userId, 10);
 $suggestionsResult = $cUser->cGetImprovementSuggestions($userId);
@@ -210,8 +213,8 @@ $suggestions = $suggestionsResult['success'] ? $suggestionsResult['data'] : [];
         </div>
         
         <div class="score-level" style="background: <?php echo $scoreData['level']['color']; ?>20; color: <?php echo $scoreData['level']['color']; ?>">
-          <span class="level-badge"><?php echo $scoreData['level']['badge']; ?></span>
-          <span><?php echo $scoreData['level']['name']; ?></span>
+          <span class="level-badge"><?php echo $scoreData['level']['icon']; ?></span>
+          <span><?php echo $scoreData['level']['level']; ?></span>
         </div>
         
         <p style="margin-top: 15px; color: #666;">
@@ -247,8 +250,8 @@ $suggestions = $suggestionsResult['success'] ? $suggestionsResult['data'] : [];
           <?php foreach ($suggestions as $suggestion): ?>
             <li class="suggestion-item">
               <span class="icon">⭐</span>
-              <span class="text"><?php echo htmlspecialchars($suggestion['description']); ?></span>
-              <span class="points">+<?php echo $suggestion['points']; ?></span>
+              <span class="text"><?php echo htmlspecialchars($suggestion['action']); ?></span>
+              <span class="points"><?php echo $suggestion['points']; ?></span>
             </li>
           <?php endforeach; ?>
         </ul>

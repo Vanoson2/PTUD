@@ -8,7 +8,7 @@ $rootPath = '../../../';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-  header('Location: ' . $rootPath . 'view/user/traveller/login.php');
+  header('Location: ../traveller/login.php');
   exit();
 }
 
@@ -18,14 +18,14 @@ $cHost = new cHost();
 $isHost = $cHost->cIsUserHost($_SESSION['user_id']);
 
 if (!$isHost) {
-  header('Location: ' . $rootPath . 'view/user/host/become-host.php');
+  header('Location: become-host.php');
   exit();
 }
 
 // Get HOST info
 $hostInfo = $cHost->cGetHostByUserId($_SESSION['user_id']);
 if (!$hostInfo) {
-  header('Location: ' . $rootPath . 'view/user/host/become-host.php');
+  header('Location: become-host.php');
   exit();
 }
 

@@ -68,7 +68,7 @@ $totalPrice = $listing['price'] * $nights;
 ?>
 <?php include __DIR__ . '/../../partials/header.php'; ?>
 <!-- Page-specific CSS -->
-<link rel="stylesheet" href="../../../view/css/traveller-detail-listing.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="../../css/traveller-detail-listing.css?v=<?php echo time(); ?>">
 
 <div class="detail-container">
   <!-- Breadcrumb -->

@@ -39,7 +39,7 @@
           
           <?php if (isset($showVerifyButton) && $showVerifyButton): ?>
           <div class="verify-email-cta">
-            <a href="<?php echo $rootPath ?? '../'; ?>view/user/traveller/verify-code.php?user_id=<?php echo $userId; ?>&email=<?php echo urlencode($user['email']); ?>&auto_send=1" 
+            <a href="./verify-code.php?user_id=<?php echo $userId; ?>&email=<?php echo urlencode($user['email']); ?>&auto_send=1" 
                class="verify-email-button">
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
@@ -53,7 +53,7 @@
       </div>
       
       <nav class="profile-nav">
-        <a href="<?php echo $rootPath ?? '../'; ?>view/user/traveller/profile.php" 
+        <a href="./profile.php" 
            class="nav-item <?php echo ($currentPage ?? '') === 'profile' ? 'active' : ''; ?>">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
@@ -61,7 +61,7 @@
           Thông tin cá nhân
         </a>
         
-        <a href="<?php echo $rootPath ?? '../'; ?>view/user/traveller/my-bookings.php" 
+        <a href="./my-bookings.php" 
            class="nav-item <?php echo ($currentPage ?? '') === 'bookings' ? 'active' : ''; ?>">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
             <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
@@ -70,7 +70,7 @@
           Đơn đặt của tôi
         </a>
         
-        <a href="<?php echo $rootPath ?? '../'; ?>view/user/traveller/trust-score.php" 
+        <a href="./trust-score.php" 
            class="nav-item <?php echo ($currentPage ?? '') === 'trust-score' ? 'active' : ''; ?>">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
@@ -78,7 +78,7 @@
           Điểm Tín Nhiệm
         </a>
         
-        <a href="<?php echo $rootPath ?? '../'; ?>view/user/traveller/logout.php" class="nav-item">
+        <a href="./logout.php" class="nav-item">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
           </svg>

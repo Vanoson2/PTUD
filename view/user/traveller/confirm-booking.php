@@ -222,9 +222,9 @@ $subtotal = $listing['price'] * $nights;
             <input class="form-check-input" type="checkbox" id="agreeTerms" required>
             <label class="form-check-label small" for="agreeTerms">
               Bằng cách nhấn nút bên dưới, tôi đồng ý với 
-              <a href="/view/static/terms.php" target="_blank">Điều khoản & Điều kiện</a>, 
-              <a href="/view/static/privacy.php" target="_blank">Chính sách bảo mật</a> và 
-              <a href="/view/static/cancellation.php" target="_blank">Chính sách hủy đặt chỗ</a>.
+              <a href="../../static/terms.php" target="_blank">Điều khoản & Điều kiện</a>, 
+              <a href="../../static/privacy.php" target="_blank">Chính sách bảo mật</a> và 
+              <a href="../../static/cancellation.php" target="_blank">Chính sách hủy đặt chỗ</a>.
             </label>
           </div>
 

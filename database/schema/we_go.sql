@@ -304,10 +304,6 @@ CREATE TABLE `bookings` (
   `check_in` DATE NOT NULL,
   `check_out` DATE NOT NULL,
   `status` ENUM('confirmed','cancelled','completed') NOT NULL DEFAULT 'confirmed',
-  `payment_method` ENUM('momo','cash','bank_transfer') DEFAULT NULL,
-  `payment_status` ENUM('unpaid','pending','paid','refunded') NOT NULL DEFAULT 'unpaid',
-  `payment_id` VARCHAR(50) DEFAULT NULL,
-  `paid_at` DATETIME DEFAULT NULL,
   `total_amount` DECIMAL(12,2) NOT NULL,
   `cancelled_at` DATETIME DEFAULT NULL,
   `cancelled_by` ENUM('user','admin','system') DEFAULT NULL,
@@ -321,8 +317,6 @@ CREATE TABLE `bookings` (
   KEY `ix_booking_listing_dates` (`listing_id`,`check_in`,`check_out`),
   KEY `ix_booking_user_status` (`user_id`,`status`),
   KEY `ix_booking_rated` (`is_rated`),
-  KEY `ix_booking_payment_status` (`payment_status`),
-  KEY `ix_booking_payment_id` (`payment_id`),
   CONSTRAINT `fk_booking_listing` FOREIGN KEY (`listing_id`) REFERENCES `listing` (`listing_id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_booking_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -381,60 +375,6 @@ CREATE TABLE `support_message` (
   CONSTRAINT `fk_msg_ticket` FOREIGN KEY (`ticket_id`) REFERENCES `support_ticket` (`ticket_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_msg_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_msg_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Bảng payment_transaction để lưu lịch sử giao dịch MoMo
-CREATE TABLE `payment_transaction` (
-  `transaction_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `booking_id` BIGINT UNSIGNED NOT NULL,
-  `partner_code` VARCHAR(50) NOT NULL DEFAULT 'MOMOBKUN20180529',
-  `order_id` VARCHAR(50) NOT NULL,
-  `request_id` VARCHAR(50) NOT NULL,
-  `amount` DECIMAL(12,2) NOT NULL,
-  `order_info` VARCHAR(255) NOT NULL,
-  `order_type` VARCHAR(50) DEFAULT 'momo_wallet',
-  `trans_id` VARCHAR(50) DEFAULT NULL,
-  `result_code` INT DEFAULT NULL,
-  `message` VARCHAR(500) DEFAULT NULL,
-  `pay_type` VARCHAR(50) DEFAULT NULL,
-  `response_time` BIGINT DEFAULT NULL,
-  `extra_data` TEXT DEFAULT NULL,
-  `signature` VARCHAR(255) DEFAULT NULL,
-  `payment_url` VARCHAR(500) DEFAULT NULL,
-  `deeplink` VARCHAR(500) DEFAULT NULL,
-  `qr_code_url` VARCHAR(500) DEFAULT NULL,
-  `status` ENUM('pending','success','failed','expired') NOT NULL DEFAULT 'pending',
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`transaction_id`),
-  UNIQUE KEY `uq_order_id` (`order_id`),
-  UNIQUE KEY `uq_booking_transaction` (`booking_id`),
-  KEY `ix_trans_status` (`status`),
-  KEY `ix_trans_result` (`result_code`),
-  CONSTRAINT `fk_trans_booking` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`booking_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE `payment_logs` (
-  `log_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `booking_id` BIGINT UNSIGNED DEFAULT NULL,
-  `transaction_id` BIGINT UNSIGNED DEFAULT NULL,
-  `event_type` ENUM('init','ipn_received','ipn_verified','return_received','return_verified','retry','query','error') NOT NULL,
-  `request_data` JSON DEFAULT NULL,
-  `response_data` JSON DEFAULT NULL,
-  `result_code` INT DEFAULT NULL,
-  `error_message` TEXT DEFAULT NULL,
-  `ip_address` VARCHAR(45) DEFAULT NULL,
-  `user_agent` VARCHAR(500) DEFAULT NULL,
-  `session_id` VARCHAR(100) DEFAULT NULL,
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`log_id`),
-  KEY `ix_logs_booking` (`booking_id`),
-  KEY `ix_logs_transaction` (`transaction_id`),
-  KEY `ix_logs_event_time` (`event_type`, `created_at`),
-  KEY `ix_logs_result` (`result_code`),
-  KEY `ix_logs_created_at` (`created_at` DESC),
-  CONSTRAINT `fk_logs_booking` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`booking_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_logs_transaction` FOREIGN KEY (`transaction_id`) REFERENCES `payment_transaction` (`transaction_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================

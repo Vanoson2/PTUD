@@ -8,7 +8,7 @@ $rootPath = '../../../';
 
 // Check if user is logged in and is a host
 if (!isset($_SESSION['user_id'])) {
-  header('Location: ' . $rootPath . 'view/user/traveller/login.php');
+  header('Location: ../traveller/login.php');
   exit();
 }
 
@@ -20,7 +20,7 @@ $cReport = new cReport();
 
 $isHost = $cHost->cIsUserHost($_SESSION['user_id']);
 if (!$isHost) {
-  header('Location: ' . $rootPath . 'view/user/host/become-host.php');
+  header('Location: become-host.php');
   exit();
 }
 
@@ -145,7 +145,7 @@ if ($ratingsDistribution && $ratingsDistribution->num_rows > 0) {
                 <tr>
                   <td><?php echo $index++; ?></td>
                   <td class="listing-name">
-                    <a href="../../../view/user/traveller/detailListing.php?listing_id=<?php echo $listing['listing_id']; ?>" target="_blank">
+                    <a href="../traveller/detailListing.php?listing_id=<?php echo $listing['listing_id']; ?>" target="_blank">
                       <?php echo htmlspecialchars($listing['title']); ?>
                     </a>
                   </td>

@@ -214,7 +214,7 @@ $totalCount = count($cAdmin->cGetAllListings(null));
                     ?>
                     <img src="<?php echo htmlspecialchars($displayPath); ?>" 
                          alt="Cover" class="listing-thumb"
-                         onerror="this.src='/public/img/placeholder.jpg'; this.onerror=null;">
+                         onerror="this.src='../../../public/img/placeholder.jpg'; this.onerror=null;">
                   <?php else: ?>
                     <div class="no-image">📷</div>
                   <?php endif; ?>

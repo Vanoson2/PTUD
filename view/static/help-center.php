@@ -71,7 +71,8 @@ if (session_status() === PHP_SESSION_NONE) {
                   <ul>
                     <li>Thẻ tín dụng/ghi nợ (Visa, Mastercard, JCB)</li>
                     <li>Chuyển khoản ngân hàng</li>
-                    <li>Ví điện tử (MoMo, ZaloPay, VNPay)</li>
+                    <li>Chuyển khoản ngân hàng</li>
+                    <li>Thanh toán trực tiếp</li>
                     <li>Thanh toán khi nhận phòng (tùy chỗ ở)</li>
                   </ul>
                 </div>
