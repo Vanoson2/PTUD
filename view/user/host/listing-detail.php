@@ -8,7 +8,7 @@ $rootPath = '../../../';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-  header('Location: ../traveller/login.php');
+  header('Location: ' . $rootPath . 'view/user/traveller/login.php');
   exit();
 }
 
@@ -18,14 +18,14 @@ $cHost = new cHost();
 $isHost = $cHost->cIsUserHost($_SESSION['user_id']);
 
 if (!$isHost) {
-  header('Location: become-host.php');
+  header('Location: ' . $rootPath . 'view/user/host/become-host.php');
   exit();
 }
 
 // Get HOST info
 $hostInfo = $cHost->cGetHostByUserId($_SESSION['user_id']);
 if (!$hostInfo) {
-  header('Location: become-host.php');
+  header('Location: ' . $rootPath . 'view/user/host/become-host.php');
   exit();
 }
 
@@ -63,7 +63,7 @@ include_once __DIR__ . '/../../partials/header.php';
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chi tiết phòng - <?php echo htmlspecialchars($listing['title']); ?></title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="<?php echo $rootPath; ?>view/css/host-listing-detail.css?v=<?php echo time(); ?>">
+  <link rel="stylesheet" href="../../css/host-listing-detail.css?v=<?php echo time(); ?>">
 </head>
 <body>
 

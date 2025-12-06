@@ -39,7 +39,7 @@
           
           <?php if (isset($showVerifyButton) && $showVerifyButton): ?>
           <div class="verify-email-cta">
-            <a href="./verify-code.php?user_id=<?php echo $userId; ?>&email=<?php echo urlencode($user['email']); ?>&auto_send=1" 
+            <a href="<?php echo $rootPath ?? '../'; ?>view/user/traveller/verify-code.php?user_id=<?php echo $userId; ?>&email=<?php echo urlencode($user['email']); ?>&auto_send=1" 
                class="verify-email-button">
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>

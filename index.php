@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'Lâm Đồng' => 'LamDong.jpg',
         'Lạng Sơn' => 'LangSon.jpg',
         'Lào Cai' => 'LaoCai.jpg',
-        'Nghệ An' => 'NgheAn.jpg',
+        'NghềEAn' => 'NgheAn.jpg',
         'Ninh Bình' => 'NinhBinh.jpg',
         'Phú Thọ' => 'PhuTho.jpg',
         'Quảng Ngãi' => 'QuangNgai.jpg',
@@ -200,7 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
         'Thái Nguyên' => 'ThaiNguyen.png',
         'Thanh Hóa' => 'ThanhHoa.jpg',
         'Thành phố Hồ Chí Minh' => 'TP.HCM.jpg',
-        'Hồ Chí Minh' => 'TP.HCM.jpg',
         'Tuyên Quang' => 'TuyenQuang.jpg',
         'Vĩnh Long' => 'VinhLong.jpg',
       ];
@@ -236,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Tạo title viết hoa
       $title = mb_strtoupper($provinceName, 'UTF-8');
       
-      // Hiển thị: "X chỗ ở - Đã có hơn Y đơn đặt"
+      // Hiển thị "X chỗ ở - Đã có hơn Y đơn đặt"
       $countText = number_format($totalListings) . ' chỗ ở - Đã có hơn ' . number_format($totalBookings) . ' đơn đặt';
       
       // Tạo URL với tham số location, sử dụng ngày mặc định, thêm source=featured
@@ -337,7 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
           echo "</a>";
         } else {
           // Nếu không tìm thấy listing, hiển thị ảnh category với thông báo
-          // Encode URL để xử lý khoảng trắng và ký tự đặc biệt
+          // Encode URL đềExử lý khoảng trắng và ký tự đặc biệt
           $imageUrl = str_replace(' ', '%20', $category['image']);
           
           echo "<div class='feature-card'>";
@@ -365,7 +364,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <img src="./public/img/home/host.jpg" alt="Promo 1">
       <div class="overlay"></div>
       <div class="promo-content">
-        <h3 class="promo-title">NHIỀU KHÁCH BIẾT ĐẾN<br>CHỖ Ở BẠN HƠN?</h3>
+        <h3 class="promo-title">NHIỀU KHÁCH BIẾT ĐẾN<br>CHỐ Ở CỦA BẠN HƠN?</h3>
         <a href="./view/user/host/become-host.php" class="promo-btn" style="display: inline-block; text-decoration: none;">Trở thành đối tác với chúng tôi ngay!</a>
       </div>
     </div>

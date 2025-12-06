@@ -1,4 +1,19 @@
   </main>
+  <?php
+  // Auto-detect root path based on current file location
+  if (!isset($rootPath)) {
+    $currentPath = $_SERVER['PHP_SELF'];
+    if (strpos($currentPath, '/view/user/') !== false) {
+      $rootPath = '../../../';
+    } elseif (strpos($currentPath, '/view/static/') !== false) {
+      $rootPath = '../../';
+    } elseif (strpos($currentPath, '/view/') !== false) {
+      $rootPath = '../../';
+    } else {
+      $rootPath = './';
+    }
+  }
+  ?>
   <footer class="site-footer bg-light mt-5">
     <div class="container py-5">
       <div class="row g-5">
