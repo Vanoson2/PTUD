@@ -100,7 +100,9 @@ $subtotal = $listing['price'] * $nights;
   <title>Xác nhận đơn đặt - WEGO</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../../css/shared-style.css">
+  <link rel="stylesheet" href="../../css/shared-style.css?v=<?php echo time(); ?>">
+  <link rel="stylesheet" href="../../css/components-header.css?v=<?php echo time(); ?>">
+  <link rel="stylesheet" href="../../css/confirm-booking.css?v=<?php echo time(); ?>">
 </head>
 <body>
   <?php include(__DIR__ . '/../../partials/header.php'); ?>
@@ -112,6 +114,14 @@ $subtotal = $listing['price'] * $nights;
     </a>
 
     <h1 class="mb-4">XÁC NHẬN ĐƠN ĐẶT CỦA BẠN</h1>
+
+    <?php if (isset($_SESSION['error'])): ?>
+    <div class="alert alert-danger">
+      <i class="fa-solid fa-exclamation-circle"></i>
+      <strong>Lỗi!</strong> <?php echo htmlspecialchars($_SESSION['error']); ?>
+      <?php unset($_SESSION['error']); ?>
+    </div>
+    <?php endif; ?>
 
     <?php if ($hasUserConflict): ?>
     <div class="alert alert-warning">
@@ -211,11 +221,10 @@ $subtotal = $listing['price'] * $nights;
           <div class="form-check mb-3 mt-4">
             <input class="form-check-input" type="checkbox" id="agreeTerms" required>
             <label class="form-check-label small" for="agreeTerms">
-              By selecting the button below, I agree to the 
-              <a href="#">Property Rules</a>, 
-              <a href="#">Terms and Conditions</a>, 
-              <a href="#">Privacy Policy</a> and 
-              <a href="#">COVID-19 Safety Requirements</a>.
+              Bằng cách nhấn nút bên dưới, tôi đồng ý với 
+              <a href="/view/static/terms.php" target="_blank">Điều khoản & Điều kiện</a>, 
+              <a href="/view/static/privacy.php" target="_blank">Chính sách bảo mật</a> và 
+              <a href="/view/static/cancellation.php" target="_blank">Chính sách hủy đặt chỗ</a>.
             </label>
           </div>
 

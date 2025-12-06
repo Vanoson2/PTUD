@@ -16,6 +16,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Get POST data
 $userId = getCurrentUserId();
+
+// Validate user exists in database
+$cUser = new cUser();
+$user = $cUser->cGetUserById($userId);
+if (!$user) {
+  // User không tồn tại trong database - logout và redirect
+  session_destroy();
+  header('Location: ./login.php?error=session_expired&message=' . urlencode('Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.'));
+  exit;
+}
+
 $listingId = $_POST['listing_id'] ?? 0;
 $checkin = $_POST['checkin'] ?? '';
 $checkout = $_POST['checkout'] ?? '';
@@ -75,13 +86,14 @@ $paymentResult = $cPayment->cInitiateMoMoPayment(
 );
 
 if (!$paymentResult['success']) {
-  // Nếu không thể khởi tạo thanh toán, log error nhưng vẫn cho phép đặt
-  error_log('MoMo payment init failed: ' . $paymentResult['message']);
+  // Nếu không thể khởi tạo thanh toán, báo lỗi rõ ràng
+  error_log('MoMo payment init failed: ' . ($paymentResult['message'] ?? 'Unknown error'));
   
-  $_SESSION['payment_init_error'] = $paymentResult['message'];
+  // Hiển thị lỗi chi tiết cho user
+  $_SESSION['error'] = 'Không thể khởi tạo thanh toán MoMo: ' . ($paymentResult['message'] ?? 'Vui lòng thử lại sau');
   
-  // Redirect đến trang booking success với thông báo thanh toán sau
-  header("Location: booking-success.php?booking_id=$bookingId&payment=pending");
+  // Redirect về trang confirm để user thử lại
+  header("Location: confirm-booking.php?listing_id=$listingId&checkin=$checkin&checkout=$checkout&guests=$guests&error=payment_init_failed");
   exit;
 }
 

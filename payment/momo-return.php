@@ -78,6 +78,49 @@ try {
             'amount' => $amount
         ]);
         
+        // Log vào database với transaction_id
+        require_once(__DIR__ . '/../model/mPaymentLog.php');
+        $paymentLogger = new mPaymentLog();
+        $paymentLogger->mLogPaymentEvent(
+            $bookingId,
+            $transId ? intval($transId) : null,
+            'return_received',
+            null,
+            $_GET,
+            $resultCode,
+            null
+        );
+        
+        // CẬP NHẬT BOOKING STATUS (vì IPN không thể gọi localhost)
+        require_once(__DIR__ . '/../model/mPayment.php');
+        $mPayment = new mPayment();
+        
+        // Update transaction status trong payment_transaction
+        $mPayment->mUpdateTransaction(
+            $orderId,
+            $transId,
+            $resultCode,
+            $message,
+            $payType,
+            $responseTime,
+            $extraData
+        );
+        
+        // Update booking payment status và booking status thành 'confirmed'
+        $updateResult = $mPayment->mUpdateBookingPaymentStatus($bookingId, 'paid', 'momo', $transId);
+        
+        if ($updateResult) {
+            logMoMoPayment('Return URL - Booking status updated to confirmed', [
+                'bookingId' => $bookingId,
+                'transId' => $transId
+            ]);
+        } else {
+            logMoMoPayment('Return URL - Failed to update booking status', [
+                'bookingId' => $bookingId,
+                'transId' => $transId
+            ]);
+        }
+        
         // Set session success
         $_SESSION['payment_success'] = true;
         $_SESSION['payment_trans_id'] = $transId;

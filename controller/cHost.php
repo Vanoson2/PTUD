@@ -679,7 +679,3 @@ if (isset($_GET['action'])) {
     }
 }
 ?>
-        exit();
-    }
-}
-?>
