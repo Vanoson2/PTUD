@@ -41,15 +41,17 @@ class mBooking {
             $checkOut = $conn->real_escape_string($checkOut);
             
             // Kiểm tra user có booking nào conflict không (trừ listing hiện tại nếu có)
+            // Logic: Hai khoảng thời gian KHÔNG overlap chỉ khi:
+            // - check_out của booking cũ < check_in mới HOẶC
+            // - check_in của booking cũ > check_out mới
+            // Ngược lại = overlap = conflict
             $strSelect = "SELECT b.booking_id, b.code, b.check_in, b.check_out, l.title as listing_title
                          FROM bookings b
                          INNER JOIN listing l ON b.listing_id = l.listing_id
                          WHERE b.user_id = $userId 
-                         AND b.status = 'confirmed'
-                         AND (
-                            (b.check_in <= '$checkIn' AND b.check_out > '$checkIn')
-                            OR (b.check_in < '$checkOut' AND b.check_out >= '$checkOut')
-                            OR (b.check_in >= '$checkIn' AND b.check_out <= '$checkOut')
+                         AND (b.status = 'confirmed' OR b.status = 'pending')
+                         AND NOT (
+                            b.check_out < '$checkIn' OR b.check_in > '$checkOut'
                          )";
             
             // Nếu có excludeListingId, loại trừ listing đó ra (cho phép đặt cùng chỗ nhiều lần)
@@ -77,14 +79,17 @@ class mBooking {
             $checkOut = $conn->real_escape_string($checkOut);
             
             // Kiểm tra có booking nào ở listing này conflict không
+            // Logic: Hai khoảng thời gian KHÔNG overlap (cho phép đặt) chỉ khi:
+            // - check_out của booking cũ < check_in mới (ví dụ: cũ 7-8, mới 9-10 OK)
+            // - check_in của booking cũ > check_out mới (ví dụ: cũ 10-11, mới 7-8 OK)
+            // Ngược lại = overlap = không cho đặt
+            // LƯU Ý: Nếu booking cũ 8-9 và mới 9-10 thì check_out(9) = check_in(9) -> CONFLICT
             $strSelect = "SELECT booking_id 
                          FROM bookings 
                          WHERE listing_id = $listingId 
-                         AND status = 'confirmed'
-                         AND (
-                            (check_in <= '$checkIn' AND check_out > '$checkIn')
-                            OR (check_in < '$checkOut' AND check_out >= '$checkOut')
-                            OR (check_in >= '$checkIn' AND check_out <= '$checkOut')
+                         AND (status = 'confirmed' OR status = 'pending')
+                         AND NOT (
+                            check_out < '$checkIn' OR check_in > '$checkOut'
                          )
                          LIMIT 1";
             
@@ -216,24 +221,30 @@ class mBooking {
             $today = date('Y-m-d');
             
             if($status == 'upcoming'){
-                // Đơn sắp tới: status = 'confirmed' VÀ check_out >= hôm nay
+                // Đơn sắp tới: (status = 'pending' HOẶC 'confirmed') VÀ check_out >= hôm nay
                 $strSelect = "SELECT b.*, l.title as listing_title, l.address,
+                             b.payment_status, b.payment_method, b.payment_id, b.paid_at,
                              (SELECT file_url FROM listing_image WHERE listing_id = l.listing_id ORDER BY is_cover DESC, sort_order ASC LIMIT 1) as image_url
                              FROM bookings b
                              INNER JOIN listing l ON b.listing_id = l.listing_id
                              WHERE b.user_id = $userId 
-                             AND b.status = 'confirmed'
+                             AND (b.status = 'pending' OR b.status = 'confirmed')
                              AND b.check_out >= '$today'
-                             ORDER BY b.check_in ASC";
+                             ORDER BY 
+                               CASE WHEN b.payment_status = 'unpaid' THEN 0 
+                                    WHEN b.payment_status = 'pending' THEN 1 
+                                    ELSE 2 END,
+                               b.check_in ASC";
             } else {
-                // Đơn đã hoàn thành: status = 'completed' HOẶC (status = 'confirmed' VÀ check_out < hôm nay)
+                // Đơn đã hoàn thành: status = 'completed' HOẶC (status = 'confirmed' VÀ check_out < hôm nay VÀ payment_status = 'paid')
                 $strSelect = "SELECT b.*, l.title as listing_title, l.address, l.listing_id,
+                             b.payment_status, b.payment_method, b.payment_id, b.paid_at,
                              (SELECT file_url FROM listing_image WHERE listing_id = l.listing_id ORDER BY is_cover DESC, sort_order ASC LIMIT 1) as image_url,
                              b.is_rated as user_reviewed
                              FROM bookings b
                              INNER JOIN listing l ON b.listing_id = l.listing_id
                              WHERE b.user_id = $userId 
-                             AND (b.status = 'completed' OR (b.status = 'confirmed' AND b.check_out < '$today'))
+                             AND (b.status = 'completed' OR (b.status = 'confirmed' AND b.check_out < '$today' AND b.payment_status = 'paid'))
                              ORDER BY b.check_out DESC";
             }
             

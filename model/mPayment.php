@@ -8,7 +8,8 @@ include_once(__DIR__ . '/mConnect.php');
 class mPayment {
     
     /**
-     * Tạo transaction record mới
+     * Tạo hoặc cập nhật transaction record (UPSERT)
+     * Nếu booking_id đã có transaction, sẽ cập nhật với order_id mới
      */
     public function mCreateTransaction($bookingId, $orderId, $requestId, $amount, $orderInfo, $paymentUrl, $signature, $extraData = '') {
         $p = new mConnect();
@@ -27,13 +28,42 @@ class mPayment {
         $signature = $conn->real_escape_string($signature);
         $extraData = $conn->real_escape_string($extraData);
         
+        // Sử dụng ON DUPLICATE KEY UPDATE để xử lý retry payment
         $sql = "INSERT INTO payment_transaction 
                 (booking_id, order_id, request_id, amount, order_info, payment_url, signature, extra_data, status)
                 VALUES 
-                ($bookingId, '$orderId', '$requestId', $amount, '$orderInfo', '$paymentUrl', '$signature', '$extraData', 'pending')";
+                ($bookingId, '$orderId', '$requestId', $amount, '$orderInfo', '$paymentUrl', '$signature', '$extraData', 'pending')
+                ON DUPLICATE KEY UPDATE
+                    order_id = '$orderId',
+                    request_id = '$requestId',
+                    amount = $amount,
+                    order_info = '$orderInfo',
+                    payment_url = '$paymentUrl',
+                    signature = '$signature',
+                    extra_data = '$extraData',
+                    status = 'pending',
+                    trans_id = NULL,
+                    result_code = NULL,
+                    message = NULL,
+                    pay_type = NULL,
+                    response_time = NULL,
+                    updated_at = CURRENT_TIMESTAMP";
         
         if ($conn->query($sql)) {
-            $transactionId = $conn->insert_id;
+            // Lấy transaction_id (insert mới hoặc existing)
+            if ($conn->insert_id > 0) {
+                $transactionId = $conn->insert_id;
+            } else {
+                // Nếu là update, lấy transaction_id từ booking_id
+                $getIdSql = "SELECT transaction_id FROM payment_transaction WHERE booking_id = $bookingId LIMIT 1";
+                $result = $conn->query($getIdSql);
+                if ($result && $result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $transactionId = $row['transaction_id'];
+                } else {
+                    $transactionId = 0;
+                }
+            }
             $p->mDongKetNoi($conn);
             return $transactionId;
         }

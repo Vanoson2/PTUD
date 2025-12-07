@@ -80,7 +80,13 @@ $paymentResult = $cPayment->cInitiateMoMoPayment(
 );
 
 if (!$paymentResult['success']) {
-    $_SESSION['payment_init_error'] = $paymentResult['message'];
+    $_SESSION['payment_error'] = $paymentResult['message'];
+    $_SESSION['payment_result_code'] = $paymentResult['error_code'] ?? 'UNKNOWN';
+    $_SESSION['payment_booking_id'] = $bookingId;
+    
+    // Debug: Log chi tiết lỗi
+    error_log("MoMo Payment Init Failed: " . json_encode($paymentResult));
+    
     header('Location: payment-error.php?booking_id=' . $bookingId);
     exit;
 }
