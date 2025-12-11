@@ -308,8 +308,6 @@ CREATE TABLE `bookings` (
   `payment_status` ENUM('unpaid','pending','paid','refunded') NOT NULL DEFAULT 'unpaid',
   `payment_id` VARCHAR(50) DEFAULT NULL COMMENT 'MoMo orderId hoặc transaction ID',
   `paid_at` DATETIME DEFAULT NULL COMMENT 'Thời điểm thanh toán thành công',
-  `payment_id` VARCHAR(50) DEFAULT NULL,
-  `paid_at` DATETIME DEFAULT NULL,
   `total_amount` DECIMAL(12,2) NOT NULL,
   `cancelled_at` DATETIME DEFAULT NULL,
   `cancelled_by` ENUM('user','admin','system') DEFAULT NULL,

@@ -1,4 +1,6 @@
 # Composer dependencies
+vendor/
+
 # Dashboard folder
 .dashboard/
 # Email configuration (contains sensitive data)
