@@ -179,8 +179,8 @@ class mPayment {
         $paymentMethod = $conn->real_escape_string($paymentMethod);
         $paymentId = $paymentId ? "'" . $conn->real_escape_string($paymentId) . "'" : "NULL";
         
-        // Nếu paid thì set paid_at
-        $paidAtClause = ($paymentStatus === 'paid') ? ", paid_at = CURRENT_TIMESTAMP" : "";
+        // Nếu paid thì set paid_at và xóa expires_at (đã thanh toán thành công)
+        $paidAtClause = ($paymentStatus === 'paid') ? ", paid_at = CURRENT_TIMESTAMP, expires_at = NULL" : "";
         
         // Nếu thanh toán thành công, chuyển status booking sang confirmed
         $statusClause = ($paymentStatus === 'paid') ? ", status = 'confirmed'" : "";

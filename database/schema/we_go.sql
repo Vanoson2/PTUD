@@ -308,6 +308,7 @@ CREATE TABLE `bookings` (
   `payment_status` ENUM('unpaid','pending','paid','refunded') NOT NULL DEFAULT 'unpaid',
   `payment_id` VARCHAR(50) DEFAULT NULL COMMENT 'MoMo orderId hoặc transaction ID',
   `paid_at` DATETIME DEFAULT NULL COMMENT 'Thời điểm thanh toán thành công',
+  `expires_at` DATETIME DEFAULT NULL COMMENT 'Thời điểm hết hạn thanh toán (10 phút sau khi tạo booking)',
   `total_amount` DECIMAL(12,2) NOT NULL,
   `cancelled_at` DATETIME DEFAULT NULL,
   `cancelled_by` ENUM('user','admin','system') DEFAULT NULL,
@@ -323,6 +324,7 @@ CREATE TABLE `bookings` (
   KEY `ix_booking_rated` (`is_rated`),
   KEY `ix_booking_payment_status` (`payment_status`),
   KEY `ix_booking_payment_id` (`payment_id`),
+  KEY `ix_booking_expires_at` (`expires_at`,`status`,`payment_status`),
   CONSTRAINT `fk_booking_listing` FOREIGN KEY (`listing_id`) REFERENCES `listing` (`listing_id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_booking_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
