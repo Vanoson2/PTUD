@@ -607,8 +607,7 @@ class mAdmin {
         
         // Get tickets - Support both logged-in users and guests
         $sql = "SELECT st.*, 
-                       u.full_name, u.email,
-                       st.guest_name, st.guest_email, st.guest_phone
+                       u.full_name, u.email
                 FROM support_ticket st
                 LEFT JOIN user u ON st.user_id = u.user_id
                 $whereClause
@@ -622,6 +621,10 @@ class mAdmin {
             while ($row = $result->fetch_assoc()) {
                 $tickets[] = $row;
             }
+        } else {
+            // DEBUG: Log SQL error
+            error_log("SQL Error in mGetAllSupportTickets: " . $conn->error);
+            error_log("SQL Query: " . $sql);
         }
         
         $pages = ceil($total / $limit);
@@ -643,10 +646,9 @@ class mAdmin {
             return null;
         }
         
-        // Support both user tickets and guest tickets
+        // Support both user tickets and guests
         $sql = "SELECT st.*, 
-                       u.full_name, u.email, u.phone,
-                       st.guest_name, st.guest_email, st.guest_phone
+                       u.full_name, u.email, u.phone
                 FROM support_ticket st
                 LEFT JOIN user u ON st.user_id = u.user_id
                 WHERE st.ticket_id = $ticketId
