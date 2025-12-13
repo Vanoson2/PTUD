@@ -41,38 +41,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $role = $_POST['role'] ?? 'support';
     
     $result = $cAdmin->cCreateAdmin($username, $password, $fullName, $role);
-    $message = $result['message'];
-    $messageType = $result['success'] ? 'success' : 'error';
+    $_SESSION['message'] = $result['message'];
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'error';
+    
+    header('Location: admin-management.php');
+    exit();
     
   } elseif ($action === 'update_role') {
     $targetAdminId = intval($_POST['admin_id'] ?? 0);
     $newRole = $_POST['new_role'] ?? '';
     
     $result = $cAdmin->cUpdateAdminRole($targetAdminId, $newRole);
-    $message = $result['message'];
-    $messageType = $result['success'] ? 'success' : 'error';
+    $_SESSION['message'] = $result['message'];
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'error';
+    
+    header('Location: admin-management.php');
+    exit();
     
   } elseif ($action === 'delete') {
     $targetAdminId = intval($_POST['admin_id'] ?? 0);
     
     // Prevent self-deletion
     if ($targetAdminId == $adminId) {
-      $message = 'Không thể xóa chính tài khoản của bạn';
-      $messageType = 'error';
+      $_SESSION['message'] = 'Không thể xóa chính tài khoản của bạn';
+      $_SESSION['messageType'] = 'error';
     } else {
       $result = $cAdmin->cDeleteAdmin($targetAdminId);
-      $message = $result['message'];
-      $messageType = $result['success'] ? 'success' : 'error';
+      $_SESSION['message'] = $result['message'];
+      $_SESSION['messageType'] = $result['success'] ? 'success' : 'error';
     }
+    
+    header('Location: admin-management.php');
+    exit();
     
   } elseif ($action === 'reset_password') {
     $targetAdminId = intval($_POST['admin_id'] ?? 0);
     $newPassword = trim($_POST['new_password'] ?? '');
     
     $result = $cAdmin->cResetAdminPassword($targetAdminId, $newPassword);
-    $message = $result['message'];
-    $messageType = $result['success'] ? 'success' : 'error';
+    $_SESSION['message'] = $result['message'];
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'error';
+    
+    header('Location: admin-management.php');
+    exit();
   }
+}
+
+// Get message from session (after redirect)
+if (isset($_SESSION['message'])) {
+  $message = $_SESSION['message'];
+  $messageType = $_SESSION['messageType'] ?? 'info';
+  unset($_SESSION['message']);
+  unset($_SESSION['messageType']);
 }
 
 // Get all admins

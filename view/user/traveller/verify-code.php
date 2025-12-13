@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_code'])) {
       unset($_SESSION['pending_verify_user_id']);
       unset($_SESSION['pending_verify_email']);
       
-      header('Location: ../../index.php?verified=1');
+      header('Location: ../../../index.php?verified=1');
       exit;
     }
   } else {

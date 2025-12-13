@@ -31,9 +31,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if ($action === 'toggle_status') {
     $hostId = intval($_POST['host_id'] ?? 0);
     $result = $cAdmin->cToggleHostStatus($hostId);
-    $message = $result['message'];
-    $messageType = $result['success'] ? 'success' : 'error';
+    
+    // Store message in session to display after redirect
+    $_SESSION['message'] = $result['message'];
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'error';
+    
+    // Redirect to avoid form resubmission (PRG pattern)
+    $redirectUrl = 'hosts.php';
+    if (isset($_GET['page'])) {
+      $redirectUrl .= '?page=' . intval($_GET['page']);
+    }
+    if (isset($_GET['search'])) {
+      $redirectUrl .= (strpos($redirectUrl, '?') === false ? '?' : '&') . 'search=' . urlencode($_GET['search']);
+    }
+    
+    header('Location: ' . $redirectUrl);
+    exit();
   }
+}
+
+// Get message from session (after redirect)
+if (isset($_SESSION['message'])) {
+  $message = $_SESSION['message'];
+  $messageType = $_SESSION['messageType'] ?? 'info';
+  unset($_SESSION['message']);
+  unset($_SESSION['messageType']);
 }
 
 // Get pagination parameters

@@ -1,24 +1,27 @@
 <?php
-include_once __DIR__ . '/../../../controller/cUser.php';
+// Include Authentication Helper and Controller
+require_once __DIR__ . '/../../../helper/auth.php';
+require_once __DIR__ . '/../../../controller/cUser.php';
 
-// Start session
-if (session_status() === PHP_SESSION_NONE) {
-  session_start();
-}
+// Use helper for authentication
+requireLogin();
 
-// Kiểm tra đăng nhập
-if (!isset($_SESSION['user_id'])) {
-  header('Location: ./login.php?returnUrl=' . urlencode($_SERVER['REQUEST_URI']));
-  exit;
-}
-
-$userId = $_SESSION['user_id'];
+$userId = getCurrentUserId();
 $currentPage = 'trust-score'; // For sidebar active state
 $rootPath = '../../';
 $showVerifyButton = false;
 
-// Lấy thông tin điểm tín nhiệm
+// Use Controller to get user data
 $cUser = new cUser();
+$user = $cUser->cGetUserProfile($userId);
+
+if (!$user) {
+  logoutUser();
+  header('Location: ./login.php');
+  exit;
+}
+
+// Lấy thông tin điểm tín nhiệm
 $scoreResult = $cUser->cGetUserScore($userId);
 $historyResult = $cUser->cGetScoreHistory($userId, 10);
 $suggestionsResult = $cUser->cGetImprovementSuggestions($userId);
@@ -26,6 +29,22 @@ $suggestionsResult = $cUser->cGetImprovementSuggestions($userId);
 $scoreData = $scoreResult['success'] ? $scoreResult['data'] : null;
 $history = $historyResult['success'] ? $historyResult['data'] : [];
 $suggestions = $suggestionsResult['success'] ? $suggestionsResult['data'] : [];
+
+// Set default values if scoreData is null
+if (!$scoreData) {
+  $scoreData = [
+    'trust_score' => 0,
+    'level' => [
+      'badge' => '🆕',
+      'name' => 'Người dùng mới',
+      'description' => 'Chưa có điểm tín nhiệm',
+      'color' => '#999999'
+    ],
+    'verified_phone' => false,
+    'verified_id' => false,
+    'verified_full' => false
+  ];
+}
 ?>
 
 <?php include __DIR__ . '/../../partials/header.php'; ?>
@@ -200,22 +219,22 @@ $suggestions = $suggestionsResult['success'] ? $suggestionsResult['data'] : [];
     <!-- Main Score Card -->
     <div class="score-card">
       <div class="score-main">
-        <div class="score-number"><?php echo $scoreData['trust_score']; ?></div>
+        <div class="score-number"><?php echo $scoreData['trust_score'] ?? 0; ?></div>
         <div class="score-label">/ 100 điểm</div>
         
         <div class="progress-bar-container">
           <div class="progress-bar-fill" 
-               style="width: <?php echo $scoreData['trust_score']; ?>%; background: <?php echo $scoreData['level']['color']; ?>">
+               style="width: <?php echo $scoreData['trust_score'] ?? 0; ?>%; background: <?php echo $scoreData['level']['color'] ?? '#999999'; ?>">
           </div>
         </div>
         
-        <div class="score-level" style="background: <?php echo $scoreData['level']['color']; ?>20; color: <?php echo $scoreData['level']['color']; ?>">
-          <span class="level-badge"><?php echo $scoreData['level']['badge']; ?></span>
-          <span><?php echo $scoreData['level']['name']; ?></span>
+        <div class="score-level" style="background: <?php echo ($scoreData['level']['color'] ?? '#999999') . '20'; ?>; color: <?php echo $scoreData['level']['color'] ?? '#999999'; ?>">
+          <span class="level-badge"><?php echo $scoreData['level']['badge'] ?? '🆕'; ?></span>
+          <span><?php echo $scoreData['level']['name'] ?? 'Người dùng bình thường'; ?></span>
         </div>
         
         <p style="margin-top: 15px; color: #666;">
-          <?php echo $scoreData['level']['description']; ?>
+          <?php echo $scoreData['level']['description'] ?? 'Chưa có mô tả'; ?>
         </p>
       </div>
       
@@ -231,8 +250,8 @@ $suggestions = $suggestionsResult['success'] ? $suggestionsResult['data'] : [];
             <span class="verify-icon"><?php echo $scoreData['verified_id'] ? '✓' : '○'; ?></span>
             <span>CCCD/CMND</span>
           </div>
-          <div class="verify-item <?php echo $scoreData['is_verified'] ? 'verified' : ''; ?>">
-            <span class="verify-icon"><?php echo $scoreData['is_verified'] ? '✓' : '○'; ?></span>
+          <div class="verify-item <?php echo ($scoreData['verified_full'] ?? false) ? 'verified' : ''; ?>">
+            <span class="verify-icon"><?php echo ($scoreData['verified_full'] ?? false) ? '✓' : '○'; ?></span>
             <span>Tài khoản đầy đủ</span>
           </div>
         </div>
@@ -247,8 +266,8 @@ $suggestions = $suggestionsResult['success'] ? $suggestionsResult['data'] : [];
           <?php foreach ($suggestions as $suggestion): ?>
             <li class="suggestion-item">
               <span class="icon">⭐</span>
-              <span class="text"><?php echo htmlspecialchars($suggestion['description']); ?></span>
-              <span class="points">+<?php echo $suggestion['points']; ?></span>
+              <span class="text"><?php echo htmlspecialchars($suggestion['description'] ?? 'Không có mô tả'); ?></span>
+              <span class="points">+<?php echo $suggestion['points'] ?? 0; ?></span>
             </li>
           <?php endforeach; ?>
         </ul>

@@ -62,6 +62,35 @@ class mHost {
         ];
     }
     
+    /**
+     * Create pending host record immediately after registration
+     * @param int $userId User ID
+     * @param string $businessName Business name
+     * @param string $taxCode Tax code
+     * @return bool
+     */
+    public function mCreatePendingHost($userId, $businessName, $taxCode = '') {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return false;
+        }
+        
+        $businessName = $conn->real_escape_string($businessName);
+        $taxCode = $conn->real_escape_string($taxCode);
+        $taxCodeValue = !empty($taxCode) ? "'$taxCode'" : "NULL";
+        
+        // Create host with pending status
+        $sql = "INSERT INTO host (user_id, legal_name, tax_code, status, created_at) 
+                VALUES ($userId, '$businessName', $taxCodeValue, 'pending', CURRENT_TIMESTAMP)";
+        
+        $success = $conn->query($sql);
+        $p->mDongKetNoi($conn);
+        
+        return $success ? true : false;
+    }
+    
     public function mSaveHostDocument($applicationId, $docType, $fileUrl, $mimeType, $fileSizeBytes) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -155,7 +184,8 @@ class mHost {
             return false;
         }
         
-        $sql = "SELECT host_id FROM host WHERE user_id = $userId AND status = 'approved' LIMIT 1";
+        // Allow both pending and approved hosts to access host features
+        $sql = "SELECT host_id FROM host WHERE user_id = $userId AND status IN ('pending', 'approved') LIMIT 1";
         $result = $conn->query($sql);
         
         $isHost = ($result && $result->num_rows > 0);

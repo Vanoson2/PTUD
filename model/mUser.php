@@ -205,6 +205,12 @@ class mUser {
         
         if ($updateResult) {
             $p->mDongKetNoi($conn);
+            
+            // Cộng điểm tín nhiệm +5 khi verify email thành công
+            include_once(__DIR__ . "/mUserScore.php");
+            $mUserScore = new mUserScore();
+            $mUserScore->mAddScoreByAction($userId, 'verify_email', 'Xác thực email lần đầu', 'verification', null);
+            
             return [
                 'success' => true,
                 'message' => 'Xác thực email thành công!'

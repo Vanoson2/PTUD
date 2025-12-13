@@ -74,9 +74,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $appResult = $cHost->cCreateHostApplication($userId, $fullName, $taxCode);
       
       if ($appResult['success']) {
+        $applicationId = $appResult['application_id'];
+        
+        // Save ID card images to database
+        if (isset($idCardImages['front'])) {
+          $cHost->cSaveHostDocument($applicationId, 'id_card_front', $idCardImages['front'], 'image/jpeg', 0);
+        }
+        if (isset($idCardImages['back'])) {
+          $cHost->cSaveHostDocument($applicationId, 'id_card_back', $idCardImages['back'], 'image/jpeg', 0);
+        }
+        
+        // Save business license if uploaded
+        if (!empty($businessLicenseImage)) {
+          $businessLicensePath = 'public/uploads/host/' . $businessLicenseImage;
+          $cHost->cSaveHostDocument($applicationId, 'business_license', $businessLicensePath, 'image/jpeg', 0);
+        }
+        
+        // Create host record immediately (pending status)
+        include_once __DIR__ . '/../../../model/mHost.php';
+        $mHost = new mHost();
+        
+        // Check if already has host record
+        $existingHost = $mHost->mGetHostByUserId($userId);
+        if (!$existingHost) {
+          // Create pending host record
+          $businessName = $user['full_name'];
+          $taxCodeEscaped = htmlspecialchars($taxCode, ENT_QUOTES, 'UTF-8');
+          $mHost->mCreatePendingHost($userId, $businessName, $taxCodeEscaped);
+        }
+        
+        // Set session to allow host access
+        if (session_status() === PHP_SESSION_NONE) {
+          session_start();
+        }
+        $_SESSION['is_host'] = true;
+        
         // Successfully created host application
-        // Note: User info update should be handled by Controller/Model in production
-        $successMessage = 'Đăng ký host thành công! Vui lòng chờ admin phê duyệt.';
+        $successMessage = 'Đăng ký host thành công! Bạn có thể bắt đầu tạo phòng. Admin sẽ duyệt trong vòng 24-48h.';
         header('refresh:3;url=./my-listings.php');
       } else {
         $errors['general'] = $appResult['message'];

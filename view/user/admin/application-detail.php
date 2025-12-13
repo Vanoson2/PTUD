@@ -42,9 +42,9 @@ foreach ($documents as $doc) {
     $fileUrl = '/' . $fileUrl;
   }
   
-  if ($doc['doc_type'] === 'cccd_front') {
+  if ($doc['doc_type'] === 'id_card_front' || $doc['doc_type'] === 'cccd_front') {
     $cccdFront = $fileUrl;
-  } elseif ($doc['doc_type'] === 'cccd_back') {
+  } elseif ($doc['doc_type'] === 'id_card_back' || $doc['doc_type'] === 'cccd_back') {
     $cccdBack = $fileUrl;
   } elseif ($doc['doc_type'] === 'business_license') {
     $businessLicense = $fileUrl;

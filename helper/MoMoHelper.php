@@ -5,6 +5,7 @@
  */
 
 require_once(__DIR__ . '/../config/momo.php');
+require_once(__DIR__ . '/../model/mPaymentLog.php');
 
 class MoMoHelper {
     
@@ -12,12 +13,14 @@ class MoMoHelper {
     private $accessKey;
     private $secretKey;
     private $endpoint;
+    private $paymentLogger;
     
     public function __construct() {
         $this->partnerCode = MOMO_PARTNER_CODE;
         $this->accessKey = MOMO_ACCESS_KEY;
         $this->secretKey = MOMO_SECRET_KEY;
         $this->endpoint = MOMO_ENDPOINT;
+        $this->paymentLogger = new mPaymentLog();
     }
     
     /**
@@ -31,6 +34,9 @@ class MoMoHelper {
      */
     public function createPayment($bookingId, $amount, $orderInfo, $extraData = []) {
         try {
+            // Convert amount to integer (MoMo yêu cầu integer, không có decimal)
+            $amount = (int)$amount;
+            
             // Generate unique IDs
             $orderId = 'WEGO_' . $bookingId . '_' . time();
             $requestId = time() . "_" . $bookingId;
@@ -69,20 +75,44 @@ class MoMoHelper {
                 'signature' => $signature
             ];
             
-            // Log request
+            // Log request vào database
+            $this->paymentLogger->mLogPaymentEvent(
+                $bookingId,
+                null,
+                'init',
+                $data,
+                null,
+                null,
+                null
+            );
+            
+            // Log ra file (minimal - chỉ event type)
             logMoMoPayment('Create payment request', [
                 'bookingId' => $bookingId,
                 'orderId' => $orderId,
-                'amount' => $amount,
-                'requestData' => $data
+                'amount' => $amount
             ]);
             
             // Gửi request đến MoMo
             $result = $this->execPostRequest($this->endpoint, json_encode($data));
             $jsonResult = json_decode($result, true);
             
-            // Log response
-            logMoMoPayment('Create payment response', $jsonResult);
+            // Log response vào database
+            $this->paymentLogger->mLogPaymentEvent(
+                $bookingId,
+                null,
+                'init',
+                null,
+                $jsonResult,
+                $jsonResult['resultCode'] ?? null,
+                $jsonResult['message'] ?? null
+            );
+            
+            // Log ra file (minimal)
+            logMoMoPayment('Create payment response', [
+                'resultCode' => $jsonResult['resultCode'] ?? null,
+                'message' => $jsonResult['message'] ?? null
+            ]);
             
             if (!$jsonResult) {
                 return [
@@ -114,9 +144,20 @@ class MoMoHelper {
             }
             
         } catch (Exception $e) {
+            // Log error vào database
+            $this->paymentLogger->mLogPaymentEvent(
+                $bookingId ?? null,
+                null,
+                'error',
+                null,
+                null,
+                null,
+                'Create payment exception: ' . $e->getMessage()
+            );
+            
+            // Log ra file (minimal)
             logMoMoPayment('Create payment exception', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'error' => $e->getMessage()
             ]);
             
             return [
@@ -156,16 +197,45 @@ class MoMoHelper {
             
             $isValid = ($momoSignature === $partnerSignature);
             
+            // Tìm booking_id từ orderId hoặc extraData
+            $bookingId = null;
+            if (isset($data['orderId']) && strpos($data['orderId'], 'WEGO_') === 0) {
+                $parts = explode('_', $data['orderId']);
+                $bookingId = isset($parts[1]) ? intval($parts[1]) : null;
+            }
+            
+            // Log vào database
+            $this->paymentLogger->mLogPaymentEvent(
+                $bookingId,
+                isset($data['transId']) ? intval($data['transId']) : null,
+                'ipn_verified',
+                null,
+                $data,
+                $data['resultCode'] ?? null,
+                $isValid ? null : 'Invalid signature'
+            );
+            
+            // Log ra file (minimal)
             logMoMoPayment('Verify signature', [
-                'momoSignature' => $momoSignature,
-                'partnerSignature' => $partnerSignature,
                 'isValid' => $isValid,
-                'rawHash' => $rawHash
+                'resultCode' => $data['resultCode'] ?? null
             ]);
             
             return $isValid;
             
         } catch (Exception $e) {
+            // Log error vào database
+            $this->paymentLogger->mLogPaymentEvent(
+                null,
+                null,
+                'error',
+                null,
+                null,
+                null,
+                'Verify signature exception: ' . $e->getMessage()
+            );
+            
+            // Log ra file (minimal)
             logMoMoPayment('Verify signature exception', [
                 'error' => $e->getMessage()
             ]);
@@ -199,16 +269,64 @@ class MoMoHelper {
                 'signature' => $signature
             ];
             
-            logMoMoPayment('Query transaction request', $data);
+            // Tìm booking_id từ orderId
+            $bookingId = null;
+            if (strpos($orderId, 'WEGO_') === 0) {
+                $parts = explode('_', $orderId);
+                $bookingId = isset($parts[1]) ? intval($parts[1]) : null;
+            }
+            
+            // Log request vào database
+            $this->paymentLogger->mLogPaymentEvent(
+                $bookingId,
+                null,
+                'query',
+                $data,
+                null,
+                null,
+                null
+            );
+            
+            // Log ra file (minimal)
+            logMoMoPayment('Query transaction request', [
+                'orderId' => $orderId
+            ]);
             
             $result = $this->execPostRequest($queryEndpoint, json_encode($data));
             $jsonResult = json_decode($result, true);
             
-            logMoMoPayment('Query transaction response', $jsonResult);
+            // Log response vào database
+            $this->paymentLogger->mLogPaymentEvent(
+                $bookingId,
+                isset($jsonResult['transId']) ? intval($jsonResult['transId']) : null,
+                'query',
+                null,
+                $jsonResult,
+                $jsonResult['resultCode'] ?? null,
+                $jsonResult['message'] ?? null
+            );
+            
+            // Log ra file (minimal)
+            logMoMoPayment('Query transaction response', [
+                'resultCode' => $jsonResult['resultCode'] ?? null,
+                'message' => $jsonResult['message'] ?? null
+            ]);
             
             return $jsonResult;
             
         } catch (Exception $e) {
+            // Log error vào database
+            $this->paymentLogger->mLogPaymentEvent(
+                null,
+                null,
+                'error',
+                null,
+                null,
+                null,
+                'Query transaction exception: ' . $e->getMessage()
+            );
+            
+            // Log ra file (minimal)
             logMoMoPayment('Query transaction exception', [
                 'error' => $e->getMessage()
             ]);
@@ -244,8 +362,19 @@ class MoMoHelper {
         $result = curl_exec($ch);
         
         if (curl_errno($ch)) {
+            // Log CURL error vào database
+            $this->paymentLogger->mLogPaymentEvent(
+                null,
+                null,
+                'error',
+                null,
+                null,
+                null,
+                'CURL Error: ' . curl_error($ch) . ' (errno: ' . curl_errno($ch) . ')'
+            );
+            
+            // Log ra file (minimal)
             logMoMoPayment('CURL Error', [
-                'error' => curl_error($ch),
                 'errno' => curl_errno($ch)
             ]);
         }

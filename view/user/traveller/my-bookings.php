@@ -138,12 +138,24 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
         </div>
         
         <div class="booking-actions">
-          <?php if ($activeTab === 'upcoming' && $booking['status'] === 'confirmed'): ?>
-            <a href="cancel-booking.php?booking_id=<?php echo $booking['booking_id']; ?>" 
-               class="btn-cancel"
-               onclick="return confirm('Bạn có chắc chắn muốn hủy đơn đặt này?');">
-              <i class="fas fa-times-circle"></i> Hủy Đơn Đặt
-            </a>
+          <?php if ($activeTab === 'upcoming'): ?>
+            <?php if ($booking['status'] === 'pending' && in_array($booking['payment_status'], ['unpaid', 'pending'])): ?>
+              <!-- Booking chưa thanh toán - Hiển thị nút thanh toán -->
+              <a href="retry-payment.php?booking_id=<?php echo $booking['booking_id']; ?>" 
+                 class="btn-payment">
+                <i class="fas fa-credit-card"></i> Thanh toán ngay
+              </a>
+              <span class="badge badge-pending">
+                <i class="fas fa-clock"></i> Chờ thanh toán
+              </span>
+            <?php elseif ($booking['status'] === 'confirmed' && $booking['payment_status'] === 'paid'): ?>
+              <!-- Booking đã thanh toán - Cho phép hủy -->
+              <a href="cancel-booking.php?booking_id=<?php echo $booking['booking_id']; ?>" 
+                 class="btn-cancel"
+                 onclick="return confirm('Bạn có chắc chắn muốn hủy đơn đặt này?');">
+                <i class="fas fa-times-circle"></i> Hủy Đơn Đặt
+              </a>
+            <?php endif; ?>
           <?php elseif ($booking['status'] === 'cancelled'): ?>
             <span class="badge-cancelled">
               <i class="fas fa-ban"></i> Đã hủy

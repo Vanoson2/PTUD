@@ -655,7 +655,7 @@ class cHost {
                 return ['success' => false, 'message' => "Không thể lưu ảnh " . ($side === 'front' ? 'mặt trước' : 'mặt sau')];
             }
             
-            $images[$side] = '/public/uploads/id_cards/' . $newFileName;
+            $images[$side] = 'public/uploads/id_cards/' . $newFileName;
         }
         
         return ['success' => true, 'front' => $images['front'], 'back' => $images['back']];
@@ -678,3 +678,4 @@ if (isset($_GET['action'])) {
         exit();
     }
 }
+

@@ -46,26 +46,17 @@ $reviewCount = $ratingInfo['review_count'] ?? 0;
 // Get user_id from session
 $userId = $_SESSION['user_id'];
 
-// Check 1: User có đơn đặt nào khác trùng ngày không?
+// Bỏ check user conflict - cho phép đặt nhiều phòng cùng lúc
+// Check: Listing còn trống không?
 $cBooking = new cBooking();
-$userConflictResult = $cBooking->cCheckUserBookingConflict($userId, $checkin, $checkout, $listingId);
-$hasUserConflict = false;
-$conflictBooking = null;
-
-if ($userConflictResult && $userConflictResult->num_rows > 0) {
-  $hasUserConflict = true;
-  $conflictBooking = $userConflictResult->fetch_assoc();
-}
-
-// Check 2: Listing còn trống không?
 $listingAvailabilityResult = $cBooking->cCheckListingAvailability($listingId, $checkin, $checkout);
 $isListingAvailable = true;
 if ($listingAvailabilityResult && $listingAvailabilityResult->num_rows > 0) {
   $isListingAvailable = false;
 }
 
-// Tổng hợp: Chỉ cho đặt nếu cả 2 điều kiện đều OK
-$canBook = !$hasUserConflict && $isListingAvailable;
+// Chỉ kiểm tra listing có sẵn hay không
+$canBook = $isListingAvailable;
 
 // Get listing services
 $servicesResult = $cListing->cGetListingServices($listingId);
@@ -100,7 +91,9 @@ $subtotal = $listing['price'] * $nights;
   <title>Xác nhận đơn đặt - WEGO</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="../../css/shared-style.css">
+  <link rel="stylesheet" href="../../css/shared-style.css?v=<?php echo time(); ?>">
+  <link rel="stylesheet" href="../../css/components-header.css?v=<?php echo time(); ?>">
+  <link rel="stylesheet" href="../../css/confirm-booking.css?v=<?php echo time(); ?>">
 </head>
 <body>
   <?php include(__DIR__ . '/../../partials/header.php'); ?>
@@ -113,17 +106,11 @@ $subtotal = $listing['price'] * $nights;
 
     <h1 class="mb-4">XÁC NHẬN ĐƠN ĐẶT CỦA BẠN</h1>
 
-    <?php if ($hasUserConflict): ?>
-    <div class="alert alert-warning">
-      <i class="fa-solid fa-exclamation-triangle"></i>
-      <strong>Bạn đã có đơn đặt khác trùng thời gian!</strong>
-      <p class="mb-0 mt-2">
-        Bạn có đơn đặt <strong><?php echo $conflictBooking['listing_title']; ?></strong> 
-        từ <?php echo date('d/m/Y', strtotime($conflictBooking['check_in'])); ?> 
-        đến <?php echo date('d/m/Y', strtotime($conflictBooking['check_out'])); ?> 
-        (Mã: <?php echo $conflictBooking['code']; ?>).
-        <br>Vui lòng chọn ngày khác hoặc hủy đơn cũ trước.
-      </p>
+    <?php if (isset($_SESSION['error'])): ?>
+    <div class="alert alert-danger">
+      <i class="fa-solid fa-exclamation-circle"></i>
+      <strong>Lỗi!</strong> <?php echo htmlspecialchars($_SESSION['error']); ?>
+      <?php unset($_SESSION['error']); ?>
     </div>
     <?php endif; ?>
 
@@ -211,20 +198,17 @@ $subtotal = $listing['price'] * $nights;
           <div class="form-check mb-3 mt-4">
             <input class="form-check-input" type="checkbox" id="agreeTerms" required>
             <label class="form-check-label small" for="agreeTerms">
-              By selecting the button below, I agree to the 
-              <a href="#">Property Rules</a>, 
-              <a href="#">Terms and Conditions</a>, 
-              <a href="#">Privacy Policy</a> and 
-              <a href="#">COVID-19 Safety Requirements</a>.
+              Bằng cách nhấn nút bên dưới, tôi đồng ý với 
+              <a href="/view/static/terms.php" target="_blank">Điều khoản & Điều kiện</a>, 
+              <a href="/view/static/privacy.php" target="_blank">Chính sách bảo mật</a> và 
+              <a href="/view/static/cancellation.php" target="_blank">Chính sách hủy đặt chỗ</a>.
             </label>
           </div>
 
           <button type="submit" 
                   class="btn btn-primary w-100 py-3 fw-bold"
                   <?php echo !$canBook ? 'disabled' : ''; ?>>
-            <?php if ($hasUserConflict): ?>
-              Bạn có đơn đặt trùng ngày
-            <?php elseif (!$isListingAvailable): ?>
+            <?php if (!$isListingAvailable): ?>
               Chỗ ở đã được đặt
             <?php else: ?>
               XÁC NHẬN
