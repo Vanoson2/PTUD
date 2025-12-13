@@ -36,13 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = trim($_POST['description'] ?? '');
     
     $result = $cType->cInsertAmenity($name, $groupName, $description);
-    if ($result['success']) {
-      $message = $result['message'];
-      $messageType = 'success';
-    } else {
-      $message = implode('<br>', $result['errors']);
-      $messageType = 'danger';
-    }
+    $_SESSION['message'] = $result['success'] ? $result['message'] : implode('<br>', $result['errors']);
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'danger';
+    
+    header('Location: amenities-services.php');
+    exit();
   } 
   elseif ($action === 'edit_amenity') {
     $amenityId = $_POST['amenity_id'] ?? 0;
@@ -51,25 +49,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = trim($_POST['description'] ?? '');
     
     $result = $cType->cUpdateAmenity($amenityId, $name, $groupName, $description);
-    if ($result['success']) {
-      $message = $result['message'];
-      $messageType = 'success';
-    } else {
-      $message = implode('<br>', $result['errors']);
-      $messageType = 'danger';
-    }
+    $_SESSION['message'] = $result['success'] ? $result['message'] : implode('<br>', $result['errors']);
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'danger';
+    
+    header('Location: amenities-services.php');
+    exit();
   } 
   elseif ($action === 'delete_amenity') {
     $amenityId = $_POST['amenity_id'] ?? 0;
     
     $result = $cType->cDeleteAmenity($amenityId);
-    if ($result['success']) {
-      $message = $result['message'];
-      $messageType = 'success';
-    } else {
-      $message = implode('<br>', $result['errors']);
-      $messageType = 'danger';
-    }
+    $_SESSION['message'] = $result['success'] ? $result['message'] : implode('<br>', $result['errors']);
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'danger';
+    
+    header('Location: amenities-services.php');
+    exit();
   }
   
   // SERVICE ACTIONS
@@ -78,13 +72,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = trim($_POST['description'] ?? '');
     
     $result = $cType->cInsertService($name, $description);
-    if ($result['success']) {
-      $message = $result['message'];
-      $messageType = 'success';
-    } else {
-      $message = implode('<br>', $result['errors']);
-      $messageType = 'danger';
-    }
+    $_SESSION['message'] = $result['success'] ? $result['message'] : implode('<br>', $result['errors']);
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'danger';
+    
+    header('Location: amenities-services.php');
+    exit();
   } 
   elseif ($action === 'edit_service') {
     $serviceId = $_POST['service_id'] ?? 0;
@@ -92,26 +84,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = trim($_POST['description'] ?? '');
     
     $result = $cType->cUpdateService($serviceId, $name, $description);
-    if ($result['success']) {
-      $message = $result['message'];
-      $messageType = 'success';
-    } else {
-      $message = implode('<br>', $result['errors']);
-      $messageType = 'danger';
-    }
+    $_SESSION['message'] = $result['success'] ? $result['message'] : implode('<br>', $result['errors']);
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'danger';
+    
+    header('Location: amenities-services.php');
+    exit();
   } 
   elseif ($action === 'delete_service') {
     $serviceId = $_POST['service_id'] ?? 0;
     
     $result = $cType->cDeleteService($serviceId);
-    if ($result['success']) {
-      $message = $result['message'];
-      $messageType = 'success';
-    } else {
-      $message = implode('<br>', $result['errors']);
-      $messageType = 'danger';
-    }
+    $_SESSION['message'] = $result['success'] ? $result['message'] : implode('<br>', $result['errors']);
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'danger';
+    
+    header('Location: amenities-services.php');
+    exit();
   }
+}
+
+// Get message from session (after redirect)
+if (isset($_SESSION['message'])) {
+  $message = $_SESSION['message'];
+  $messageType = $_SESSION['messageType'] ?? 'info';
+  unset($_SESSION['message']);
+  unset($_SESSION['messageType']);
 }
 
 // Get all amenities và services

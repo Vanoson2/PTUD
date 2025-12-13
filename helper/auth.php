@@ -109,10 +109,56 @@ function isHost() {
 function requireHost() {
     requireLogin();
     
-    if (!isHost()) {
-        header('Location: /view/user/host/become-host.php');
-        exit;
+    // Check session first
+    if (isHost()) {
+        return;
     }
+    
+    // Session not set, check database
+    $userId = getCurrentUserId();
+    if ($userId) {
+        require_once __DIR__ . '/../controller/cHost.php';
+        require_once __DIR__ . '/../model/mHost.php';
+        
+        $cHost = new cHost();
+        $mHost = new mHost();
+        
+        // Check if has host record in database
+        $hostInfo = $mHost->mGetHostByUserId($userId);
+        
+        if ($hostInfo) {
+            // Has host record, update session
+            $_SESSION['is_host'] = true;
+            return;
+        }
+        
+        // No host record, check if isUserHost returns true (handles pending status)
+        if ($cHost->cIsUserHost($userId)) {
+            $_SESSION['is_host'] = true;
+            return;
+        }
+        
+        // Still no host record? Try to create one automatically
+        // This handles users who registered before the fix
+        require_once __DIR__ . '/../controller/cUser.php';
+        $cUser = new cUser();
+        $userProfile = $cUser->cGetUserProfile($userId);
+        
+        if ($userProfile) {
+            // Create pending host record automatically
+            $created = $mHost->mCreatePendingHost($userId, $userProfile['full_name'], '');
+            
+            if ($created) {
+                // Set session and allow access
+                $_SESSION['is_host'] = true;
+                return;
+            }
+        }
+    }
+    
+    // Not a host, redirect
+    header('Location: /view/user/host/become-host.php');
+    exit;
 }
 
 /**

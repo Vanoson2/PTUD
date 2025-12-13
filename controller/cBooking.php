@@ -91,18 +91,9 @@ class cBooking {
             ];
         }
 
-        // Check 1: User có đơn đặt nào khác trùng ngày không?
-        $userConflictResult = $this->cCheckUserBookingConflict($userId, $checkin, $checkout, $listingId);
-        if ($userConflictResult && $userConflictResult->num_rows > 0) {
-            $conflict = $userConflictResult->fetch_assoc();
-            return [
-                'success' => false,
-                'message' => "Bạn đã có đơn đặt '{$conflict['listing_title']}' trùng thời gian (Mã: {$conflict['code']})",
-                'redirect' => "confirm-booking.php?listing_id=$listingId&checkin=$checkin&checkout=$checkout&guests=$guests"
-            ];
-        }
-
-        // Check 2: Listing còn trống không?
+        // Bỏ check user conflict - cho phép user đặt nhiều phòng cùng lúc
+        
+        // Check: Listing còn trống không?
         $listingAvailabilityResult = $this->cCheckListingAvailability($listingId, $checkin, $checkout);
         if ($listingAvailabilityResult && $listingAvailabilityResult->num_rows > 0) {
             return [

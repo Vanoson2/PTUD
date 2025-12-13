@@ -46,26 +46,17 @@ $reviewCount = $ratingInfo['review_count'] ?? 0;
 // Get user_id from session
 $userId = $_SESSION['user_id'];
 
-// Check 1: User có đơn đặt nào khác trùng ngày không?
+// Bỏ check user conflict - cho phép đặt nhiều phòng cùng lúc
+// Check: Listing còn trống không?
 $cBooking = new cBooking();
-$userConflictResult = $cBooking->cCheckUserBookingConflict($userId, $checkin, $checkout, $listingId);
-$hasUserConflict = false;
-$conflictBooking = null;
-
-if ($userConflictResult && $userConflictResult->num_rows > 0) {
-  $hasUserConflict = true;
-  $conflictBooking = $userConflictResult->fetch_assoc();
-}
-
-// Check 2: Listing còn trống không?
 $listingAvailabilityResult = $cBooking->cCheckListingAvailability($listingId, $checkin, $checkout);
 $isListingAvailable = true;
 if ($listingAvailabilityResult && $listingAvailabilityResult->num_rows > 0) {
   $isListingAvailable = false;
 }
 
-// Tổng hợp: Chỉ cho đặt nếu cả 2 điều kiện đều OK
-$canBook = !$hasUserConflict && $isListingAvailable;
+// Chỉ kiểm tra listing có sẵn hay không
+$canBook = $isListingAvailable;
 
 // Get listing services
 $servicesResult = $cListing->cGetListingServices($listingId);
@@ -120,20 +111,6 @@ $subtotal = $listing['price'] * $nights;
       <i class="fa-solid fa-exclamation-circle"></i>
       <strong>Lỗi!</strong> <?php echo htmlspecialchars($_SESSION['error']); ?>
       <?php unset($_SESSION['error']); ?>
-    </div>
-    <?php endif; ?>
-
-    <?php if ($hasUserConflict): ?>
-    <div class="alert alert-warning">
-      <i class="fa-solid fa-exclamation-triangle"></i>
-      <strong>Bạn đã có đơn đặt khác trùng thời gian!</strong>
-      <p class="mb-0 mt-2">
-        Bạn có đơn đặt <strong><?php echo $conflictBooking['listing_title']; ?></strong> 
-        từ <?php echo date('d/m/Y', strtotime($conflictBooking['check_in'])); ?> 
-        đến <?php echo date('d/m/Y', strtotime($conflictBooking['check_out'])); ?> 
-        (Mã: <?php echo $conflictBooking['code']; ?>).
-        <br>Vui lòng chọn ngày khác hoặc hủy đơn cũ trước.
-      </p>
     </div>
     <?php endif; ?>
 
@@ -231,9 +208,7 @@ $subtotal = $listing['price'] * $nights;
           <button type="submit" 
                   class="btn btn-primary w-100 py-3 fw-bold"
                   <?php echo !$canBook ? 'disabled' : ''; ?>>
-            <?php if ($hasUserConflict): ?>
-              Bạn có đơn đặt trùng ngày
-            <?php elseif (!$isListingAvailable): ?>
+            <?php if (!$isListingAvailable): ?>
               Chỗ ở đã được đặt
             <?php else: ?>
               XÁC NHẬN

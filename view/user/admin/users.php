@@ -36,8 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fullName = trim($_POST['full_name'] ?? '');
     
     $result = $cAdmin->cCreateUser($email, $password, $phone, $fullName);
-    $message = $result['message'];
-    $messageType = $result['success'] ? 'success' : 'error';
+    
+    // Store message in session to display after redirect
+    $_SESSION['message'] = $result['message'];
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'error';
+    
+    // Redirect to avoid form resubmission
+    header('Location: users.php');
+    exit();
     
   } elseif ($action === 'update') {
     $userId = intval($_POST['user_id'] ?? 0);
@@ -47,16 +53,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = !empty($_POST['password']) ? $_POST['password'] : null;
     
     $result = $cAdmin->cUpdateUser($userId, $email, $phone, $fullName, $password);
-    $message = $result['message'];
-    $messageType = $result['success'] ? 'success' : 'error';
+    
+    // Store message in session to display after redirect
+    $_SESSION['message'] = $result['message'];
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'error';
+    
+    // Redirect to avoid form resubmission
+    $redirectUrl = 'users.php';
+    if (isset($_GET['page'])) {
+      $redirectUrl .= '?page=' . intval($_GET['page']);
+    }
+    if (isset($_GET['search'])) {
+      $redirectUrl .= (strpos($redirectUrl, '?') === false ? '?' : '&') . 'search=' . urlencode($_GET['search']);
+    }
+    
+    header('Location: ' . $redirectUrl);
+    exit();
     
   } elseif ($action === 'toggle_status') {
     $userId = intval($_POST['user_id'] ?? 0);
     
     $result = $cAdmin->cToggleUserStatus($userId);
-    $message = $result['message'];
-    $messageType = $result['success'] ? 'success' : 'error';
+    
+    // Store message in session to display after redirect
+    $_SESSION['message'] = $result['message'];
+    $_SESSION['messageType'] = $result['success'] ? 'success' : 'error';
+    
+    // Redirect to avoid form resubmission (PRG pattern)
+    $redirectUrl = 'users.php';
+    if (isset($_GET['page'])) {
+      $redirectUrl .= '?page=' . intval($_GET['page']);
+    }
+    if (isset($_GET['search'])) {
+      $redirectUrl .= (strpos($redirectUrl, '?') === false ? '?' : '&') . 'search=' . urlencode($_GET['search']);
+    }
+    
+    header('Location: ' . $redirectUrl);
+    exit();
   }
+}
+
+// Get message from session (after redirect)
+if (isset($_SESSION['message'])) {
+  $message = $_SESSION['message'];
+  $messageType = $_SESSION['messageType'] ?? 'info';
+  unset($_SESSION['message']);
+  unset($_SESSION['messageType']);
 }
 
 // Get pagination parameters

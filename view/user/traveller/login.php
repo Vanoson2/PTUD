@@ -53,6 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $_SESSION['user_phone'] = $user['phone'] ?? '';
       $_SESSION['is_email_verified'] = $user['is_email_verified'] ?? 0;
       
+      // Check if user is host
+      include_once __DIR__ . '/../../../controller/cHost.php';
+      $cHost = new cHost();
+      $isHost = $cHost->cIsUserHost($user['user_id']);
+      $_SESSION['is_host'] = $isHost;
+      
       // Remember me (cookie 30 days)
       if ($remember) {
         $token = bin2hex(random_bytes(32));

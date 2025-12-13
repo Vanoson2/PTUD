@@ -120,8 +120,24 @@ class mUserScore {
         
         if (!$conn) return ['success' => false, 'message' => 'Không thể kết nối database'];
         
-        // Lấy score change từ config
+        $userId = intval($userId);
         $actionType = $conn->real_escape_string($actionType);
+        
+        // Kiểm tra xem action loại "verify_email" đã được cộng điểm chưa (tránh trùng lặp)
+        if (in_array($actionType, ['verify_email', 'verify_phone', 'verify_id', 'first_booking'])) {
+            $checkSql = "SELECT history_id FROM user_score_history 
+                         WHERE user_id = $userId 
+                         AND reason LIKE '%$actionType%'
+                         LIMIT 1";
+            $checkResult = $conn->query($checkSql);
+            
+            if ($checkResult && $checkResult->num_rows > 0) {
+                // Đã cộng điểm rồi, không cộng nữa
+                return ['success' => false, 'message' => 'Đã nhận điểm cho hành động này rồi'];
+            }
+        }
+        
+        // Lấy score change từ config
         $sql = "SELECT score_change, description FROM score_config WHERE action_type = '$actionType' AND is_active = 1";
         $result = $conn->query($sql);
         
