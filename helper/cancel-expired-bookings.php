@@ -70,7 +70,7 @@ while ($booking = $result->fetch_assoc()) {
     // Cancel the booking
     $sqlCancel = "UPDATE bookings 
                   SET status = 'cancelled',
-                      payment_status = 'refunded',
+                      payment_status = 'unpaid',
                       cancelled_at = NOW(),
                       cancelled_by = 'system',
                       cancel_reason = 'Booking expired - No payment received within 10 minutes'
