@@ -87,9 +87,7 @@ class mBooking {
             // - check_out của booking cũ < check_in mới (ví dụ: cũ 7-8, mới 9-10 OK)
             // - check_in của booking cũ > check_out mới (ví dụ: cũ 10-11, mới 7-8 OK)
             // Ngược lại = overlap = không cho đặt
-            // LƯU Ý: 
-            // - Nếu booking cũ 8-9 và mới 9-10 thì check_out(9) = check_in(9) -> CONFLICT
-            // - Booking pending đã hết hạn (expires_at < NOW) sẽ KHÔNG được tính là conflict
+            // LƯU Ý: Nếu booking cũ 8-9 và mới 9-10 thì check_out(9) = check_in(9) -> CONFLICT
             $strSelect = "SELECT booking_id 
                          FROM bookings 
                          WHERE listing_id = $listingId 
@@ -129,8 +127,8 @@ class mBooking {
             
             $code = $this->generateBookingCode();
             
-            // ⚠️ Tạo booking với status='pending' và expires_at = 10 phút từ bây giờ
-            // Booking sẽ tự động hết hạn nếu không thanh toán trong 10 phút
+            // ⚠️ Tạo booking với status='pending' và expires_at sau 10 phút
+            // MoMo payment cũng sẽ expire sau 10 phút thông qua orderExpireTime
             $strInsert = "INSERT INTO bookings 
                          (code, user_id, listing_id, check_in, check_out, guests, total_amount, note, status, expires_at)
                          VALUES 

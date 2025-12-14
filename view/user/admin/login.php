@@ -53,11 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="admin-login-card">
     <div class="admin-login-header">
       <div class="admin-icon">
-        <svg width="50" height="50" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
-        </svg>
+        <i class="fa-solid fa-user-shield" style="font-size: 50px;"></i>
       </div>
-      <h1>🏠 WeGo Admin</h1>
+      <h1><i class="fa-solid fa-house"></i> WeGo Admin</h1>
       <p>Đăng nhập vào hệ thống quản trị</p>
     </div>
     

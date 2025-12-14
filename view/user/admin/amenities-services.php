@@ -228,7 +228,7 @@ $servicesResult = $cType->cGetAllServices();
       <!-- AMENITIES TAB -->
       <div class="tab-pane fade show active" id="amenities" role="tabpanel">
         <div class="section-header">
-          <h3>📋 Danh sách Tiện nghi</h3>
+          <h3><i class="fa-solid fa-clipboard-list"></i> Danh sách Tiện nghi</h3>
           <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAmenityModal">
             ➕ Thêm tiện nghi
           </button>
@@ -257,12 +257,12 @@ $servicesResult = $cType->cGetAllServices();
                   <td><?php echo htmlspecialchars($amenity['description'] ?? '-'); ?></td>
                   <td>
                     <button class="btn btn-sm btn-warning" onclick="editAmenity(<?php echo $amenity['amenity_id']; ?>, '<?php echo htmlspecialchars(addslashes($amenity['name'])); ?>', '<?php echo htmlspecialchars(addslashes($amenity['group_name'] ?? '')); ?>', '<?php echo htmlspecialchars(addslashes($amenity['description'] ?? '')); ?>')">
-                      ✏️ Sửa
+                      <i class="fa-solid fa-edit"></i> Sửa
                     </button>
                     <form method="POST" style="display: inline;" onsubmit="return confirm('Bạn có chắc muốn xóa tiện nghi này?')">
                       <input type="hidden" name="action" value="delete_amenity">
                       <input type="hidden" name="amenity_id" value="<?php echo $amenity['amenity_id']; ?>">
-                      <button type="submit" class="btn btn-sm btn-danger">🗑️ Xóa</button>
+                      <button type="submit" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i> Xóa</button>
                     </form>
                   </td>
                 </tr>
@@ -280,7 +280,7 @@ $servicesResult = $cType->cGetAllServices();
       <!-- SERVICES TAB -->
       <div class="tab-pane fade" id="services" role="tabpanel">
         <div class="section-header">
-          <h3>📋 Danh sách Dịch vụ</h3>
+          <h3><i class="fa-solid fa-clipboard-list"></i> Danh sách Dịch vụ</h3>
           <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal">
             ➕ Thêm dịch vụ
           </button>
@@ -307,12 +307,12 @@ $servicesResult = $cType->cGetAllServices();
                   <td><?php echo htmlspecialchars($service['description'] ?? '-'); ?></td>
                   <td>
                     <button class="btn btn-sm btn-warning" onclick="editService(<?php echo $service['service_id']; ?>, '<?php echo htmlspecialchars(addslashes($service['name'])); ?>', '<?php echo htmlspecialchars(addslashes($service['description'] ?? '')); ?>')">
-                      ✏️ Sửa
+                      <i class="fa-solid fa-edit"></i> Sửa
                     </button>
                     <form method="POST" style="display: inline;" onsubmit="return confirm('Bạn có chắc muốn xóa dịch vụ này?')">
                       <input type="hidden" name="action" value="delete_service">
                       <input type="hidden" name="service_id" value="<?php echo $service['service_id']; ?>">
-                      <button type="submit" class="btn btn-sm btn-danger">🗑️ Xóa</button>
+                      <button type="submit" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i> Xóa</button>
                     </form>
                   </td>
                 </tr>
@@ -367,7 +367,7 @@ $servicesResult = $cType->cGetAllServices();
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">✏️ Sửa Tiện nghi</h5>
+          <h5 class="modal-title"><i class="fa-solid fa-edit"></i> Sửa Tiện nghi</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <form method="POST">
@@ -430,7 +430,7 @@ $servicesResult = $cType->cGetAllServices();
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">✏️ Sửa Dịch vụ</h5>
+          <h5 class="modal-title"><i class="fa-solid fa-edit"></i> Sửa Dịch vụ</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <form method="POST">

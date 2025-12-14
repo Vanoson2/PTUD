@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <div class="container">
       <div class="row align-items-center">
         <div class="col-md-6">
-          <h1>🏡 Quản lý phòng của bạn</h1>
+          <h1><i class="fa-solid fa-house"></i> Quản lý phòng của bạn</h1>
           <p>Xin chào, <?php echo htmlspecialchars($hostInfo['full_name']); ?></p>
         </div>
         <div class="col-md-6">
@@ -106,29 +106,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <!-- Filters -->
     <div class="filter-tabs">
       <a href="./my-listings.php" class="filter-btn <?php echo $filterStatus === null ? 'active' : ''; ?>">
-        📋 Tất cả
+        <i class="fa-solid fa-clipboard-list"></i> Tất cả
       </a>
       <a href="./my-listings.php?status=draft" class="filter-btn <?php echo $filterStatus === 'draft' ? 'active' : ''; ?>">
-        📝 Bản nháp
+        <i class="fa-solid fa-file-alt"></i> Bản nháp
       </a>
       <a href="./my-listings.php?status=pending" class="filter-btn <?php echo $filterStatus === 'pending' ? 'active' : ''; ?>">
-        ⏳ Chờ duyệt
+        <i class="fa-solid fa-hourglass-half"></i> Chờ duyệt
       </a>
       <a href="./my-listings.php?status=active" class="filter-btn <?php echo $filterStatus === 'active' ? 'active' : ''; ?>">
-        ✅ Hoạt động
+        <i class="fa-solid fa-check-circle"></i> Hoạt động
       </a>
       <a href="./my-listings.php?status=inactive" class="filter-btn <?php echo $filterStatus === 'inactive' ? 'active' : ''; ?>">
         ⏸️ Tạm dừng
       </a>
       <a href="./my-listings.php?status=rejected" class="filter-btn <?php echo $filterStatus === 'rejected' ? 'active' : ''; ?>">
-        ❌ Bị từ chối
+        <i class="fa-solid fa-times-circle"></i> Bị từ chối
       </a>
     </div>
     
     <!-- Listings Grid -->
     <?php if (empty($listings)): ?>
       <div class="empty-state">
-        <div class="empty-state-icon">🏠</div>
+        <div class="empty-state-icon"><i class="fa-solid fa-house"></i></div>
         <h3>Chưa có phòng nào</h3>
         <p>
           <?php if ($filterStatus): ?>
@@ -157,9 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                   <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="<?php echo htmlspecialchars($listing['title']); ?>">
                 <?php else: ?>
                   <div class="no-image-placeholder">
-                    <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-                    </svg>
+                    <i class="fa-solid fa-image fa-3x"></i>
                   </div>
                 <?php endif; ?>
               </div>
@@ -186,11 +184,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $statusClass = 'status-' . $listing['status'];
                 $statusText = '';
                 switch ($listing['status']) {
-                  case 'draft': $statusText = '📝 Bản nháp'; break;
-                  case 'pending': $statusText = '⏳ Chờ duyệt'; break;
-                  case 'active': $statusText = '✅ Hoạt động'; break;
+                  case 'draft': $statusText = '<i class="fa-solid fa-file-alt"></i> Bản nháp'; break;
+                  case 'pending': $statusText = '<i class="fa-solid fa-hourglass-half"></i> Chờ duyệt'; break;
+                  case 'active': $statusText = '<i class="fa-solid fa-check-circle"></i> Hoạt động'; break;
                   case 'inactive': $statusText = '⏸️ Tạm dừng'; break;
-                  case 'rejected': $statusText = '❌ Bị từ chối'; break;
+                  case 'rejected': $statusText = '<i class="fa-solid fa-times-circle"></i> Bị từ chối'; break;
                 }
                 ?>
                 <span class="listing-status <?php echo $statusClass; ?>"><?php echo $statusText; ?></span>
@@ -202,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 </a>
                 
                 <a href="./edit-listing.php?id=<?php echo $listing['listing_id']; ?>" class="btn-action btn-edit">
-                  ✏️ Sửa
+                  <i class="fa-solid fa-edit"></i> Sửa
                 </a>
                 
                 <?php if ($listing['status'] === 'active' || $listing['status'] === 'inactive'): ?>
@@ -219,7 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     <input type="hidden" name="action" value="delete">
                     <input type="hidden" name="listing_id" value="<?php echo $listing['listing_id']; ?>">
                     <button type="submit" class="btn-action btn-delete">
-                      🗑️ Xóa
+                      <i class="fa-solid fa-trash"></i> Xóa
                     </button>
                   </form>
                 <?php endif; ?>
@@ -253,7 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         // Disable button and show loading
         const originalText = this.innerHTML;
         this.disabled = true;
-        this.innerHTML = '⏳ Đang xử lý...';
+        this.innerHTML = '<i class="fa-solid fa-hourglass-half"></i> Đang xử lý...';
         
         try {
           const formData = new FormData();

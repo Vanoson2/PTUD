@@ -49,44 +49,44 @@ if ($hasPendingApplication) {
     
     <!-- Hero Section -->
     <div class="hero-section">
-      <h1>🏡 Trở Thành Host</h1>
+      <h1><i class="fa-solid fa-house"></i> Trở Thành Host</h1>
       <p>Chia sẻ không gian của bạn và kiếm thu nhập từ việc cho thuê nhà</p>
     </div>
     
     <!-- Benefits Grid -->
     <div class="benefits-grid">
       <div class="benefit-card">
-        <div class="benefit-icon">💰</div>
+        <div class="benefit-icon"><i class="fa-solid fa-dollar-sign"></i></div>
         <h3>Thu Nhập Thêm</h3>
         <p>Kiếm tiền từ căn nhà, phòng trống của bạn. Bạn quyết định giá và thời gian cho thuê.</p>
       </div>
       
       <div class="benefit-card">
-        <div class="benefit-icon">🛡️</div>
+        <div class="benefit-icon"><i class="fa-solid fa-shield-alt"></i></div>
         <h3>An Toàn & Bảo Mật</h3>
         <p>Chúng tôi xác minh danh tính khách hàng và cung cấp bảo hiểm tài sản cho host.</p>
       </div>
       
       <div class="benefit-card">
-        <div class="benefit-icon">📱</div>
+        <div class="benefit-icon"><i class="fa-solid fa-mobile-alt"></i></div>
         <h3>Quản Lý Dễ Dàng</h3>
         <p>Công cụ quản lý đặt phòng, lịch trình và giao tiếp với khách hàng đơn giản.</p>
       </div>
       
       <div class="benefit-card">
-        <div class="benefit-icon">🌍</div>
+        <div class="benefit-icon"><i class="fa-solid fa-globe"></i></div>
         <h3>Kết Nối Toàn Cầu</h3>
         <p>Tiếp cận hàng triệu du khách trên khắp thế giới đang tìm kiếm nơi lưu trú.</p>
       </div>
       
       <div class="benefit-card">
-        <div class="benefit-icon">⚡</div>
+        <div class="benefit-icon"><i class="fa-solid fa-bolt"></i></div>
         <h3>Linh Hoạt</h3>
         <p>Tự do quyết định thời gian, giá cả và quy định cho thuê phù hợp với bạn.</p>
       </div>
       
       <div class="benefit-card">
-        <div class="benefit-icon">💬</div>
+        <div class="benefit-icon"><i class="fa-solid fa-comments"></i></div>
         <h3>Hỗ Trợ 24/7</h3>
         <p>Đội ngũ hỗ trợ host luôn sẵn sàng giúp đỡ bạn bất cứ lúc nào.</p>
       </div>
@@ -98,23 +98,18 @@ if ($hasPendingApplication) {
         <!-- Pending Application Message -->
         <div class="pending-application-box">
           <div class="pending-application-header">
-            <svg width="32" height="32" fill="#f59e0b" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-            </svg>
+            <i class="fa-solid fa-clock fa-2x" style="color: #f59e0b;"></i>
             <h3>Đơn Đăng Ký Đang Chờ Duyệt</h3>
           </div>
           <p>
             <?php echo htmlspecialchars($pendingMessage); ?>
           </p>
           <p class="email-notice">
-            📧 Chúng tôi sẽ gửi email thông báo khi hồ sơ của bạn được xét duyệt.
+            <i class="fa-solid fa-envelope"></i> Chúng tôi sẽ gửi email thông báo khi hồ sơ của bạn được xét duyệt.
           </p>
           <div class="pending-application-cta">
             <a href="application-status.php" class="btn btn-warning">
-              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
-                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
-              </svg>
+              <i class="fa-solid fa-clipboard-list"></i>
               Xem Chi Tiết Đơn
             </a>
           </div>
@@ -124,9 +119,7 @@ if ($hasPendingApplication) {
         <p>Chỉ cần vài bước đơn giản để đăng ký trở thành host và bắt đầu cho thuê nhà của bạn!</p>
         
         <a href="./register-host.php" class="btn-become-host">
-          <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-          </svg>
+          <i class="fa-solid fa-house"></i>
           Đăng Ký Ngay
         </a>
       <?php endif; ?>
@@ -136,33 +129,23 @@ if ($hasPendingApplication) {
         <h4>Yêu Cầu:</h4>
         <ul>
           <li>
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
+            <i class="fa-solid fa-check-circle"></i>
             <span>Có tài khoản đã xác thực email</span>
           </li>
           <li>
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
+            <i class="fa-solid fa-check-circle"></i>
             <span>Cung cấp ảnh CMND/CCCD (mặt trước và sau)</span>
           </li>
           <li>
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
+            <i class="fa-solid fa-check-circle"></i>
             <span>Upload ảnh Giấy phép kinh doanh hoặc giấy tờ sở hữu</span>
           </li>
           <li>
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
+            <i class="fa-solid fa-check-circle"></i>
             <span>Có ít nhất một căn nhà/phòng để cho thuê</span>
           </li>
           <li>
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
+            <i class="fa-solid fa-check-circle"></i>
             <span>Chấp nhận các điều khoản và chính sách của WeGo</span>
           </li>
         </ul>

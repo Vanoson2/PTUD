@@ -171,17 +171,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
           case 'pending':
             $statusClass = 'badge-pending';
             $statusText = 'Chờ duyệt';
-            $statusIcon = '⏳';
+            $statusIcon = '<i class="fa-solid fa-hourglass-half"></i>';
             break;
           case 'approved':
             $statusClass = 'badge-approved';
             $statusText = 'Đã duyệt';
-            $statusIcon = '✅';
+            $statusIcon = '<i class="fa-solid fa-check-circle"></i>';
             break;
           case 'rejected':
             $statusClass = 'badge-rejected';
             $statusText = 'Đã từ chối';
-            $statusIcon = '❌';
+            $statusIcon = '<i class="fa-solid fa-times-circle"></i>';
             break;
         }
         ?>
@@ -208,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     
     <!-- User Information -->
     <div class="detail-card">
-      <h3>👤 Thông tin người đăng ký</h3>
+      <h3><i class="fa-solid fa-user"></i> Thông tin người đăng ký</h3>
       <div class="info-row">
         <div class="info-label">Họ tên:</div>
         <div class="info-value"><?php echo htmlspecialchars($application['full_name']); ?></div>
@@ -229,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     
     <!-- Business Information -->
     <div class="detail-card">
-      <h3>🏢 Thông tin kinh doanh</h3>
+      <h3><i class="fa-solid fa-building"></i> Thông tin kinh doanh</h3>
       <div class="info-row">
         <div class="info-label">Tên doanh nghiệp:</div>
         <div class="info-value"><?php echo $application['business_name'] ? htmlspecialchars($application['business_name']) : '<span class="text-muted">Chưa cung cấp</span>'; ?></div>
@@ -242,7 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     
     <!-- Documents -->
     <div class="detail-card">
-      <h3>📎 Tài liệu đính kèm</h3>
+      <h3><i class="fa-solid fa-paperclip"></i> Tài liệu đính kèm</h3>
       
       <?php if (empty($documents)): ?>
         <div class="alert alert-warning">
@@ -292,17 +292,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <!-- Action Buttons (only for pending applications) -->
     <?php if ($application['status'] === 'pending'): ?>
       <div class="detail-card">
-        <h3>⚡ Hành động</h3>
+        <h3><i class="fa-solid fa-bolt"></i> Hành động</h3>
         <div class="action-buttons">
           <form method="POST" onsubmit="return confirm('Bạn có chắc muốn duyệt đơn này?');">
             <input type="hidden" name="action" value="approve">
             <button type="submit" class="btn-approve">
-              ✅ Duyệt đơn
+              <i class="fa-solid fa-check-circle"></i> Duyệt đơn
             </button>
           </form>
           
           <button type="button" class="btn-reject" data-bs-toggle="modal" data-bs-target="#rejectModal">
-            ❌ Từ chối đơn
+            <i class="fa-solid fa-times-circle"></i> Từ chối đơn
           </button>
         </div>
       </div>
@@ -314,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">❌ Từ chối đơn đăng ký</h5>
+          <h5 class="modal-title"><i class="fa-solid fa-times-circle"></i> Từ chối đơn đăng ký</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <form method="POST">

@@ -44,7 +44,12 @@ class MoMoHelper {
             // Convert extra data to JSON string
             $extraDataString = !empty($extraData) ? json_encode($extraData) : "";
             
-            // Tạo chữ ký (signature)
+            // Set expiration time: 10 minutes from now (in seconds, Unix timestamp)
+            $expireTime = time() + (10 * 60); // 10 minutes in seconds
+            
+            // Tạo chữ ký (signature) - Các field PHẢI được sort theo alphabet
+            // ⚠️ Không thêm orderExpireTime vào signature (MoMo sandbox có thể không hỗ trợ)
+            // Thứ tự: accessKey, amount, extraData, ipnUrl, orderId, orderInfo, partnerCode, redirectUrl, requestId, requestType
             $rawHash = "accessKey=" . $this->accessKey . 
                        "&amount=" . $amount . 
                        "&extraData=" . $extraDataString . 
@@ -69,6 +74,7 @@ class MoMoHelper {
                 'orderInfo' => $orderInfo,
                 'redirectUrl' => MOMO_RETURN_URL,
                 'ipnUrl' => MOMO_IPN_URL,
+                'orderExpireTime' => $expireTime,
                 'lang' => MOMO_LANG,
                 'extraData' => $extraDataString,
                 'requestType' => MOMO_REQUEST_TYPE,

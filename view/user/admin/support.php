@@ -275,11 +275,11 @@ $statusLabels = [
                         echo htmlspecialchars($ticket['full_name']);
                         echo '<br><small style="color: #9CA3AF;">' . htmlspecialchars($ticket['email']) . '</small>';
                       } else {
-                        echo '<span style="color: #f59e0b;">👤 Khách vãng lai</span><br>';
+                        echo '<span style="color: #f59e0b;"><i class="fa-solid fa-user"></i> Khách vãng lai</span><br>';
                         echo '<strong>' . htmlspecialchars($ticket['guest_name'] ?? 'N/A') . '</strong><br>';
                         echo '<small style="color: #9CA3AF;">' . htmlspecialchars($ticket['guest_email'] ?? 'N/A') . '</small>';
                         if (!empty($ticket['guest_phone'])) {
-                          echo '<br><small style="color: #9CA3AF;">📞 ' . htmlspecialchars($ticket['guest_phone']) . '</small>';
+                          echo '<br><small style="color: #9CA3AF;"><i class="fa-solid fa-phone"></i> ' . htmlspecialchars($ticket['guest_phone']) . '</small>';
                         }
                       }
                       ?>

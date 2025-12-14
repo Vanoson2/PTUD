@@ -221,19 +221,19 @@ foreach ($amenities as $amenity) {
       </a>
       
       <div class="form-header">
-        <h1>✏️ Chỉnh sửa phòng</h1>
+        <h1><i class="fas fa-edit"></i> Chỉnh sửa phòng</h1>
         <p>Cập nhật thông tin cho phòng: <strong><?php echo htmlspecialchars($listing['title']); ?></strong></p>
       </div>
       
       <?php if ($successMessage): ?>
         <div class="alert alert-success">
-          <strong>✅ Thành công!</strong> <?php echo htmlspecialchars($successMessage); ?>
+          <strong><i class="fas fa-check-circle"></i> Thành công!</strong> <?php echo htmlspecialchars($successMessage); ?>
         </div>
       <?php endif; ?>
       
       <?php if ($errorMessage): ?>
         <div class="alert alert-danger">
-          <strong>❌ Lỗi!</strong> <?php echo htmlspecialchars($errorMessage); ?>
+          <strong><i class="fas fa-times-circle"></i> Lỗi!</strong> <?php echo htmlspecialchars($errorMessage); ?>
         </div>
       <?php endif; ?>
       
@@ -242,7 +242,7 @@ foreach ($amenities as $amenity) {
         <!-- Ảnh hiện tại -->
         <?php if (!empty($existingImages)): ?>
         <div class="form-section">
-          <h3 class="section-title">📷 Ảnh hiện tại</h3>
+          <h3 class="section-title"><i class="fas fa-camera"></i> Ảnh hiện tại</h3>
           <div class="existing-images">
             <?php foreach ($existingImages as $image): ?>
               <div class="existing-image-item <?php echo $image['is_cover'] ? 'is-cover' : ''; ?>" id="image-<?php echo $image['image_id']; ?>">
@@ -270,7 +270,7 @@ foreach ($amenities as $amenity) {
         
         <!-- Thông tin cơ bản -->
         <div class="form-section">
-          <h3 class="section-title">📝 Thông tin cơ bản</h3>
+          <h3 class="section-title"><i class="fas fa-edit"></i> Thông tin cơ bản</h3>
           
           <div class="mb-3">
             <label for="title" class="form-label">Tiêu đề <span class="required">*</span></label>
@@ -314,7 +314,7 @@ foreach ($amenities as $amenity) {
         
         <!-- Địa chỉ -->
         <div class="form-section">
-          <h3 class="section-title">📍 Địa chỉ</h3>
+          <h3 class="section-title"><i class="fas fa-map-marker-alt"></i> Địa chỉ</h3>
           
           <div class="mb-3">
             <label for="address" class="form-label">Địa chỉ cụ thể <span class="required">*</span></label>
@@ -349,7 +349,7 @@ foreach ($amenities as $amenity) {
         
         <!-- Tiện nghi -->
         <div class="form-section">
-          <h3 class="section-title">✨ Tiện nghi</h3>
+          <h3 class="section-title"><i class="fas fa-sparkles"></i> Tiện nghi</h3>
           <?php foreach ($amenitiesByGroup as $groupName => $groupAmenities): ?>
             <div class="amenity-group">
               <h5><?php echo htmlspecialchars($groupName); ?></h5>
@@ -370,7 +370,7 @@ foreach ($amenities as $amenity) {
         <div class="form-section">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-              <h3 class="section-title mb-1">🛎️ Dịch vụ thêm (tùy chọn)</h3>
+              <h3 class="section-title mb-1"><i class="fas fa-concierge-bell"></i> Dịch vụ thêm (tùy chọn)</h3>
               <p class="text-muted mb-0">Cập nhật các dịch vụ phụ phí mà khách có thể sử dụng</p>
             </div>
             <a href="suggest-service.php" class="btn btn-outline-primary btn-sm" target="_blank">
@@ -419,7 +419,7 @@ foreach ($amenities as $amenity) {
         
         <!-- Upload ảnh mới -->
         <div class="form-section">
-          <h3 class="section-title">📸 Thêm ảnh mới (tùy chọn)</h3>
+          <h3 class="section-title"><i class="fas fa-images"></i> Thêm ảnh mới (tùy chọn)</h3>
           <p class="text-muted">Bạn có thể thêm thêm ảnh cho phòng. Chỉ chấp nhận file JPG, PNG. Tối đa 5MB/ảnh.</p>
           
           <div class="mb-3">
@@ -434,7 +434,7 @@ foreach ($amenities as $amenity) {
         
         <!-- Trạng thái -->
         <div class="form-section">
-          <h3 class="section-title">📋 Trạng thái</h3>
+          <h3 class="section-title"><i class="fas fa-clipboard-check"></i> Trạng thái</h3>
           <div class="mb-3">
             <label class="form-label">Chọn trạng thái</label>
             <div>
@@ -442,14 +442,14 @@ foreach ($amenities as $amenity) {
                 <input class="form-check-input" type="radio" name="status" id="statusDraft" value="draft"
                        <?php echo ($listing['status'] === 'draft') ? 'checked' : ''; ?>>
                 <label class="form-check-label" for="statusDraft">
-                  📝 Lưu nháp (chỉnh sửa sau)
+                  <i class="fas fa-file-alt"></i> Lưu nháp (chỉnh sửa sau)
                 </label>
               </div>
               <div class="form-check">
                 <input class="form-check-input" type="radio" name="status" id="statusPending" value="pending"
                        <?php echo ($listing['status'] === 'pending') ? 'checked' : ''; ?>>
                 <label class="form-check-label" for="statusPending">
-                  ⏳ Gửi duyệt (chờ admin phê duyệt)
+                  <i class="fas fa-clock"></i> Gửi duyệt (chờ admin phê duyệt)
                 </label>
               </div>
             </div>

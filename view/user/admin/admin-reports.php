@@ -232,7 +232,7 @@ if ($newUsersByMonth && $newUsersByMonth->num_rows > 0) {
                   <td>
                     <?php if ($rank <= 3): ?>
                       <span class="rank-badge rank-<?php echo $rank; ?>">
-                        <?php echo $rank === 1 ? '🥇' : ($rank === 2 ? '🥈' : '🥉'); ?>
+                        <i class="fas fa-medal" style="color: <?php echo $rank === 1 ? '#FFD700' : ($rank === 2 ? '#C0C0C0' : '#CD7F32'); ?>;"></i>
                       </span>
                     <?php else: ?>
                       <?php echo $rank; ?>
@@ -248,7 +248,7 @@ if ($newUsersByMonth && $newUsersByMonth->num_rows > 0) {
                   <td>
                     <?php if ($host['avg_rating']): ?>
                       <span class="rating-badge">
-                        <?php echo number_format($host['avg_rating'], 1); ?> ⭐
+                        <?php echo number_format($host['avg_rating'], 1); ?> <i class="fas fa-star" style="color: #FDB022;"></i>
                       </span>
                     <?php else: ?>
                       <span class="no-rating">N/A</span>

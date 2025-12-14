@@ -276,7 +276,7 @@ if (!$scoreData) {
 
     <!-- History -->
     <div class="score-card">
-      <h3 style="margin-bottom: 15px;">📊 Lịch sử thay đổi điểm</h3>
+      <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-chart-line"></i> Lịch sử thay đổi điểm</h3>
       
       <?php if (!empty($history)): ?>
         <div style="overflow-x: auto;">

@@ -147,14 +147,14 @@ $services = $mListing->mGetListingServices($listingId);
     <!-- Messages -->
     <?php if ($successMessage): ?>
       <div class="alert alert-success alert-dismissible fade show" role="alert">
-        ✅ <?php echo htmlspecialchars($successMessage); ?>
+        <i class="fa-solid fa-check-circle"></i> <?php echo htmlspecialchars($successMessage); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     <?php endif; ?>
 
     <?php if ($errorMessage): ?>
       <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        ❌ <?php echo htmlspecialchars($errorMessage); ?>
+        <i class="fa-solid fa-times-circle"></i> <?php echo htmlspecialchars($errorMessage); ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
     <?php endif; ?>
@@ -173,19 +173,19 @@ $services = $mListing->mGetListingServices($listingId);
         switch ($listing['status']) {
           case 'pending':
             $statusText = 'Chờ duyệt';
-            $statusIcon = '⏳';
+            $statusIcon = '<i class="fa-solid fa-hourglass-half"></i>';
             break;
           case 'active':
             $statusText = 'Hoạt động';
-            $statusIcon = '✅';
+            $statusIcon = '<i class="fa-solid fa-check-circle"></i>';
             break;
           case 'rejected':
             $statusText = 'Từ chối';
-            $statusIcon = '❌';
+            $statusIcon = '<i class="fa-solid fa-times-circle"></i>';
             break;
           case 'draft':
             $statusText = 'Bản nháp';
-            $statusIcon = '📝';
+            $statusIcon = '<i class="fa-solid fa-file-alt"></i>';
             break;
         }
         ?>
@@ -197,7 +197,7 @@ $services = $mListing->mGetListingServices($listingId);
       <!-- Images -->
       <?php if (!empty($images)): ?>
         <div class="detail-section">
-          <h3>📷 Hình ảnh</h3>
+          <h3><i class="fa-solid fa-camera"></i> Hình ảnh</h3>
           <div class="images-grid">
             <?php foreach ($images as $image): ?>
               <?php
@@ -214,7 +214,7 @@ $services = $mListing->mGetListingServices($listingId);
               <div class="image-item <?php echo $image['is_cover'] ? 'is-cover' : ''; ?>">
                 <img src="<?php echo htmlspecialchars($imagePath); ?>" alt="Listing image">
                 <?php if ($image['is_cover']): ?>
-                  <span class="cover-badge">⭐ Ảnh bìa</span>
+                  <span class="cover-badge"><i class="fa-solid fa-star"></i> Ảnh bìa</span>
                 <?php endif; ?>
               </div>
             <?php endforeach; ?>
@@ -224,7 +224,7 @@ $services = $mListing->mGetListingServices($listingId);
 
       <!-- Basic Info -->
       <div class="detail-section">
-        <h3>📝 Thông tin cơ bản</h3>
+        <h3><i class="fa-solid fa-file-alt"></i> Thông tin cơ bản</h3>
         <div class="info-grid">
           <div class="info-item">
             <span class="info-label">Loại chỗ ở:</span>
@@ -274,7 +274,7 @@ $services = $mListing->mGetListingServices($listingId);
       <!-- Amenities -->
       <?php if (!empty($amenities)): ?>
         <div class="detail-section">
-          <h3>✨ Tiện nghi</h3>
+          <h3><i class="fa-solid fa-sparkles"></i> Tiện nghi</h3>
           <div class="amenities-list">
             <?php foreach ($amenities as $amenity): ?>
               <span class="amenity-tag">
@@ -288,7 +288,7 @@ $services = $mListing->mGetListingServices($listingId);
       <!-- Services -->
       <?php if (!empty($services) && $services->num_rows > 0): ?>
         <div class="detail-section">
-          <h3>🛎️ Dịch vụ thêm</h3>
+          <h3><i class="fa-solid fa-concierge-bell"></i> Dịch vụ thêm</h3>
           <div class="services-list">
             <?php while($service = $services->fetch_assoc()): ?>
               <div class="service-item-admin">
@@ -313,7 +313,7 @@ $services = $mListing->mGetListingServices($listingId);
       <!-- Rejection Reason (if rejected) -->
       <?php if ($listing['status'] === 'rejected' && !empty($listing['rejection_reason'])): ?>
         <div class="detail-section rejection-reason">
-          <h3>❌ Lý do từ chối</h3>
+          <h3><i class="fa-solid fa-times-circle"></i> Lý do từ chối</h3>
           <p><?php echo nl2br(htmlspecialchars($listing['rejection_reason'])); ?></p>
         </div>
       <?php endif; ?>
@@ -327,12 +327,12 @@ $services = $mListing->mGetListingServices($listingId);
               <form method="POST" style="display: inline-block;">
                 <input type="hidden" name="action" value="approve">
                 <button type="submit" class="btn-approve" onclick="return confirm('Bạn có chắc muốn phê duyệt phòng này?')">
-                  ✅ Phê duyệt
+                  <i class="fa-solid fa-check-circle"></i> Phê duyệt
                 </button>
               </form>
               
               <button type="button" class="btn-reject" data-bs-toggle="modal" data-bs-target="#rejectModal">
-                ❌ Từ chối
+                <i class="fa-solid fa-times-circle"></i> Từ chối
               </button>
             </div>
           </div>
@@ -352,7 +352,7 @@ $services = $mListing->mGetListingServices($listingId);
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">❌ Từ chối phòng</h5>
+          <h5 class="modal-title"><i class="fa-solid fa-times-circle"></i> Từ chối phòng</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <form method="POST">

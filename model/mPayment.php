@@ -230,6 +230,34 @@ class mPayment {
         $result = $conn->query($sql);
         return $result;
     }
+    
+    /**
+     * Cancel booking và cập nhật trạng thái
+     */
+    public function mCancelBooking($bookingId, $cancelledBy, $cancelReason = null) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return false;
+        }
+        
+        $bookingId = intval($bookingId);
+        $cancelledBy = $conn->real_escape_string($cancelledBy);
+        $cancelReason = $cancelReason ? $conn->real_escape_string($cancelReason) : null;
+        
+        $reasonSql = $cancelReason ? "'$cancelReason'" : "NULL";
+        
+        $sql = "UPDATE bookings 
+                SET status = 'cancelled',
+                    payment_status = 'unpaid',
+                    cancelled_by = '$cancelledBy',
+                    cancel_reason = $reasonSql,
+                    cancelled_at = NOW()
+                WHERE booking_id = $bookingId";
+        
+        return $conn->query($sql);
+    }
 }
 
 ?>

@@ -168,9 +168,7 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
               </a>
             <?php else: ?>
               <span class="badge-reviewed">
-                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                </svg>
+                <i class="fa-solid fa-check-circle"></i>
                 Reviewed
               </span>
             <?php endif; ?>
@@ -180,9 +178,7 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
     <?php endforeach; ?>
   <?php else: ?>
     <div class="empty-state">
-      <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-      </svg>
+      <i class="fa-solid fa-clipboard-list empty-icon"></i>
       <h3>Chưa có đơn đặt nào</h3>
       <p>Bạn chưa có đơn đặt <?php echo $activeTab === 'upcoming' ? 'sắp tới' : 'đã hoàn thành'; ?></p>
       <a href="../../../index.php" class="btn-primary">Khám phá ngay</a>

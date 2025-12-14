@@ -124,7 +124,7 @@ $admins = $cAdmin->cGetAllAdmins();
           <?php 
           if ($isSuperAdmin) echo '👑 Superadmin';
           elseif ($isManager) echo '🔧 Manager';
-          else echo '💬 Support';
+          else echo '<i class="fa-solid fa-headset"></i> Support';
           ?>
         </small>
       </div>

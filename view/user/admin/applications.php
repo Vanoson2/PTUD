@@ -117,23 +117,23 @@ $applications = $cAdmin->cGetAllHostApplications($filterStatus);
     <div class="container">
     <div class="filter-tabs">
       <a href="./applications.php" class="filter-btn <?php echo $filterStatus === null ? 'active' : ''; ?>">
-        📋 Tất cả
+        <i class="fa-solid fa-clipboard-list"></i> Tất cả
       </a>
       <a href="./applications.php?status=pending" class="filter-btn <?php echo $filterStatus === 'pending' ? 'active' : ''; ?>">
-        ⏳ Chờ duyệt
+        <i class="fa-solid fa-hourglass-half"></i> Chờ duyệt
       </a>
       <a href="./applications.php?status=approved" class="filter-btn <?php echo $filterStatus === 'approved' ? 'active' : ''; ?>">
-        ✅ Đã duyệt
+        <i class="fa-solid fa-check-circle"></i> Đã duyệt
       </a>
       <a href="./applications.php?status=rejected" class="filter-btn <?php echo $filterStatus === 'rejected' ? 'active' : ''; ?>">
-        ❌ Đã từ chối
+        <i class="fa-solid fa-times-circle"></i> Đã từ chối
       </a>
     </div>
     
     <div class="applications-table">
       <?php if (empty($applications)): ?>
         <div class="empty-state">
-          <div class="empty-state-icon">📭</div>
+          <div class="empty-state-icon"><i class="fa-solid fa-inbox"></i></div>
           <h3>Không có đơn đăng ký nào</h3>
           <p class="text-muted">
             <?php if ($filterStatus): ?>

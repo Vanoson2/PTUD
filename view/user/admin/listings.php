@@ -151,19 +151,19 @@ $totalCount = count($cAdmin->cGetAllListings(null));
     <!-- Filter Tabs -->
     <div class="filter-tabs">
       <a href="./listings.php" class="filter-btn <?php echo $filterStatus === null ? 'active' : ''; ?>">
-        📋 Tất cả (<?php echo $totalCount; ?>)
+        <i class="fa-solid fa-clipboard"></i> Tất cả (<?php echo $totalCount; ?>)
       </a>
       <a href="./listings.php?status=pending" class="filter-btn <?php echo $filterStatus === 'pending' ? 'active' : ''; ?>">
-        ⏳ Chờ duyệt (<?php echo $pendingCount; ?>)
+        <i class="fa-solid fa-hourglass-half"></i> Chờ duyệt (<?php echo $pendingCount; ?>)
       </a>
       <a href="./listings.php?status=active" class="filter-btn <?php echo $filterStatus === 'active' ? 'active' : ''; ?>">
-        ✅ Hoạt động (<?php echo $activeCount; ?>)
+        <i class="fa-solid fa-check-circle"></i> Hoạt động (<?php echo $activeCount; ?>)
       </a>
       <a href="./listings.php?status=rejected" class="filter-btn <?php echo $filterStatus === 'rejected' ? 'active' : ''; ?>">
-        ❌ Từ chối (<?php echo $rejectedCount; ?>)
+        <i class="fa-solid fa-times-circle"></i> Từ chối (<?php echo $rejectedCount; ?>)
       </a>
       <a href="./listings.php?status=draft" class="filter-btn <?php echo $filterStatus === 'draft' ? 'active' : ''; ?>">
-        📝 Bản nháp (<?php echo $draftCount; ?>)
+        <i class="fa-solid fa-file-alt"></i> Bản nháp (<?php echo $draftCount; ?>)
       </a>
     </div>
 
@@ -171,7 +171,7 @@ $totalCount = count($cAdmin->cGetAllListings(null));
     <div class="table-container">
       <?php if (empty($listings)): ?>
         <div class="empty-state">
-          <div class="empty-icon">🏠</div>
+          <div class="empty-icon"><i class="fa-solid fa-house"></i></div>
           <h3>Không có phòng nào</h3>
           <p>Chưa có phòng nào trong danh sách này.</p>
         </div>
@@ -216,7 +216,7 @@ $totalCount = count($cAdmin->cGetAllListings(null));
                          alt="Cover" class="listing-thumb"
                          onerror="this.src='/public/img/placeholder.jpg'; this.onerror=null;">
                   <?php else: ?>
-                    <div class="no-image">📷</div>
+                    <div class="no-image"><i class="fa-solid fa-camera"></i></div>
                   <?php endif; ?>
                 </td>
                 <td>
@@ -252,19 +252,19 @@ $totalCount = count($cAdmin->cGetAllListings(null));
                   switch ($listing['status']) {
                     case 'pending':
                       $statusText = 'Chờ duyệt';
-                      $statusIcon = '⏳';
+                      $statusIcon = '<i class="fa-solid fa-hourglass-half"></i>';
                       break;
                     case 'active':
                       $statusText = 'Hoạt động';
-                      $statusIcon = '✅';
+                      $statusIcon = '<i class="fa-solid fa-check-circle"></i>';
                       break;
                     case 'rejected':
                       $statusText = 'Từ chối';
-                      $statusIcon = '❌';
+                      $statusIcon = '<i class="fa-solid fa-times-circle"></i>';
                       break;
                     case 'draft':
                       $statusText = 'Bản nháp';
-                      $statusIcon = '📝';
+                      $statusIcon = '<i class="fa-solid fa-file-alt"></i>';
                       break;
                   }
                   ?>

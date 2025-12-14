@@ -81,30 +81,23 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
     <!-- Sidebar -->
     <aside class="host-sidebar">
       <div class="host-brand">
-        <h2>🏠 Host Dashboard</h2>
+        <h2><i class="fas fa-home"></i> Host Dashboard</h2>
         <p>Quản lý chỗ ở của bạn</p>
       </div>
       
       <nav class="host-nav">
         <a href="./host-dashboard.php" class="nav-item">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-          </svg>
+          <i class="fas fa-chart-line"></i>
           Tổng quan
         </a>
         
         <a href="./my-listings.php" class="nav-item">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
-          </svg>
+          <i class="fas fa-building"></i>
           Danh sách chỗ ở
         </a>
         
         <a href="./host-bookings.php" class="nav-item active">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
-          </svg>
+          <i class="fas fa-clipboard-list"></i>
           Đơn đặt phòng
           <?php if ($counts['ongoing'] > 0): ?>
             <span class="badge-count"><?php echo $counts['ongoing']; ?></span>
@@ -112,23 +105,17 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
         </a>
         
         <a href="./create-listing.php" class="nav-item">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
-          </svg>
+          <i class="fas fa-plus-circle"></i>
           Thêm chỗ ở mới
         </a>
         
         <a href="../profile.php" class="nav-item">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-          </svg>
+          <i class="fas fa-user"></i>
           Hồ sơ cá nhân
         </a>
         
         <a href="../logout.php" class="nav-item">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
-          </svg>
+          <i class="fas fa-sign-out-alt"></i>
           Đăng xuất
         </a>
       </nav>
@@ -143,18 +130,14 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
       
       <?php if ($successMessage): ?>
         <div class="alert alert-success">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-          </svg>
+          <i class="fas fa-check-circle"></i>
           <span><?php echo htmlspecialchars($successMessage); ?></span>
         </div>
       <?php endif; ?>
       
       <?php if ($errorMessage): ?>
         <div class="alert alert-danger">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-          </svg>
+          <i class="fas fa-times-circle"></i>
           <span><?php echo htmlspecialchars($errorMessage); ?></span>
         </div>
       <?php endif; ?>
@@ -221,9 +204,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                 <h3 class="booking-title"><?php echo htmlspecialchars($booking['listing_title']); ?></h3>
                 
                 <div class="booking-guest">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" style="display: inline; margin-right: 5px;">
-                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                  </svg>
+                  <i class="fas fa-user" style="margin-right: 5px;"></i>
                   Khách: <strong><?php echo htmlspecialchars($booking['guest_name']); ?></strong>
                 </div>
                 
@@ -261,7 +242,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
                     <input type="hidden" name="booking_id" value="<?php echo $booking['booking_id']; ?>">
                     <input type="hidden" name="new_status" value="completed">
                     <button type="submit" name="update_status" class="btn-complete">
-                      ✓ Đã trả phòng
+                      <i class="fas fa-check"></i> Đã trả phòng
                     </button>
                   </form>
                 <?php endif; ?>
@@ -274,9 +255,7 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
           <?php endforeach; ?>
         <?php else: ?>
           <div class="empty-state">
-            <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-            </svg>
+            <i class="fas fa-clipboard empty-icon"></i>
             <h3>Chưa có đơn đặt nào</h3>
             <p>
               <?php 

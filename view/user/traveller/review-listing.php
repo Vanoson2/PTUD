@@ -108,9 +108,7 @@ if ($booking['is_rated']) {
     <div class="image-upload-section">
       <label class="upload-label">Ảnh (Không bắt buộc - Tối đa 5 ảnh - PNG/JPG/JPEG - Max 5MB/ảnh)</label>
       <div class="upload-area" onclick="document.getElementById('imageInput').click()">
-        <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-        </svg>
+        <i class="fa-solid fa-cloud-arrow-up fa-3x upload-icon"></i>
         <p class="upload-text">Upload ảnh (tuỳ chọn)</p>
       </div>
       <input 
@@ -141,9 +139,7 @@ if ($booking['is_rated']) {
 <div class="success-overlay" id="successOverlay">
   <div class="success-modal">
     <div class="success-icon">
-      <svg width="48" height="48" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-      </svg>
+      <i class="fa-solid fa-circle-check" style="font-size: 48px;"></i>
     </div>
     <h3>ĐÁNH GIÁ THÀNH CÔNG</h3>
     <p>ĐÁNH GIÁ ĐÃ ĐƯỢC GỬI<br>CẢM ƠN BẠN ĐÃ CHIA SẺ TRẢI NGHIỆM CỦA MÌNH.</p>

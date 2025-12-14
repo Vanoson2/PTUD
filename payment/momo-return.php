@@ -139,11 +139,34 @@ try {
             'message' => $message
         ]);
         
+        // Lấy thông tin booking để redirect về confirm-booking nếu cần
+        $booking = null;
+        if ($bookingId) {
+            require_once(__DIR__ . '/../model/mBooking.php');
+            $mBooking = new mBooking();
+            $bookingResult = $mBooking->mGetBookingById($bookingId);
+            if ($bookingResult && $bookingResult->num_rows > 0) {
+                $booking = $bookingResult->fetch_assoc();
+            }
+        }
+        
         // Map error message
         $errorMessage = $message;
         switch ($resultCode) {
             case 1006:
-                $errorMessage = 'Giao dịch bị từ chối bởi người dùng';
+                $errorMessage = 'Bạn đã hủy thanh toán. Đặt chỗ đã được hủy và ngày đã chọn đã được mở khóa.';
+                // Cancel booking khi user hủy thanh toán → Tự động mở khóa ngày
+                if ($bookingId) {
+                    require_once(__DIR__ . '/../model/mPayment.php');
+                    $mPayment = new mPayment();
+                    $mPayment->mCancelBooking($bookingId, 'user', 'Hủy thanh toán MoMo');
+                }
+                // Redirect về trang chi tiết listing để user có thể đặt lại
+                if ($booking) {
+                    $_SESSION['info'] = $errorMessage;
+                    header('Location: ../view/user/traveller/detailListing.php?id=' . $booking['listing_id']);
+                    exit;
+                }
                 break;
             case 1001:
                 $errorMessage = 'Giao dịch thất bại do tài khoản người dùng không đủ tiền';

@@ -266,11 +266,14 @@ class mListing {
         $conn = $p->mMoKetNoi();
         if($conn){
             $listingId = intval($listingId);
-            // Chỉ lấy booking đang active (confirmed) và chưa hoàn thành
+            // Lấy booking confirmed HOẶC pending chưa hết hạn
             $strSelect = "SELECT check_in, check_out 
                          FROM bookings 
                          WHERE listing_id = $listingId 
-                         AND status = 'confirmed'
+                         AND (
+                            status = 'confirmed' 
+                            OR (status = 'pending' AND (expires_at IS NULL OR expires_at > NOW()))
+                         )
                          AND check_out >= CURDATE()
                          ORDER BY check_in ASC";
             

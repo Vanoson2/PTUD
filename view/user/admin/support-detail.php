@@ -278,10 +278,10 @@ $statusLabels = [
                 <div class="col-md-8">
                   <label class="form-label">Chọn trạng thái mới</label>
                   <select name="status" class="form-select form-select-lg">
-                    <option value="open" <?php echo $ticket['status'] === 'open' ? 'selected' : ''; ?>>🆕 Mới</option>
-                    <option value="in_progress" <?php echo $ticket['status'] === 'in_progress' ? 'selected' : ''; ?>>⏳ Đang xử lý</option>
-                    <option value="resolved" <?php echo $ticket['status'] === 'resolved' ? 'selected' : ''; ?>>✅ Đã giải quyết</option>
-                    <option value="closed" <?php echo $ticket['status'] === 'closed' ? 'selected' : ''; ?>>🔒 Đã đóng</option>
+                    <option value="open" <?php echo $ticket['status'] === 'open' ? 'selected' : ''; ?>><i class="fa-solid fa-circle-exclamation"></i> Mới</option>
+                    <option value="in_progress" <?php echo $ticket['status'] === 'in_progress' ? 'selected' : ''; ?>><i class="fa-solid fa-hourglass-half"></i> Đang xử lý</option>
+                    <option value="resolved" <?php echo $ticket['status'] === 'resolved' ? 'selected' : ''; ?>><i class="fa-solid fa-check-circle"></i> Đã giải quyết</option>
+                    <option value="closed" <?php echo $ticket['status'] === 'closed' ? 'selected' : ''; ?>><i class="fa-solid fa-lock"></i> Đã đóng</option>
                   </select>
                 </div>
                 <div class="col-md-4">

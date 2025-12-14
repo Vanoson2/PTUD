@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if (errors.length > 0) {
                 e.preventDefault();
-                alert('❌ Lỗi:\n\n' + errors.map((err, idx) => (idx + 1) + '. ' + err).join('\n'));
+                alert('Lỗi:\n\n' + errors.map((err, idx) => (idx + 1) + '. ' + err).join('\n'));
             }
         });
     </script>

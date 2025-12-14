@@ -71,6 +71,24 @@ $totalPrice = $listing['price'] * $nights;
 <link rel="stylesheet" href="../../../view/css/traveller-detail-listing.css?v=<?php echo time(); ?>">
 
 <div class="detail-container">
+  <?php if (isset($_SESSION['info'])): ?>
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+      <i class="fa-solid fa-info-circle"></i>
+      <?php echo htmlspecialchars($_SESSION['info']); ?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <?php unset($_SESSION['info']); ?>
+  <?php endif; ?>
+  
+  <?php if (isset($_SESSION['error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="fa-solid fa-exclamation-circle"></i>
+      <?php echo htmlspecialchars($_SESSION['error']); ?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <?php unset($_SESSION['error']); ?>
+  <?php endif; ?>
+  
   <!-- Breadcrumb -->
   <div class="breadcrumb">
     <a href="../../../index.php">Trang chủ</a>
@@ -434,7 +452,7 @@ const pricePerNight = <?php echo $listing['price']; ?>;
         const encodedUrl = encodeURIComponent(currentUrl);
         
         // Redirect to login with backup parameter
-        window.location.href = `../login.php?returnUrl=${encodedUrl}`;
+        window.location.href = `./login.php?returnUrl=${encodedUrl}`;
       <?php else: ?>
         // Logged in - proceed to confirmation page
         const checkin = document.getElementById('hiddenCheckin').value;

@@ -82,26 +82,26 @@ foreach ($amenities as $amenity) {
       <a href="./my-listings.php" class="back-link">← Quay lại danh sách phòng</a>
       
       <div class="form-header">
-        <h1>🏡 Đăng phòng mới</h1>
+        <h1><i class="fas fa-home"></i> Đăng phòng mới</h1>
         <p>Chia sẻ không gian của bạn với du khách trên WeGo</p>
       </div>
       
       <?php if ($successMessage): ?>
         <div class="alert alert-success">
-          <strong>✅ Thành công!</strong> <?php echo htmlspecialchars($successMessage); ?>
+          <strong><i class="fas fa-check-circle"></i> Thành công!</strong> <?php echo htmlspecialchars($successMessage); ?>
         </div>
       <?php endif; ?>
       
       <?php if ($errorMessage): ?>
         <div class="alert alert-danger">
-          <strong>❌ Lỗi!</strong> <?php echo $errorMessage; ?>
+          <strong><i class="fas fa-times-circle"></i> Lỗi!</strong> <?php echo $errorMessage; ?>
         </div>
       <?php endif; ?>
       
       <form method="POST" enctype="multipart/form-data" id="listingForm">
         <!-- Thông tin cơ bản -->
         <div class="form-section">
-          <h3 class="section-title">📝 Thông tin cơ bản</h3>
+          <h3 class="section-title"><i class="fas fa-edit"></i> Thông tin cơ bản</h3>
           
           <div class="mb-3">
             <label for="title" class="form-label">Tiêu đề <span class="required">*</span></label>
@@ -144,7 +144,7 @@ foreach ($amenities as $amenity) {
         
         <!-- Địa chỉ -->
         <div class="form-section">
-          <h3 class="section-title">📍 Địa chỉ</h3>
+          <h3 class="section-title"><i class="fas fa-map-marker-alt"></i> Địa chỉ</h3>
           
           <div class="mb-3">
             <label for="address" class="form-label">Địa chỉ chi tiết <span class="required">*</span></label>
@@ -176,7 +176,7 @@ foreach ($amenities as $amenity) {
         
         <!-- Tiện nghi -->
         <div class="form-section">
-          <h3 class="section-title">✨ Tiện nghi</h3>
+          <h3 class="section-title"><i class="fas fa-sparkles"></i> Tiện nghi</h3>
           <p class="text-muted">Chọn các tiện nghi có sẵn tại chỗ ở của bạn</p>
           
           <?php foreach ($amenitiesByGroup as $groupName => $groupAmenities): ?>
@@ -202,7 +202,7 @@ foreach ($amenities as $amenity) {
         <div class="form-section">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-              <h3 class="section-title mb-1">🛎️ Dịch vụ thêm (tùy chọn)</h3>
+              <h3 class="section-title mb-1"><i class="fas fa-concierge-bell"></i> Dịch vụ thêm (tùy chọn)</h3>
               <p class="text-muted mb-0">Thêm các dịch vụ phụ phí mà khách có thể sử dụng</p>
             </div>
             <a href="suggest-service.php" class="btn btn-outline-primary btn-sm" target="_blank">
@@ -244,11 +244,11 @@ foreach ($amenities as $amenity) {
         
         <!-- Ảnh -->
         <div class="form-section">
-          <h3 class="section-title">📷 Hình ảnh</h3>
+          <h3 class="section-title"><i class="fas fa-camera"></i> Hình ảnh</h3>
           <p class="text-muted">Tải lên từ 3-5 ảnh (tối đa 5MB/ảnh, định dạng JPG/PNG/JPEG)</p>
           
           <div class="image-upload-area" onclick="document.getElementById('images').click()">
-            <div class="upload-icon">📸</div>
+            <div class="upload-icon"><i class="fas fa-images fa-3x"></i></div>
             <p><strong>Click để chọn ảnh (3-5 ảnh)</strong></p>
             <p class="text-muted">Hoặc kéo thả ảnh vào đây</p>
           </div>
@@ -263,12 +263,12 @@ foreach ($amenities as $amenity) {
         <div class="row">
           <div class="col-md-6">
             <button type="submit" name="status" value="draft" class="btn-submit btn-draft">
-              💾 Lưu nháp
+              <i class="fas fa-save"></i> Lưu nháp
             </button>
           </div>
           <div class="col-md-6">
             <button type="submit" name="status" value="pending" class="btn-submit">
-              🚀 Gửi duyệt
+              <i class="fas fa-paper-plane"></i> Gửi duyệt
             </button>
           </div>
         </div>

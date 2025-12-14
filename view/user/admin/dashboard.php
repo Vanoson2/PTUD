@@ -73,7 +73,7 @@ $stats = array_merge([
         <?php 
         if ($isSuperAdmin) echo '👑 Superadmin';
         elseif ($isManager) echo '🔧 Manager';
-        else echo '💬 Support';
+        else echo '<i class="fa-solid fa-headset"></i> Support';
         ?>
       </small>
     </div>
@@ -165,7 +165,7 @@ $stats = array_merge([
       <!-- Total Applications -->
       <div class="col-md-4">
         <div class="stats-card total">
-          <div class="stats-icon total">📋</div>
+          <div class="stats-icon total"><i class="fa-solid fa-clipboard-list"></i></div>
           <div class="stats-number"><?php echo $stats['total_applications']; ?></div>
           <div class="stats-label">Tổng đơn đăng ký</div>
         </div>
@@ -174,7 +174,7 @@ $stats = array_merge([
       <!-- Pending Applications -->
       <div class="col-md-4">
         <div class="stats-card pending">
-          <div class="stats-icon pending">⏳</div>
+          <div class="stats-icon pending"><i class="fa-solid fa-hourglass-half"></i></div>
           <div class="stats-number"><?php echo $stats['pending_applications']; ?></div>
           <div class="stats-label">Đơn chờ duyệt</div>
         </div>
@@ -183,7 +183,7 @@ $stats = array_merge([
       <!-- Approved Applications -->
       <div class="col-md-4">
         <div class="stats-card approved">
-          <div class="stats-icon approved">✅</div>
+          <div class="stats-icon approved"><i class="fa-solid fa-check-circle"></i></div>
           <div class="stats-number"><?php echo $stats['approved_applications']; ?></div>
           <div class="stats-label">Đơn đã duyệt</div>
         </div>
@@ -192,7 +192,7 @@ $stats = array_merge([
       <!-- Rejected Applications -->
       <div class="col-md-4">
         <div class="stats-card rejected">
-          <div class="stats-icon rejected">❌</div>
+          <div class="stats-icon rejected"><i class="fa-solid fa-times-circle"></i></div>
           <div class="stats-number"><?php echo $stats['rejected_applications']; ?></div>
           <div class="stats-label">Đơn bị từ chối</div>
         </div>
@@ -210,7 +210,7 @@ $stats = array_merge([
       <!-- Total Hosts -->
       <div class="col-md-4">
         <div class="stats-card hosts">
-          <div class="stats-icon hosts">🏡</div>
+          <div class="stats-icon hosts"><i class="fa-solid fa-house"></i></div>
           <div class="stats-number"><?php echo $stats['total_hosts']; ?></div>
           <div class="stats-label">Tổng hosts hoạt động</div>
         </div>
@@ -247,17 +247,17 @@ $stats = array_merge([
             </div>
             <div class="col-md-3 mb-3">
               <a href="./hosts.php" class="quick-link-btn">
-                🏠 Quản lý chủ nhà
+                <i class="fa-solid fa-house"></i> Quản lý chủ nhà
               </a>
             </div>
             <div class="col-md-3 mb-3">
               <a href="./applications.php?status=pending" class="quick-link-btn">
-                📋 Đơn đăng ký Host (<?php echo $stats['pending_applications']; ?>)
+                <i class="fa-solid fa-clipboard-list"></i> Đơn đăng ký Host (<?php echo $stats['pending_applications']; ?>)
               </a>
             </div>
             <div class="col-md-3 mb-3">
               <a href="./listings.php?status=pending" class="quick-link-btn">
-                🏠 Quản lý phòng
+                <i class="fa-solid fa-house"></i> Quản lý phòng
               </a>
             </div>
             <div class="col-md-3 mb-3">

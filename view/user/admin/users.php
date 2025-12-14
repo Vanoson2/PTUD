@@ -627,15 +627,15 @@ $totalUsers = $userData['total'];
       
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px;">
         <div style="text-align: center; padding: 15px; background: #F3F4F6; border-radius: 8px;">
-          <div style="font-size: 24px;">${score.verified_phone ? '✓' : '○'}</div>
+          <div style="font-size: 24px;">${score.verified_phone ? '<i class="fas fa-check-circle" style="color: #10B981;"></i>' : '<i class="far fa-circle" style="color: #9CA3AF;"></i>'}</div>
           <div style="font-size: 14px; color: #6B7280; margin-top: 5px;">Số điện thoại</div>
         </div>
         <div style="text-align: center; padding: 15px; background: #F3F4F6; border-radius: 8px;">
-          <div style="font-size: 24px;">${score.verified_id ? '✓' : '○'}</div>
+          <div style="font-size: 24px;">${score.verified_id ? '<i class="fas fa-check-circle" style="color: #10B981;"></i>' : '<i class="far fa-circle" style="color: #9CA3AF;"></i>'}</div>
           <div style="font-size: 14px; color: #6B7280; margin-top: 5px;">CCCD/CMND</div>
         </div>
         <div style="text-align: center; padding: 15px; background: #F3F4F6; border-radius: 8px;">
-          <div style="font-size: 24px;">${score.is_verified ? '✓' : '○'}</div>
+          <div style="font-size: 24px;">${score.is_verified ? '<i class="fas fa-check-circle" style="color: #10B981;"></i>' : '<i class="far fa-circle" style="color: #9CA3AF;"></i>'}</div>
           <div style="font-size: 14px; color: #6B7280; margin-top: 5px;">Tài khoản đầy đủ</div>
         </div>
       </div>

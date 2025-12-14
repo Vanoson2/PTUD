@@ -91,19 +91,19 @@ include_once __DIR__ . '/../../partials/header.php';
             switch ($listing['status']) {
               case 'pending':
                 $statusText = 'Chờ duyệt';
-                $statusIcon = '⏳';
+                $statusIcon = '<i class="fa-solid fa-hourglass-half"></i>';
                 break;
               case 'active':
                 $statusText = 'Hoạt động';
-                $statusIcon = '✅';
+                $statusIcon = '<i class="fa-solid fa-check-circle"></i>';
                 break;
               case 'rejected':
                 $statusText = 'Từ chối';
-                $statusIcon = '❌';
+                $statusIcon = '<i class="fa-solid fa-times-circle"></i>';
                 break;
               case 'draft':
                 $statusText = 'Bản nháp';
-                $statusIcon = '📝';
+                $statusIcon = '<i class="fa-solid fa-file-alt"></i>';
                 break;
               case 'inactive':
                 $statusText = 'Tạm dừng';
