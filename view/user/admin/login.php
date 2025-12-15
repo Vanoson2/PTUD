@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
     
     <div class="back-link">
-      <a href="../../index.php">
+      <a href="../../../index.php">
         ← Quay về trang chủ
       </a>
     </div>
