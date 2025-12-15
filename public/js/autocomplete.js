@@ -34,7 +34,12 @@
       return;
     }
     
-    fetch(`./controller/autocomplete.php?q=${encodeURIComponent(query)}`)
+    // Get base path dynamically - works on both localhost and hosting
+    const basePath = window.location.pathname.includes('/view/') 
+      ? '../../../controller/autocomplete.php' 
+      : './controller/autocomplete.php';
+    
+    fetch(`${basePath}?q=${encodeURIComponent(query)}`)
       .then(response => response.json())
       .then(data => {
         closeAutocompleteList();
