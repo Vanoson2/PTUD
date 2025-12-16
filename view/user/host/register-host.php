@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Save business license if uploaded
         if (!empty($businessLicenseImage)) {
-          $businessLicensePath = 'public/uploads/host/' . $businessLicenseImage;
+          $businessLicensePath = '/public/uploads/host/' . $businessLicenseImage;
           $cHost->cSaveHostDocument($applicationId, 'business_license', $businessLicensePath, 'image/jpeg', 0);
         }
         

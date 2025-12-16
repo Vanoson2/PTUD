@@ -655,7 +655,8 @@ class cHost {
                 return ['success' => false, 'message' => "Không thể lưu ảnh " . ($side === 'front' ? 'mặt trước' : 'mặt sau')];
             }
             
-            $images[$side] = 'public/uploads/id_cards/' . $newFileName;
+            // Save relative path from webroot with leading slash for hosting compatibility
+            $images[$side] = '/public/uploads/id_cards/' . $newFileName;
         }
         
         return ['success' => true, 'front' => $images['front'], 'back' => $images['back']];
