@@ -111,7 +111,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Successfully created host application
         $successMessage = 'Đăng ký host thành công! Bạn có thể bắt đầu tạo phòng. Admin sẽ duyệt trong vòng 24-48h.';
-        header('refresh:3;url=./my-listings.php');
+        // Use meta refresh instead of header() since HTML output already started
+        $redirectUrl = './my-listings.php';
+        $redirectDelay = 3;
       } else {
         $errors['general'] = $appResult['message'];
       }
@@ -123,6 +125,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <?php include __DIR__ . '/../../partials/header.php'; ?>
+
+<?php if (isset($redirectUrl) && isset($redirectDelay)): ?>
+  <meta http-equiv="refresh" content="<?php echo $redirectDelay; ?>;url=<?php echo htmlspecialchars($redirectUrl); ?>">
+<?php endif; ?>
 
 <link rel="stylesheet" href="../../css/traveller-auth.css?v=<?php echo time(); ?>">
 <link rel="stylesheet" href="../../css/host-register.css">
