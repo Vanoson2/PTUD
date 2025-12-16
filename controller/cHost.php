@@ -618,9 +618,16 @@ class cHost {
         $uploadDir = __DIR__ . '/../public/uploads/id_cards/';
         
         if (!is_dir($uploadDir)) {
-            if (!mkdir($uploadDir, 0777, true)) {
-                return ['success' => false, 'message' => 'Không thể tạo thư mục upload'];
+            if (!mkdir($uploadDir, 0755, true)) {
+                error_log("Failed to create directory: $uploadDir. Error: " . error_get_last()['message']);
+                return ['success' => false, 'message' => 'Không thể tạo thư mục upload. Vui lòng liên hệ admin.'];
             }
+        }
+        
+        // Check if directory is writable
+        if (!is_writable($uploadDir)) {
+            error_log("Directory not writable: $uploadDir");
+            return ['success' => false, 'message' => 'Thư mục upload không có quyền ghi. Vui lòng liên hệ admin.'];
         }
         
         $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
