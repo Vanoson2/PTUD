@@ -84,10 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Save ID card images to database
         if (isset($idCardImages['front'])) {
-          $cHost->cSaveHostDocument($applicationId, 'id_card_front', $idCardImages['front'], 'image/jpeg', 0);
+          $cHost->cSaveHostDocument($applicationId, 'cccd_front', $idCardImages['front'], 'image/jpeg', 0);
         }
         if (isset($idCardImages['back'])) {
-          $cHost->cSaveHostDocument($applicationId, 'id_card_back', $idCardImages['back'], 'image/jpeg', 0);
+          $cHost->cSaveHostDocument($applicationId, 'cccd_back', $idCardImages['back'], 'image/jpeg', 0);
         }
         
         // Save business license if uploaded
