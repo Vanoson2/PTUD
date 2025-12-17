@@ -91,7 +91,16 @@ class cBooking {
             ];
         }
 
-        // Bỏ check user conflict - cho phép user đặt nhiều phòng cùng lúc
+        // Check: User có booking nào trùng ngày không?
+        $userConflictResult = $this->cCheckUserBookingConflict($userId, $checkin, $checkout, $listingId);
+        if ($userConflictResult && $userConflictResult->num_rows > 0) {
+            $conflict = $userConflictResult->fetch_assoc();
+            return [
+                'success' => false,
+                'message' => 'Bạn đã có đơn đặt khác trong khoảng thời gian này: ' . $conflict['listing_title'] . ' (' . date('d/m/Y', strtotime($conflict['check_in'])) . ' - ' . date('d/m/Y', strtotime($conflict['check_out'])) . ')',
+                'redirect' => "confirm-booking.php?listing_id=$listingId&checkin=$checkin&checkout=$checkout&guests=$guests"
+            ];
+        }
         
         // Check: Listing còn trống không?
         $listingAvailabilityResult = $this->cCheckListingAvailability($listingId, $checkin, $checkout);
