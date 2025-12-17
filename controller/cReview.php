@@ -58,28 +58,27 @@ class cReview {
             return ['success' => false, 'message' => 'Chỉ có thể đánh giá booking đã hoàn thành'];
         }
 
-        // Handle image uploads
-        $imageUrls = [];
-        if (!empty($filesData['images']['name'][0])) {
-            $uploadResult = $this->processReviewImages($filesData['images']);
-            if (!$uploadResult['success']) {
-                return $uploadResult; // Return error from image processing
-            }
-            $imageUrls = $uploadResult['urls'];
-        }
-
         // Sanitize inputs
         $comment = htmlspecialchars($comment, ENT_QUOTES, 'UTF-8');
 
-        // Prepare image data
-        $imageUrlsJson = !empty($imageUrls) ? json_encode($imageUrls) : null;
-
-        // Create review in Model (Model signature: listingId, userId, rating, comment, imgRating)
+        // Create review in Model
         $mReview = new mReview();
-        $success = $mReview->mCreateReview($listingId, $userId, $rating, $comment, $imageUrlsJson);
+        $reviewId = $mReview->mCreateReview($listingId, $userId, $rating, $comment);
 
-        if (!$success) {
+        if (!$reviewId) {
             return ['success' => false, 'message' => 'Không thể tạo đánh giá. Vui lòng thử lại.'];
+        }
+
+        // Handle image uploads after review is created
+        if (!empty($filesData['images']['name'][0])) {
+            $uploadResult = $this->processReviewImages($filesData['images']);
+            if ($uploadResult['success']) {
+                // Save images to database
+                $imageUrls = $uploadResult['urls'];
+                if (!empty($imageUrls)) {
+                    $mReview->mCreateReviewImages($reviewId, $imageUrls);
+                }
+            }
         }
 
         // Mark booking as rated

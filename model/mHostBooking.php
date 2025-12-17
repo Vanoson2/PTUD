@@ -19,8 +19,10 @@ class mHostBooking {
         // Build WHERE clause cho status
         $statusCondition = "";
         if ($status === 'upcoming') {
-            $statusCondition = "AND b.status = 'confirmed' AND b.check_in >= CURDATE()";
+            // Upcoming: check_in trong tương lai (sau hôm nay)
+            $statusCondition = "AND b.status = 'confirmed' AND b.check_in > CURDATE()";
         } elseif ($status === 'ongoing') {
+            // Ongoing: đã check-in hoặc check-in hôm nay, chưa check-out
             $statusCondition = "AND b.status = 'confirmed' AND b.check_in <= CURDATE() AND b.check_out > CURDATE()";
         } elseif ($status === 'completed') {
             $statusCondition = "AND b.status = 'completed'";
@@ -251,7 +253,7 @@ class mHostBooking {
         $hostId = (int)$hostId;
         
         $sql = "SELECT 
-                    COUNT(CASE WHEN b.status = 'confirmed' AND b.check_in >= CURDATE() THEN 1 END) AS upcoming,
+                    COUNT(CASE WHEN b.status = 'confirmed' AND b.check_in > CURDATE() THEN 1 END) AS upcoming,
                     COUNT(CASE WHEN b.status = 'confirmed' AND b.check_in <= CURDATE() AND b.check_out > CURDATE() THEN 1 END) AS ongoing,
                     COUNT(CASE WHEN b.status = 'completed' THEN 1 END) AS completed,
                     COUNT(*) AS total

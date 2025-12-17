@@ -4,7 +4,7 @@ include_once(__DIR__ . '/mConnect.php');
 class mReview {
     
     // Tạo review mới
-    public function mCreateReview($listingId, $userId, $rating, $comment, $imgRating = null){
+    public function mCreateReview($listingId, $userId, $rating, $comment){
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
         if($conn){
@@ -12,17 +12,51 @@ class mReview {
             $userId = intval($userId);
             $rating = intval($rating);
             $comment = $conn->real_escape_string($comment);
-            $imgRating = $imgRating ? "'" . $conn->real_escape_string($imgRating) . "'" : "NULL";
             
             $strInsert = "INSERT INTO review 
-                         (listing_id, user_id, rating, comment, imgRating)
+                         (listing_id, user_id, rating, comment)
                          VALUES 
-                         ($listingId, $userId, $rating, '$comment', $imgRating)";
+                         ($listingId, $userId, $rating, '$comment')";
             
-            return $conn->query($strInsert);
+            $result = $conn->query($strInsert);
+            
+            if (!$result) {
+                return false;
+            }
+            
+            // Return the new review_id
+            return $conn->insert_id;
         }else{
             return false;
         }
+    }
+    
+    // Tạo ảnh review
+    public function mCreateReviewImages($reviewId, $imageUrls){
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        if($conn && !empty($imageUrls)){
+            $reviewId = intval($reviewId);
+            $values = [];
+            
+            foreach($imageUrls as $index => $url){
+                $url = $conn->real_escape_string($url);
+                $sortOrder = intval($index);
+                $values[] = "($reviewId, '$url', $sortOrder)";
+            }
+            
+            if(empty($values)){
+                return true; // No images to insert
+            }
+            
+            $strInsert = "INSERT INTO review_image 
+                         (review_id, file_url, sort_order)
+                         VALUES " . implode(', ', $values);
+            
+            $result = $conn->query($strInsert);
+            return $result;
+        }
+        return true; // No images or no connection
     }
     
     // Kiểm tra user đã review listing này chưa
