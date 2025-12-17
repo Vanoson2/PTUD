@@ -261,47 +261,73 @@ Model: model/mUserScore.php
 Database: we_go.user_score_history
   ↓ INSERT INTO user_score_history (
       user_id, action, score_change,
-      previous_score, new_score,
+      old_score, new_score, reason,
       created_at=NOW()
     )
 Database: we_go.user
+  ↓ Calculate newScore = max(0, min(150, oldScore + scoreChange))
+  ↓ Check auto-lock: autoLock = (newScore < 30)
   ↓ UPDATE user SET
-      trust_score = trust_score + ?,
-      updated_at = NOW()
+      trust_score = ?,
+      status = IF(? < 30, 'locked', status),
+      last_score_update = NOW()
     WHERE user_id = ?
-  ↓ Score updated immediately
+  ↓ Score updated + account locked if needed
+  ↓ Return: success, message, auto_locked, has_warning
 ```
+
+### Trust Score System (UPDATED)
+- **Score Range:** 0-150 (increased from 0-100)
+- **Auto-Lock Threshold:** < 30 (automatic account lock)
+- **Warning Threshold:** 30-49 (display warning banner)
+- **Default Score:** 100 (new users start here)
 
 ### Trust Score Display Logic
 ```php
 // In view files
-if ($trust_score >= 80) {
-    $badge = '<span class="badge badge-success">Trusted</span>';
+if ($trust_score >= 100) {
+    $badge = '<span class="badge badge-excellent">⭐ Xuất sắc</span>';
+    $color = 'gold';
+} elseif ($trust_score >= 70) {
+    $badge = '<span class="badge badge-success">✓ Tốt</span>';
     $color = 'green';
 } elseif ($trust_score >= 50) {
-    $badge = '<span class="badge badge-info">Verified</span>';
+    $badge = '<span class="badge badge-info">ℹ️ Bình thường</span>';
     $color = 'blue';
-} elseif ($trust_score >= 20) {
-    $badge = '<span class="badge badge-warning">New</span>';
+} elseif ($trust_score >= 30) {
+    $badge = '<span class="badge badge-warning">⚠️ Cảnh báo</span>';
     $color = 'orange';
 } else {
-    $badge = '<span class="badge badge-danger">Unverified</span>';
+    $badge = '<span class="badge badge-danger">🔒 Bị khóa</span>';
     $color = 'red';
 }
 ```
 
-### Trust Score Badges
-| Score Range | Badge | Color | Meaning |
-|-------------|-------|-------|---------|
-| 80-100 | Trusted | Green | Highly reliable user |
-| 50-79 | Verified | Blue | Active, verified user |
-| 20-49 | New | Orange | New or inactive user |
-| 0-19 | Unverified | Red | Unverified or problematic |
+### Trust Score Badges (UPDATED)
+| Score Range | Badge | Color | Meaning | Status |
+|-------------|-------|-------|---------|--------|
+| 100-150 | ⭐ Xuất sắc | Gold | Highly reliable, bonus rewards | Active |
+| 70-99 | ✓ Tốt | Green | Trusted, verified user | Active |
+| 50-69 | ℹ️ Bình thường | Blue | Normal user | Active |
+| 30-49 | ⚠️ Cảnh báo | Orange | Warning - be careful | Active (Warning) |
+| 0-29 | 🔒 Bị khóa | Red | Account locked | **Locked** |
+
+### Auto-Lock Feature (NEW)
+- **Trigger:** When trust_score drops below 30
+- **Action:** Automatically set user.status = 'locked'
+- **Login:** Blocked with message showing current score
+- **Unlock:** Only admin can unlock manually
+
+### Warning Banner (NEW)
+- **Display:** When 30 ≤ score < 50
+- **Location:** Profile pages, dashboard
+- **Message:** "Điểm tín nhiệm đang thấp. Tài khoản sẽ bị khóa nếu < 30"
+- **Style:** Yellow warning banner with dismiss button
 
 ### Database Tables
-- **user** (UPDATE trust_score)
+- **user** (UPDATE trust_score, status)
 - **user_score_history** (INSERT)
-- **score_action_config** (SELECT - optional)
+- **score_config** (SELECT)
 
 ### Files Involved
 - **Model:** `model/mUserScore.php`

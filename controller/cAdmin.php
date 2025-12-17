@@ -192,8 +192,11 @@ class cAdmin {
             }
         }
         
+        // Nếu status = null, loại draft ra (admin không cần thấy bản nháp)
+        $excludeDraft = ($status === null);
+        
         $mListing = new mListing();
-        return $mListing->mGetAllListings($status);
+        return $mListing->mGetAllListings($status, $excludeDraft);
     }
     
     public function cApproveListing($listingId, $adminId) {

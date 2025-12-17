@@ -52,6 +52,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $_SESSION['user_name'] = $user['full_name'];
       $_SESSION['user_phone'] = $user['phone'] ?? '';
       $_SESSION['is_email_verified'] = $user['is_email_verified'] ?? 0;
+      $_SESSION['trust_score'] = $result['trust_score'] ?? 100;
+      
+      // Lưu cảnh báo điểm tín nhiệm (nếu có)
+      if (isset($result['has_warning']) && $result['has_warning']) {
+        $_SESSION['trust_score_warning'] = $result['warning_message'];
+        $_SESSION['trust_score_warning_level'] = $result['warning_level'];
+      }
       
       // Check if user is host
       include_once __DIR__ . '/../../../controller/cHost.php';

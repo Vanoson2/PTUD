@@ -81,6 +81,72 @@
   color: #92400e;
 }
 
+.badge-danger {
+  background: #fecaca;
+  color: #991b1b;
+}
+
+.badge-info {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.badge-excellent {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #78350f;
+  border: 2px solid #fbbf24;
+}
+
+/* Trust Score Badge - Hiển thị lớn hơn */
+.trust-score-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin: 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.trust-score-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.trust-score-badge i {
+  font-size: 16px;
+}
+
+.trust-score-badge .score-value {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.trust-score-badge.badge-excellent {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    box-shadow: 0 2px 6px rgba(251, 191, 36, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.5);
+  }
+}
+
+.trust-score-badge.badge-danger {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.trust-score-badge.badge-warning {
+  animation: pulse 2s ease-in-out infinite;
+}
+
 /* Navigation */
 .profile-nav {
   background: white;
@@ -394,5 +460,181 @@ select.form-control {
   display: block;
   width: 100%;
 }
+
+/* Trust Score Warning Banner */
+.trust-score-warning-banner {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Warning level - Yellow */
+.trust-score-warning-banner.warning {
+  background: linear-gradient(135deg, #fff3cd 0%, #fff8e1 100%);
+  border-left: 5px solid #ffc107;
+  color: #856404;
+}
+
+.trust-score-warning-banner.warning .warning-icon {
+  color: #ffc107;
+  font-size: 28px;
+}
+
+/* Danger level - Red */
+.trust-score-warning-banner.danger {
+  background: linear-gradient(135deg, #f8d7da 0%, #fce4e4 100%);
+  border-left: 5px solid #dc3545;
+  color: #721c24;
+}
+
+.trust-score-warning-banner.danger .warning-icon {
+  color: #dc3545;
+  font-size: 28px;
+}
+
+.warning-icon {
+  flex-shrink: 0;
+  font-size: 28px;
+  line-height: 1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.warning-content {
+  flex: 1;
+}
+
+.warning-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.warning-message {
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+  opacity: 0.95;
+}
+
+.warning-score {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.warning-score strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.view-score-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 4px 12px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.trust-score-warning-banner.warning .view-score-link {
+  background: rgba(255, 193, 7, 0.2);
+}
+
+.trust-score-warning-banner.warning .view-score-link:hover {
+  background: rgba(255, 193, 7, 0.35);
+  transform: translateX(4px);
+}
+
+.trust-score-warning-banner.danger .view-score-link {
+  background: rgba(220, 53, 69, 0.15);
+}
+
+.trust-score-warning-banner.danger .view-score-link:hover {
+  background: rgba(220, 53, 69, 0.25);
+  transform: translateX(4px);
+}
+
+.close-warning {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: inherit;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 4px;
+  line-height: 1;
+}
+
+.close-warning:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .trust-score-warning-banner {
+    flex-direction: column;
+    padding: 16px;
+  }
+  
+  .warning-icon {
+    font-size: 24px;
+  }
+  
+  .warning-title {
+    font-size: 16px;
+  }
+  
+  .warning-score {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .close-warning {
+    top: 12px;
+    right: 12px;
+  }
+}
+
 
 

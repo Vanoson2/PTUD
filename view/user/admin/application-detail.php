@@ -31,6 +31,12 @@ include_once __DIR__ . '/../../../model/mHost.php';
 $mHost = new mHost();
 $documents = $mHost->mGetHostDocuments($applicationId);
 
+// Load application history
+include_once __DIR__ . '/../../../model/mHostApplicationHistory.php';
+$historyModel = new mHostApplicationHistory();
+$history = $historyModel->getApplicationHistory($applicationId);
+$resubmissionCount = $historyModel->countResubmissions($applicationId);
+
 // Organize documents by type
 $cccdFront = '';
 $cccdBack = '';
@@ -285,6 +291,95 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
               <strong>Không có ảnh!</strong> Các tài liệu trong database chưa được phân loại đúng.
             </div>
           <?php endif; ?>
+        </div>
+      <?php endif; ?>
+    </div>
+    
+    <!-- Application History -->
+    <div class="detail-card">
+      <h3><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử đơn</h3>
+      
+      <?php if (!empty($history)): ?>
+        <div class="history-stats">
+          <span class="badge bg-info">
+            <i class="fa-solid fa-redo"></i> Số lần gửi lại: <?php echo $resubmissionCount; ?>
+          </span>
+          <span class="badge bg-secondary">
+            <i class="fa-solid fa-list"></i> Tổng số thay đổi: <?php echo count($history); ?>
+          </span>
+        </div>
+        
+        <div class="timeline">
+          <?php foreach ($history as $entry): ?>
+            <?php
+              $actionIcon = '';
+              $actionClass = '';
+              $actionText = '';
+              
+              switch ($entry['action_type']) {
+                case 'submitted':
+                  $actionIcon = '<i class="fa-solid fa-paper-plane"></i>';
+                  $actionClass = 'timeline-item-submitted';
+                  $actionText = 'Nộp đơn lần đầu';
+                  break;
+                case 'resubmitted':
+                  $actionIcon = '<i class="fa-solid fa-redo"></i>';
+                  $actionClass = 'timeline-item-resubmitted';
+                  $actionText = 'Nộp lại đơn';
+                  break;
+                case 'reviewed':
+                  if ($entry['new_status'] === 'approved') {
+                    $actionIcon = '<i class="fa-solid fa-check-circle"></i>';
+                    $actionClass = 'timeline-item-approved';
+                    $actionText = 'Đơn được duyệt';
+                  } else {
+                    $actionIcon = '<i class="fa-solid fa-times-circle"></i>';
+                    $actionClass = 'timeline-item-rejected';
+                    $actionText = 'Đơn bị từ chối';
+                  }
+                  break;
+              }
+            ?>
+            
+            <div class="timeline-item <?php echo $actionClass; ?>">
+              <div class="timeline-marker">
+                <?php echo $actionIcon; ?>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-header">
+                  <strong><?php echo $actionText; ?></strong>
+                  <span class="timeline-date">
+                    <?php echo date('d/m/Y H:i', strtotime($entry['created_at'])); ?>
+                  </span>
+                </div>
+                
+                <?php if ($entry['admin_name']): ?>
+                  <div class="timeline-admin">
+                    <i class="fa-solid fa-user-shield"></i>
+                    Người xử lý: <strong><?php echo htmlspecialchars($entry['admin_name']); ?></strong>
+                  </div>
+                <?php endif; ?>
+                
+                <?php if ($entry['rejection_reason']): ?>
+                  <div class="timeline-reason">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <strong>Lý do:</strong> <?php echo nl2br(htmlspecialchars($entry['rejection_reason'])); ?>
+                  </div>
+                <?php endif; ?>
+                
+                <?php if ($entry['admin_note']): ?>
+                  <div class="timeline-note">
+                    <i class="fa-solid fa-note-sticky"></i>
+                    <strong>Ghi chú:</strong> <?php echo nl2br(htmlspecialchars($entry['admin_note'])); ?>
+                  </div>
+                <?php endif; ?>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php else: ?>
+        <div class="alert alert-info">
+          <i class="fa-solid fa-info-circle"></i> Chưa có lịch sử thay đổi.
         </div>
       <?php endif; ?>
     </div>

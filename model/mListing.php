@@ -666,7 +666,7 @@ class mListing {
         return $result && $result->num_rows > 0;
     }
     
-    public function mGetAllListings($status = null) {
+    public function mGetAllListings($status = null, $excludeDraft = false) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
         if (!$conn) return [];
@@ -688,9 +688,20 @@ class mListing {
                 LEFT JOIN provinces pr ON w.province_code = pr.code";
         
         // Build WHERE clause
+        $whereConditions = [];
+        
         if ($status) {
             $status = $conn->real_escape_string($status);
-            $sql .= " WHERE l.status = '$status'";
+            $whereConditions[] = "l.status = '$status'";
+        }
+        
+        // Exclude draft if requested (for admin view)
+        if ($excludeDraft) {
+            $whereConditions[] = "l.status != 'draft'";
+        }
+        
+        if (!empty($whereConditions)) {
+            $sql .= " WHERE " . implode(' AND ', $whereConditions);
         }
         
         $sql .= " ORDER BY l.created_at DESC";

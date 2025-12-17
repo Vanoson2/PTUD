@@ -124,6 +124,13 @@ class mAdmin {
         $result = $conn->query($sql);
         $p->mDongKetNoi($conn);
         
+        if ($result) {
+            // Log to history: Admin approval
+            include_once __DIR__ . '/mHostApplicationHistory.php';
+            $history = new mHostApplicationHistory();
+            $history->logStatusChange($applicationId, 'pending', 'approved', 'reviewed', $adminId);
+        }
+        
         return $result ? true : false;
     }
     
@@ -147,6 +154,13 @@ class mAdmin {
         
         $result = $conn->query($sql);
         $p->mDongKetNoi($conn);
+        
+        if ($result) {
+            // Log to history: Admin rejection
+            include_once __DIR__ . '/mHostApplicationHistory.php';
+            $history = new mHostApplicationHistory();
+            $history->logStatusChange($applicationId, 'pending', 'rejected', 'reviewed', $adminId, $reason);
+        }
         
         return $result ? true : false;
     }

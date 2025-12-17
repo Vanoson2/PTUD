@@ -30,6 +30,21 @@ if ($user['is_email_verified'] != 1) {
 $errors = [];
 $successMessage = '';
 
+// Load previous rejected application data to pre-fill form
+$cHost = new cHost();
+$previousApplication = $cHost->cGetUserHostApplication($userId);
+$prefillData = [
+  'tax_code' => '',
+  'business_name' => $user['full_name'],
+  'rejection_reason' => ''
+];
+
+if ($previousApplication && $previousApplication['status'] === 'rejected') {
+  $prefillData['tax_code'] = $previousApplication['tax_code'] ?? '';
+  $prefillData['business_name'] = $previousApplication['business_name'] ?? $user['full_name'];
+  $prefillData['rejection_reason'] = $previousApplication['rejection_reason'] ?? '';
+}
+
 // Xử lý form submit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $idNumber = trim($_POST['id_number'] ?? '');
@@ -96,29 +111,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $cHost->cSaveHostDocument($applicationId, 'business_license', $businessLicensePath, 'image/jpeg', 0);
         }
         
-        // Create host record immediately (pending status)
-        include_once __DIR__ . '/../../../model/mHost.php';
-        $mHost = new mHost();
-        
-        // Check if already has host record
-        $existingHost = $mHost->mGetHostByUserId($userId);
-        if (!$existingHost) {
-          // Create pending host record
-          $businessName = $user['full_name'];
-          $taxCodeEscaped = htmlspecialchars($taxCode, ENT_QUOTES, 'UTF-8');
-          $mHost->mCreatePendingHost($userId, $businessName, $taxCodeEscaped);
-        }
-        
-        // Set session to allow host access
-        if (session_status() === PHP_SESSION_NONE) {
-          session_start();
-        }
-        $_SESSION['is_host'] = true;
-        
         // Successfully created host application
-        $successMessage = 'Đăng ký host thành công! Bạn có thể bắt đầu tạo phòng. Admin sẽ duyệt trong vòng 24-48h.';
-        // Use meta refresh instead of header() since HTML output already started
-        $redirectUrl = './my-listings.php';
+        // Do NOT create host record here - wait for admin approval
+        $successMessage = 'Đăng ký host thành công! Đơn đăng ký của bạn đang chờ admin duyệt (24-48h). Chúng tôi sẽ thông báo qua email khi đơn được duyệt.';
+        // Redirect to profile page
+        $redirectUrl = '../traveller/profile.php';
         $redirectDelay = 3;
       } else {
         $errors['general'] = $appResult['message'];
@@ -158,6 +155,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <a href="../../../index.php" class="btn btn-primary">Về Trang Chủ</a>
         </div>
       <?php else: ?>
+        
+        <?php if (!empty($prefillData['rejection_reason'])): ?>
+        <div class="alert alert-warning">
+          <i class="fa-solid fa-exclamation-triangle"></i>
+          <strong>Đơn trước đó bị từ chối:</strong>
+          <p><?php echo htmlspecialchars($prefillData['rejection_reason']); ?></p>
+          <small>Vui lòng điền lại form và khắc phục các vấn đề trên.</small>
+        </div>
+        <?php endif; ?>
         
         <div class="info-card">
           <h4>
@@ -355,17 +361,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             
             <div class="form-group">
-              <label for="tax_code">Mã số thuế *</label>
+              <label for="tax_code">Mã số thuế (không bắt buộc)</label>
               <input 
                 type="text" 
                 id="tax_code" 
                 name="tax_code" 
                 class="form-control <?php echo isset($errors['tax_code']) ? 'is-invalid' : ''; ?>" 
-                placeholder="Nhập mã số thuế (10-13 số)"
+                placeholder="Nhập mã số thuế (10-13 số, nếu có)"
                 pattern="[0-9]{10,13}"
                 maxlength="13"
-                required
+                value="<?php echo htmlspecialchars($prefillData['tax_code']); ?>"
               >
+              <small class="form-text text-muted">
+                <i class="fas fa-info-circle"></i> Chỉ cần điền nếu bạn là doanh nghiệp hoặc đã đăng ký kinh doanh
+              </small>
               <small class="form-text text-muted">Mã số thuế doanh nghiệp (10-13 chữ số)</small>
               <?php if (isset($errors['tax_code'])): ?>
                 <div class="invalid-feedback"><?php echo $errors['tax_code']; ?></div>
@@ -378,7 +387,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label>
               <input 
                 type="checkbox" 
-                name="accept_terms" 
+                name="accept_terms"
+                id="accept_terms" 
                 required
               >
               <span>
@@ -447,6 +457,152 @@ document.querySelectorAll('input[type="file"]').forEach(input => {
     }
   });
 });
+
+// Form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+  const errors = [];
+  
+  // Validate ID Number (CCCD)
+  const idNumber = document.getElementById('id_number').value.trim();
+  if (!idNumber) {
+    errors.push('Vui lòng nhập số CMND/CCCD');
+  } else if (!/^[0-9]{9,12}$/.test(idNumber)) {
+    errors.push('Số CMND/CCCD không hợp lệ (9-12 chữ số)');
+  }
+  
+  // Validate Address
+  const address = document.getElementById('address').value.trim();
+  if (!address) {
+    errors.push('Vui lòng nhập địa chỉ');
+  } else if (address.length > 500) {
+    errors.push('Địa chỉ quá dài (tối đa 500 ký tự)');
+  }
+  
+  // Validate Phone
+  const phone = document.getElementById('phone').value.trim();
+  if (!phone) {
+    errors.push('Vui lòng nhập số điện thoại');
+  } else if (!/^[0-9]{10,11}$/.test(phone)) {
+    errors.push('Số điện thoại không hợp lệ (10-11 chữ số)');
+  }
+  
+  // Validate Bank Account
+  const bankAccount = document.getElementById('bank_account').value.trim();
+  if (!bankAccount) {
+    errors.push('Vui lòng nhập số tài khoản ngân hàng');
+  } else if (bankAccount.length > 50) {
+    errors.push('Số tài khoản quá dài (tối đa 50 ký tự)');
+  }
+  
+  // Validate Bank Name
+  const bankName = document.getElementById('bank_name').value.trim();
+  if (!bankName) {
+    errors.push('Vui lòng nhập tên ngân hàng');
+  } else if (bankName.length > 100) {
+    errors.push('Tên ngân hàng quá dài (tối đa 100 ký tự)');
+  }
+  
+  // Validate Tax Code
+  const taxCode = document.getElementById('tax_code').value.trim();
+  if (!taxCode) {
+    errors.push('Vui lòng nhập mã số thuế');
+  } else if (!/^[0-9]{10,13}$/.test(taxCode)) {
+    errors.push('Mã số thuế không hợp lệ (10-13 chữ số)');
+  }
+  
+  // Validate ID Card Images
+  const idFront = document.getElementById('id_front').files.length;
+  const idBack = document.getElementById('id_back').files.length;
+  if (!idFront || !idBack) {
+    errors.push('Vui lòng tải lên ảnh mặt trước và mặt sau CMND/CCCD');
+  }
+  
+  // Validate Accept Terms
+  const acceptTerms = document.getElementById('accept_terms').checked;
+  if (!acceptTerms) {
+    errors.push('Bạn phải đồng ý với điều khoản và chính sách');
+  }
+  
+  // Show errors if any
+  if (errors.length > 0) {
+    e.preventDefault();
+    let errorMessage = 'Vui lòng kiểm tra lại:\n\n';
+    errors.forEach((error, index) => {
+      errorMessage += `${index + 1}. ${error}\n`;
+    });
+    alert(errorMessage);
+    return false;
+  }
+  
+  return true;
+});
+
+// Real-time validation for ID Number
+document.getElementById('id_number').addEventListener('input', function() {
+  const value = this.value.trim();
+  const feedback = this.nextElementSibling;
+  
+  if (value && !/^[0-9]{9,12}$/.test(value)) {
+    if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+      const div = document.createElement('div');
+      div.className = 'invalid-feedback';
+      div.style.display = 'block';
+      div.textContent = 'Số CMND/CCCD phải là 9-12 chữ số';
+      this.parentNode.appendChild(div);
+      this.classList.add('is-invalid');
+    }
+  } else {
+    if (feedback && feedback.classList.contains('invalid-feedback')) {
+      feedback.remove();
+      this.classList.remove('is-invalid');
+    }
+  }
+});
+
+// Real-time validation for Phone
+document.getElementById('phone').addEventListener('input', function() {
+  const value = this.value.trim();
+  const feedback = this.nextElementSibling;
+  
+  if (value && !/^[0-9]{10,11}$/.test(value)) {
+    if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+      const div = document.createElement('div');
+      div.className = 'invalid-feedback';
+      div.style.display = 'block';
+      div.textContent = 'Số điện thoại phải là 10-11 chữ số';
+      this.parentNode.appendChild(div);
+      this.classList.add('is-invalid');
+    }
+  } else {
+    if (feedback && feedback.classList.contains('invalid-feedback')) {
+      feedback.remove();
+      this.classList.remove('is-invalid');
+    }
+  }
+});
+
+// Real-time validation for Tax Code
+document.getElementById('tax_code').addEventListener('input', function() {
+  const value = this.value.trim();
+  const feedback = this.nextElementSibling;
+  
+  if (value && !/^[0-9]{10,13}$/.test(value)) {
+    if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+      const div = document.createElement('div');
+      div.className = 'invalid-feedback';
+      div.style.display = 'block';
+      div.textContent = 'Mã số thuế phải là 10-13 chữ số';
+      this.parentNode.appendChild(div);
+      this.classList.add('is-invalid');
+    }
+  } else {
+    if (feedback && feedback.classList.contains('invalid-feedback')) {
+      feedback.remove();
+      this.classList.remove('is-invalid');
+    }
+  }
+});
 </script>
 
 <?php include __DIR__ . '/../../partials/footer.php'; ?>
+

@@ -38,13 +38,76 @@ class mHost {
             }
         }
         
+        // Check if tax_code already exists (only if not empty)
+        if (!empty($taxCode)) {
+            $checkTaxSql = "SELECT host_application_id, user_id, status 
+                            FROM host_application 
+                            WHERE tax_code = '$taxCode' 
+                            LIMIT 1";
+            $taxResult = $conn->query($checkTaxSql);
+            
+            if ($taxResult && $taxResult->num_rows > 0) {
+                $taxRow = $taxResult->fetch_assoc();
+                
+                // If same user's old application
+                if ($taxRow['user_id'] == $userId) {
+                    // If old application is rejected, update it instead of creating new one
+                    if ($taxRow['status'] === 'rejected') {
+                        $oldAppId = $taxRow['host_application_id'];
+                        $updateSql = "UPDATE host_application 
+                                     SET business_name = '$businessName', 
+                                         tax_code = '$taxCode',
+                                         status = 'pending',
+                                         reviewed_by_admin_id = NULL,
+                                         reviewed_at = NULL,
+                                         rejection_reason = NULL,
+                                         updated_at = CURRENT_TIMESTAMP
+                                     WHERE host_application_id = $oldAppId";
+                        
+                        if ($conn->query($updateSql)) {
+                            $p->mDongKetNoi($conn);
+                            
+                            // Log to history: Resubmission
+                            include_once __DIR__ . '/mHostApplicationHistory.php';
+                            $history = new mHostApplicationHistory();
+                            $history->logStatusChange($oldAppId, 'rejected', 'pending', 'resubmitted');
+                            
+                            return [
+                                'success' => true,
+                                'message' => 'Tạo đơn đăng ký thành công',
+                                'application_id' => $oldAppId
+                            ];
+                        }
+                    }
+                    // If pending or approved, let it continue to show proper error below
+                } else {
+                    // Different user's tax_code - not allowed
+                    $p->mDongKetNoi($conn);
+                    return [
+                        'success' => false,
+                        'message' => 'Mã số thuế này đã được đăng ký bởi người dùng khác. Vui lòng kiểm tra lại.',
+                        'application_id' => null
+                    ];
+                }
+            }
+        }
+        
+        // Handle tax_code: NULL if empty, otherwise use value
+        $taxCodeValue = empty($taxCode) ? "NULL" : "'$taxCode'";
+        
         // Tạo application mới
         $sql = "INSERT INTO host_application (user_id, business_name, tax_code, status, created_at) 
-                VALUES ($userId, '$businessName', '$taxCode', 'pending', CURRENT_TIMESTAMP)";
+                VALUES ($userId, '$businessName', $taxCodeValue, 'pending', CURRENT_TIMESTAMP)";
         
         if ($conn->query($sql)) {
             $applicationId = $conn->insert_id;
             $p->mDongKetNoi($conn);
+            
+            // Log to history: First submission
+            include_once __DIR__ . '/mHostApplicationHistory.php';
+            $history = new mHostApplicationHistory();
+            $history->logStatusChange($applicationId, null, 'pending', 'submitted');
+            
             return [
                 'success' => true,
                 'message' => 'Tạo đơn đăng ký thành công',
@@ -55,9 +118,10 @@ class mHost {
         // Lấy error message trước khi đóng connection
         $errorMessage = $conn->error;
         $p->mDongKetNoi($conn);
+        
         return [
             'success' => false,
-            'message' => 'Không thể tạo đơn đăng ký: ' . $errorMessage,
+            'message' => 'Không thể tạo đơn đăng ký. Vui lòng thử lại.',
             'application_id' => null
         ];
     }
@@ -184,8 +248,8 @@ class mHost {
             return false;
         }
         
-        // Allow both pending and approved hosts to access host features
-        $sql = "SELECT host_id FROM host WHERE user_id = $userId AND status IN ('pending', 'approved') LIMIT 1";
+        // Only allow APPROVED hosts to access host features
+        $sql = "SELECT host_id FROM host WHERE user_id = $userId AND status = 'approved' LIMIT 1";
         $result = $conn->query($sql);
         
         $isHost = ($result && $result->num_rows > 0);

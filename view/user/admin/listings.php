@@ -33,10 +33,9 @@ $listings = $cAdmin->cGetAllListings($filterStatus);
 $pendingCount = count($cAdmin->cGetAllListings('pending'));
 $activeCount = count($cAdmin->cGetAllListings('active'));
 $rejectedCount = count($cAdmin->cGetAllListings('rejected'));
-$draftCount = count($cAdmin->cGetAllListings('draft'));
 
-// Tổng số tất cả các listing (không phân biệt status)
-$totalCount = count($cAdmin->cGetAllListings(null));
+// Tổng số listing (KHÔNG tính draft)
+$totalCount = $pendingCount + $activeCount + $rejectedCount;
 ?>
 
 <!DOCTYPE html>
@@ -142,10 +141,6 @@ $totalCount = count($cAdmin->cGetAllListings(null));
         <div class="stat-number"><?php echo $rejectedCount; ?></div>
         <div class="stat-label">Đã từ chối</div>
       </div>
-      <div class="stat-card draft">
-        <div class="stat-number"><?php echo $draftCount; ?></div>
-        <div class="stat-label">Bản nháp</div>
-      </div>
     </div>
 
     <!-- Filter Tabs -->
@@ -161,9 +156,6 @@ $totalCount = count($cAdmin->cGetAllListings(null));
       </a>
       <a href="./listings.php?status=rejected" class="filter-btn <?php echo $filterStatus === 'rejected' ? 'active' : ''; ?>">
         <i class="fa-solid fa-times-circle"></i> Từ chối (<?php echo $rejectedCount; ?>)
-      </a>
-      <a href="./listings.php?status=draft" class="filter-btn <?php echo $filterStatus === 'draft' ? 'active' : ''; ?>">
-        <i class="fa-solid fa-file-alt"></i> Bản nháp (<?php echo $draftCount; ?>)
       </a>
     </div>
 

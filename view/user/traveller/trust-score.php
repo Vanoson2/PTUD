@@ -237,25 +237,6 @@ if (!$scoreData) {
           <?php echo $scoreData['level']['description'] ?? 'Chưa có mô tả'; ?>
         </p>
       </div>
-      
-      <!-- Verification Status -->
-      <div style="padding: 20px;">
-        <h3 style="margin-bottom: 15px;">Trạng thái xác thực</h3>
-        <div class="verification-status">
-          <div class="verify-item <?php echo $scoreData['verified_phone'] ? 'verified' : ''; ?>">
-            <span class="verify-icon"><?php echo $scoreData['verified_phone'] ? '✓' : '○'; ?></span>
-            <span>Số điện thoại</span>
-          </div>
-          <div class="verify-item <?php echo $scoreData['verified_id'] ? 'verified' : ''; ?>">
-            <span class="verify-icon"><?php echo $scoreData['verified_id'] ? '✓' : '○'; ?></span>
-            <span>CCCD/CMND</span>
-          </div>
-          <div class="verify-item <?php echo ($scoreData['verified_full'] ?? false) ? 'verified' : ''; ?>">
-            <span class="verify-icon"><?php echo ($scoreData['verified_full'] ?? false) ? '✓' : '○'; ?></span>
-            <span>Tài khoản đầy đủ</span>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Suggestions -->
@@ -265,9 +246,9 @@ if (!$scoreData) {
         <ul class="suggestions-list">
           <?php foreach ($suggestions as $suggestion): ?>
             <li class="suggestion-item">
-              <span class="icon">⭐</span>
-              <span class="text"><?php echo htmlspecialchars($suggestion['description'] ?? 'Không có mô tả'); ?></span>
-              <span class="points">+<?php echo $suggestion['points'] ?? 0; ?></span>
+              <span class="icon"><?php echo $suggestion['icon'] ?? '⭐'; ?></span>
+              <span class="text"><?php echo htmlspecialchars($suggestion['action'] ?? 'Không có mô tả'); ?></span>
+              <span class="points"><?php echo $suggestion['points'] ?? '+0'; ?></span>
             </li>
           <?php endforeach; ?>
         </ul>

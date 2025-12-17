@@ -140,6 +140,13 @@ Database: we_go.host_application
       admin_note = ?,
       reviewed_at = NOW()
     WHERE application_id = ?
+Model: model/mHostApplicationHistory.php (NEW)
+  → logStatusChange($applicationId, 'pending', 'approved', 'reviewed', $adminId)
+Database: we_go.host_application_history (NEW TABLE)
+  ↓ INSERT INTO host_application_history (
+      host_application_id, previous_status, new_status,
+      action_type='reviewed', reviewed_by_admin_id, created_at=NOW()
+    )
 Model: model/mHost.php
   → mCreateHostFromApplication($applicationId)
 Database: we_go.host_application
@@ -317,6 +324,40 @@ Model: model/mHost.php → mGetHostByUserId()
 
 ---
 
+## UC-07: Host Application History Tracking (NEW)
+**Actor:** Admin, System
+
+### Overview
+Every status change in host applications is logged for audit trail and transparency.
+
+### Flow Diagram
+```
+Any Status Change Event
+  ↓ Triggered by:
+    - User submits application (new)
+    - User resubmits after rejection
+    - Admin approves application
+    - Admin rejects application
+Model: model/mHostApplicationHistory.php (NEW FILE)
+  → logStatusChange($applicationId, $previousStatus, $newStatus, $actionType, $adminId, $reason)
+Database: we_go.host_application_history (NEW TABLE)
+  ↓ INSERT INTO host_application_history (
+      host_application_id, previous_status, new_status,
+      action_type, reviewed_by_admin_id, rejection_reason,
+      created_at=NOW()
+    )
+```
+
+### Database Tables (NEW)
+- **host_application_history** (INSERT, SELECT)
+
+### Files Involved (NEW)
+- **Model:** `model/mHostApplicationHistory.php`
+- **View:** `view/user/admin/application-detail.php` (timeline UI)
+- **CSS:** `view/css/admin-application-detail.css`
+
+---
+
 **File:** `02-host-management.md`  
 **Module:** Host Management  
-**Last Updated:** December 15, 2025
+**Last Updated:** December 17, 2025

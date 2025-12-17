@@ -55,6 +55,8 @@ CREATE TABLE `wards` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Core business tables (no `availability`)
+DROP TABLE IF EXISTS `user_score_history`;
+DROP TABLE IF EXISTS `score_config`;
 DROP TABLE IF EXISTS `support_message`;
 DROP TABLE IF EXISTS `support_ticket`;
 DROP TABLE IF EXISTS `invoice`;
@@ -68,6 +70,7 @@ DROP TABLE IF EXISTS `review`;
 DROP TABLE IF EXISTS `service`;
 DROP TABLE IF EXISTS `amenity`;
 DROP TABLE IF EXISTS `place_type`;
+DROP TABLE IF EXISTS `host_application_history`;
 DROP TABLE IF EXISTS `host_document`;
 DROP TABLE IF EXISTS `host_application`;
 DROP TABLE IF EXISTS `host`;
@@ -172,6 +175,24 @@ CREATE TABLE `host_document` (
   UNIQUE KEY `uq_hostdoc_app_type` (`host_application_id`,`doc_type`),
   KEY `ix_hostdoc_app_type` (`host_application_id`,`doc_type`),
   CONSTRAINT `fk_hostdoc_app` FOREIGN KEY (`host_application_id`) REFERENCES `host_application` (`host_application_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `host_application_history` (
+  `history_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `host_application_id` BIGINT UNSIGNED NOT NULL,
+  `previous_status` ENUM('pending','approved','rejected') DEFAULT NULL,
+  `new_status` ENUM('pending','approved','rejected') NOT NULL,
+  `action_type` ENUM('submitted','reviewed','resubmitted') NOT NULL,
+  `reviewed_by_admin_id` BIGINT UNSIGNED DEFAULT NULL,
+  `rejection_reason` VARCHAR(500) DEFAULT NULL,
+  `admin_note` TEXT DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`history_id`),
+  KEY `ix_history_app` (`host_application_id`),
+  KEY `ix_history_admin` (`reviewed_by_admin_id`),
+  KEY `ix_history_created` (`created_at`),
+  CONSTRAINT `fk_history_app` FOREIGN KEY (`host_application_id`) REFERENCES `host_application` (`host_application_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_history_admin` FOREIGN KEY (`reviewed_by_admin_id`) REFERENCES `admin` (`admin_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `place_type` (
@@ -459,8 +480,8 @@ CREATE TABLE `user_score_history` (
   KEY `ix_history_user` (`user_id`),
   KEY `ix_history_created` (`created_at`),
   KEY `ix_history_related` (`related_type`, `related_id`),
-  CONSTRAINT `fk_history_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_history_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_score_history_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_score_history_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Cấu hình điểm cho các hành động

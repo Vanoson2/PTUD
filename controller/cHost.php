@@ -75,8 +75,8 @@ class cHost {
         }
         
         // Description không bắt buộc, chỉ validate nếu có
-        if (!empty($data['description']) && strlen($data['description']) < 20) {
-            $errors['description'] = 'Mô tả phải có ít nhất 20 ký tự (hoặc để trống)';
+        if (!empty($data['description']) && strlen($data['description']) < 10) {
+            $errors['description'] = 'Mô tả phải có ít nhất 10 ký tự (hoặc để trống)';
         }
         
         // Check both 'price' and 'price_per_night' for compatibility
@@ -314,8 +314,8 @@ class cHost {
         }
         
         // Validate description
-        if (!empty($description) && strlen($description) < 20) {
-            $errors[] = 'Mô tả phải có ít nhất 20 ký tự (hoặc để trống)';
+        if (!empty($description) && strlen($description) < 10) {
+            $errors[] = 'Mô tả phải có ít nhất 10 ký tự (hoặc để trống)';
         }
         
         // Validate place type

@@ -22,6 +22,15 @@ class mEmailPHPMailer {
     private $smtpPassword;
     private $smtpSecure;
     
+    /**
+     * Get base URL dynamically for email links
+     */
+    private function getBaseUrl() {
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        return $protocol . '://' . $host;
+    }
+    
     public function __construct() {
         // Load email configuration
         $this->config = require __DIR__ . '/../config/email.php';
@@ -278,7 +287,7 @@ class mEmailPHPMailer {
                             <p>" . nl2br(htmlspecialchars($content)) . "</p>
                         </div>
                         
-                        <a href='http://localhost/view/user/admin/support.php?ticket_id=$ticketId' class='btn'>Xem & Trả lời</a>
+                        <a href='" . $this->getBaseUrl() . "/view/user/admin/support.php?ticket_id=$ticketId' class='btn'>Xem & Trả lời</a>
                     </div>
                     <div class='footer'>
                         <p>Email này được gửi tự động từ hệ thống WeGo Travel</p>
@@ -475,7 +484,7 @@ class mEmailPHPMailer {
                         </div>
                         
                         <p>Bạn có thể tiếp tục trao đổi bằng cách trả lời tin nhắn này hoặc truy cập:</p>
-                        <a href='http://localhost/view/user/support/ticket-detail.php?ticket_id=$ticketId' class='btn'>Xem chi tiết</a>
+                        <a href='" . $this->getBaseUrl() . "/view/user/support/ticket-detail.php?ticket_id=$ticketId' class='btn'>Xem chi tiết</a>
                     </div>
                     <div class='footer'>
                         <p>Cảm ơn bạn đã sử dụng dịch vụ WeGo Travel!</p>

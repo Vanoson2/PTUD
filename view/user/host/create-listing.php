@@ -443,8 +443,8 @@ foreach ($amenities as $amenity) {
       
       // Validate mô tả
       const description = document.getElementById('description').value.trim();
-      if (description && description.length < 20) {
-        errors.push('Mô tả phải có ít nhất 20 ký tự (hoặc để trống)');
+      if (description && description.length < 10) {
+        errors.push('Mô tả phải có ít nhất 10 ký tự (hoặc để trống)');
       }
       
       // Validate loại phòng

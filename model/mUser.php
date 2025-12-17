@@ -286,10 +286,23 @@ class mUser {
         // Kiểm tra tài khoản có bị khóa không
         if ($user['status'] === 'locked') {
             $p->mDongKetNoi($conn);
+            
+            // Kiểm tra lý do khóa (điểm tín nhiệm thấp)
+            $trustScore = $user['trust_score'] ?? 100;
+            $lockMessage = 'Tài khoản của bạn đã bị khóa.';
+            
+            if ($trustScore < 30) {
+                $lockMessage = 'Tài khoản của bạn đã bị khóa do điểm tín nhiệm quá thấp (' . $trustScore . '/100). Vui lòng liên hệ hỗ trợ để được mở khóa.';
+            } else {
+                $lockMessage .= ' Vui lòng liên hệ hỗ trợ.';
+            }
+            
             return [
                 'success' => false,
-                'message' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ hỗ trợ.',
-                'user' => null
+                'message' => $lockMessage,
+                'user' => null,
+                'locked_reason' => 'low_trust_score',
+                'trust_score' => $trustScore
             ];
         }
             
@@ -305,11 +318,26 @@ class mUser {
         
         $p->mDongKetNoi($conn);
         
+        // Kiểm tra điểm tín nhiệm để cảnh báo
+        $trustScore = $user['trust_score'] ?? 100;
+        $hasWarning = ($trustScore >= 30 && $trustScore < 50);
+        $warningMessage = null;
+        $warningLevel = null;
+        
+        if ($hasWarning) {
+            $warningMessage = 'Cảnh báo: Điểm tín nhiệm của bạn đang ở mức thấp (' . $trustScore . '/150). Tài khoản sẽ bị khóa nếu điểm xuống dưới 30. Vui lòng cẩn thận trong các hoạt động!';
+            $warningLevel = 'warning';
+        }
+        
         // Đăng nhập thành công
         return [
             'success' => true,
             'message' => 'Đăng nhập thành công',
-            'user' => $user
+            'user' => $user,
+            'has_warning' => $hasWarning,
+            'warning_message' => $warningMessage,
+            'warning_level' => $warningLevel,
+            'trust_score' => $trustScore
         ];
     }
     

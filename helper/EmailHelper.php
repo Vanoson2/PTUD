@@ -18,6 +18,15 @@ class EmailHelper {
     private $config;
     private $mail;
     
+    /**
+     * Get base URL dynamically for email links
+     */
+    private function getBaseUrl() {
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        return $protocol . '://' . $host;
+    }
+    
     public function __construct() {
         // Load email configuration
         $this->config = require __DIR__ . '/../config/email.php';
@@ -159,7 +168,7 @@ class EmailHelper {
             $this->mail->clearAddresses();
             $this->mail->addAddress($toEmail, $toName);
             
-            $resetLink = 'http://localhost/PTUD/index.php?action=reset-password&token=' . $resetToken;
+            $resetLink = $this->getBaseUrl() . '/index.php?action=reset-password&token=' . $resetToken;
             
             $this->mail->isHTML(true);
             $this->mail->Subject = 'Đặt lại mật khẩu WeGo';

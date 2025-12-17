@@ -67,12 +67,17 @@ class mUserScore {
         }
         
         $oldScore = $currentScore['trust_score'];
-        $newScore = max(0, min(100, $oldScore + $scoreChange)); // Giới hạn 0-100
+        $newScore = max(0, min(150, $oldScore + $scoreChange)); // Giới hạn 0-150
+        
+        // Tự động khóa tài khoản nếu điểm < 30
+        $autoLock = ($newScore < 30);
+        $statusUpdate = $autoLock ? ", status = 'locked'" : "";
         
         // Update điểm trong bảng user
         $sqlUpdate = "UPDATE user 
                       SET trust_score = $newScore,
                           last_score_update = NOW()
+                          $statusUpdate
                       WHERE user_id = $userId";
         
         if (!$conn->query($sqlUpdate)) {
@@ -102,12 +107,29 @@ class mUserScore {
         
         $conn->query($sqlHistory);
         
+        // Xác định mức cảnh báo
+        $hasWarning = ($newScore >= 30 && $newScore < 50);
+        $warningLevel = null;
+        
+        $message = 'Cập nhật điểm thành công';
+        
+        if ($autoLock) {
+            $message .= '. Tài khoản đã bị khóa do điểm tín nhiệm thấp (< 30)';
+            $warningLevel = 'danger';
+        } elseif ($hasWarning) {
+            $message .= '. Cảnh báo: Điểm tín nhiệm của bạn đang ở mức thấp (' . $newScore . '/150). Vui lòng cẩn thận để tránh bị khóa tài khoản';
+            $warningLevel = 'warning';
+        }
+        
         return [
             'success' => true,
-            'message' => 'Cập nhật điểm thành công',
+            'message' => $message,
             'old_score' => $oldScore,
             'new_score' => $newScore,
-            'change' => $scoreChange
+            'change' => $scoreChange,
+            'auto_locked' => $autoLock,
+            'has_warning' => $hasWarning,
+            'warning_level' => $warningLevel
         ];
     }
     
@@ -351,7 +373,7 @@ class mUserScore {
         $userId = intval($userId);
         
         // Lấy trạng thái hiện tại
-        $sql = "SELECT is_email_verified, verified_phone, verified_id FROM user WHERE user_id = $userId";
+        $sql = "SELECT is_email_verified FROM user WHERE user_id = $userId";
         $result = $conn->query($sql);
         
         if (!$result || $result->num_rows === 0) return [];
@@ -359,44 +381,33 @@ class mUserScore {
         $user = $result->fetch_assoc();
         $suggestions = [];
         
+        // 1. Xác thực email (ĐÃ IMPLEMENT)
         if (!$user['is_email_verified']) {
             $suggestions[] = [
-                'action' => 'Xác thực email',
+                'action' => 'Xác thực email để tăng độ tin cậy',
                 'points' => '+5',
                 'icon' => '📧'
             ];
         }
         
-        if (!$user['verified_phone']) {
-            $suggestions[] = [
-                'action' => 'Xác thực số điện thoại',
-                'points' => '+5',
-                'icon' => '📱'
-            ];
-        }
+        // 2. Tips chung
+        $suggestions[] = [
+            'action' => 'Tránh hủy booking sau khi xác nhận',
+            'points' => '-5 nếu hủy',
+            'icon' => '�'
+        ];
         
-        if (!$user['verified_id']) {
-            $suggestions[] = [
-                'action' => 'Xác thực CCCD/CMND',
-                'points' => '+10',
-                'icon' => '🆔'
-            ];
-        }
+        $suggestions[] = [
+            'action' => 'Không vi phạm chính sách nền tảng',
+            'points' => '-15 đến -50',
+            'icon' => '⚠️'
+        ];
         
-        // Check if has bookings
-        $bookingSql = "SELECT COUNT(*) as count FROM bookings WHERE user_id = $userId";
-        $bookingResult = $conn->query($bookingSql);
-        if ($bookingResult && $bookingResult->num_rows > 0) {
-            $row = $bookingResult->fetch_assoc();
-            $bookingCount = (int)$row['count'];
-            if ($bookingCount == 0) {
-                $suggestions[] = [
-                    'action' => 'Hoàn thành booking đầu tiên',
-                    'points' => '+5',
-                    'icon' => '🏠'
-                ];
-            }
-        }
+        $suggestions[] = [
+            'action' => 'Tài khoản hoạt động trên 6 tháng',
+            'points' => '+10 tự động',
+            'icon' => '📅'
+        ];
         
         return $suggestions;
     }
