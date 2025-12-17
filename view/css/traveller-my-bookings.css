@@ -413,4 +413,64 @@
   border: 1px solid #fde68a;
 }
 
+/* Payment Countdown Timer */
+.payment-countdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
 
+.payment-countdown i {
+  font-size: 16px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.countdown-text {
+  flex: 1;
+}
+
+.countdown-timer {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.payment-countdown.countdown-warning {
+  background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+  animation: shake 0.5s ease-in-out infinite;
+}
+
+.badge-expired {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #ff5722;
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
