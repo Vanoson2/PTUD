@@ -161,13 +161,31 @@ document.addEventListener('DOMContentLoaded', function() {
       return false;
     }
     
-    if (value.length < 6) {
-      showError(input, 'Mật khẩu phải có ít nhất 6 ký tự');
+    if (value.length < 8) {
+      showError(input, 'Mật khẩu phải có ít nhất 8 ký tự');
       return false;
     }
     
     if (value.length > 255) {
       showError(input, 'Mật khẩu quá dài');
+      return false;
+    }
+    
+    // Check for uppercase letter
+    if (!/[A-Z]/.test(value)) {
+      showError(input, 'Mật khẩu phải có ít nhất 1 chữ hoa');
+      return false;
+    }
+    
+    // Check for lowercase letter
+    if (!/[a-z]/.test(value)) {
+      showError(input, 'Mật khẩu phải có ít nhất 1 chữ thường');
+      return false;
+    }
+    
+    // Check for number
+    if (!/[0-9]/.test(value)) {
+      showError(input, 'Mật khẩu phải có ít nhất 1 chữ số');
       return false;
     }
     

@@ -27,10 +27,16 @@ class cUser {
         // Validate password
         if (empty($password)) {
             $errors['password'] = 'Vui lòng nhập mật khẩu';
-        } elseif (strlen($password) < 6) {
-            $errors['password'] = 'Mật khẩu phải có ít nhất 6 ký tự';
+        } elseif (strlen($password) < 8) {
+            $errors['password'] = 'Mật khẩu phải có ít nhất 8 ký tự';
         } elseif (strlen($password) > 255) {
             $errors['password'] = 'Mật khẩu quá dài';
+        } elseif (!preg_match('/[A-Z]/', $password)) {
+            $errors['password'] = 'Mật khẩu phải có ít nhất 1 chữ hoa';
+        } elseif (!preg_match('/[a-z]/', $password)) {
+            $errors['password'] = 'Mật khẩu phải có ít nhất 1 chữ thường';
+        } elseif (!preg_match('/[0-9]/', $password)) {
+            $errors['password'] = 'Mật khẩu phải có ít nhất 1 chữ số';
         }
         
         // Validate confirm password
