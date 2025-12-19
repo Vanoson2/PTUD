@@ -246,7 +246,21 @@ foreach ($amenities as $amenity) {
           <div class="existing-images">
             <?php foreach ($existingImages as $image): ?>
               <div class="existing-image-item <?php echo $image['is_cover'] ? 'is-cover' : ''; ?>" id="image-<?php echo $image['image_id']; ?>">
-                <img src="../../../<?php echo htmlspecialchars($image['file_url']); ?>" alt="Listing image">
+                <?php
+                // Handle both cases: with or without leading slash
+                $imagePath = $image['file_url'];
+                if (strpos($imagePath, 'http://') === 0 || strpos($imagePath, 'https://') === 0) {
+                  // External URL (Pexels, etc.)
+                  $displayPath = $imagePath;
+                } elseif (strpos($imagePath, '/') === 0) {
+                  // Already has leading slash: /public/uploads/...
+                  $displayPath = '../../..' . $imagePath;
+                } else {
+                  // No leading slash: public/uploads/...
+                  $displayPath = '../../../' . $imagePath;
+                }
+                ?>
+                <img src="<?php echo htmlspecialchars($displayPath); ?>" alt="Listing image">
                 <?php if ($image['is_cover']): ?>
                   <span class="cover-badge"><i class="fas fa-star"></i> Ảnh bìa</span>
                 <?php endif; ?>
