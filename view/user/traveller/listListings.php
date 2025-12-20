@@ -3,6 +3,7 @@
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
+
 // Get search parameters
 $source = $_GET['source'] ?? ''; // 'featured' hoặc rỗng
 $location = $_GET['location'] ?? '';
@@ -10,6 +11,69 @@ $checkin = $_GET['checkin'] ?? '';
 $checkout = $_GET['checkout'] ?? '';
 $guests = $_GET['guests'] ?? 1;
 $amenityFilter = $_GET['amenity'] ?? ''; // Lọc theo amenity IDs (VD: "11,12")
+
+// ============ VALIDATION RULES ============
+$errors = [];
+
+// 1. Validate guests (must be positive integer, max 20)
+if (!empty($guests)) {
+  if (!is_numeric($guests) || $guests < 1) {
+    $errors[] = 'Số khách phải là số dương';
+    $guests = 1; // Reset to default
+  } elseif ($guests > 10) {
+    $errors[] = 'Số khách tối đa là 10 người';
+    $guests = 10;
+  } else {
+    $guests = (int)$guests;
+  }
+}
+
+// 2. Validate dates if both provided
+if (!empty($checkin) && !empty($checkout)) {
+  $checkinDate = strtotime($checkin);
+  $checkoutDate = strtotime($checkout);
+  $today = strtotime(date('Y-m-d'));
+  
+  // Check valid date format
+  if ($checkinDate === false) {
+    $errors[] = 'Ngày check-in không hợp lệ';
+    $checkin = '';
+  }
+  if ($checkoutDate === false) {
+    $errors[] = 'Ngày check-out không hợp lệ';
+    $checkout = '';
+  }
+  
+  // Check if dates are valid
+  if ($checkinDate && $checkoutDate) {
+    // Check-in must not be in the past
+    if ($checkinDate < $today) {
+      $errors[] = 'Ngày check-in không thể là ngày trong quá khứ';
+      $checkin = '';
+      $checkout = '';
+    }
+    // Check-out must be after check-in
+    elseif ($checkoutDate <= $checkinDate) {
+      $errors[] = 'Ngày check-out phải sau ngày check-in';
+      $checkout = '';
+    }
+    // Maximum stay duration (e.g., 30 days)
+    elseif (($checkoutDate - $checkinDate) / (60 * 60 * 24) > 30) {
+      $errors[] = 'Thời gian thuê tối đa là 30 ngày';
+      $checkout = '';
+    }
+  }
+}
+
+// 3. Validate single date (check-in without check-out or vice versa)
+if (!empty($checkin) && empty($checkout)) {
+  $errors[] = 'Vui lòng chọn cả ngày check-in và check-out';
+  $checkin = '';
+}
+if (empty($checkin) && !empty($checkout)) {
+  $errors[] = 'Vui lòng chọn cả ngày check-in và check-out';
+  $checkout = '';
+}
 
 // Calculate number of nights
 $nights = 0;
@@ -92,6 +156,22 @@ $totalResults = count($listings);
 
 <!-- Search Form at Top -->
 <div class="search-results-container">
+  
+  <!-- Validation Errors -->
+  <?php if (!empty($errors)): ?>
+    <div class="alert alert-warning" role="alert">
+      <i class="fas fa-exclamation-triangle"></i>
+      <div>
+        <strong>Thông báo:</strong>
+        <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+          <?php foreach ($errors as $error): ?>
+            <li><?php echo htmlspecialchars($error); ?></li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    </div>
+  <?php endif; ?>
+  
   <div class="search-results-header">
     <div class="search-info">
       <h1 class="search-results-title">

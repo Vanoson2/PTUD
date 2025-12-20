@@ -24,7 +24,7 @@ class cHost {
         return $mListing->mDeleteListing($listingId, $hostId);
     }
     
-    public function cCreateHostApplication($userId, $businessName, $taxCode = '') {
+    public function cCreateHostApplication($userId, $businessName, $taxCode = '', $bankAccount = '', $bankName = '') {
         // Validate input
         $errors = [];
         
@@ -38,6 +38,14 @@ class cHost {
             $errors['tax_code'] = 'Mã số thuế quá dài (tối đa 50 ký tự)';
         }
         
+        if (!empty($bankAccount) && strlen($bankAccount) > 50) {
+            $errors['bank_account'] = 'Số tài khoản quá dài (tối đa 50 ký tự)';
+        }
+        
+        if (!empty($bankName) && strlen($bankName) > 150) {
+            $errors['bank_name'] = 'Tên ngân hàng quá dài (tối đa 150 ký tự)';
+        }
+        
         if (!empty($errors)) {
             return [
                 'success' => false,
@@ -48,7 +56,7 @@ class cHost {
         }
         
         $mHost = new mHost();
-        return $mHost->mCreateHostApplication($userId, $businessName, $taxCode);
+        return $mHost->mCreateHostApplication($userId, $businessName, $taxCode, $bankAccount, $bankName);
     }
     
     public function cGetUserHostApplication($userId) {

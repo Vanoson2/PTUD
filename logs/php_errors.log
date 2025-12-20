@@ -150,3 +150,44 @@
 [17-Dec-2025 14:48:33 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD\view\partials\footer.php on line 18
 [17-Dec-2025 14:48:33 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD\view\partials\footer.php on line 63
 [17-Dec-2025 14:48:33 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD\view\partials\footer.php on line 64
+[20-Dec-2025 10:12:40 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 8
+[20-Dec-2025 10:12:40 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 9
+[20-Dec-2025 10:12:40 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 10
+[20-Dec-2025 10:12:40 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 16
+[20-Dec-2025 10:12:40 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 17
+[20-Dec-2025 10:12:40 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 18
+[20-Dec-2025 10:12:40 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 63
+[20-Dec-2025 10:12:40 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 64
+[20-Dec-2025 10:13:34 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 8
+[20-Dec-2025 10:13:34 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 9
+[20-Dec-2025 10:13:34 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 10
+[20-Dec-2025 10:13:34 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 16
+[20-Dec-2025 10:13:34 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 17
+[20-Dec-2025 10:13:34 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 18
+[20-Dec-2025 10:13:34 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 63
+[20-Dec-2025 10:13:34 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 64
+[20-Dec-2025 10:30:54 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 8
+[20-Dec-2025 10:30:54 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 9
+[20-Dec-2025 10:30:54 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 10
+[20-Dec-2025 10:30:54 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 16
+[20-Dec-2025 10:30:54 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 17
+[20-Dec-2025 10:30:54 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 18
+[20-Dec-2025 10:30:54 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 63
+[20-Dec-2025 10:30:54 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 64
+[20-Dec-2025 10:40:44 Europe/Berlin] PHP Parse error:  syntax error, unexpected token "public", expecting end of file in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\controller\cHost.php on line 63
+[20-Dec-2025 10:42:28 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 8
+[20-Dec-2025 10:42:28 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 9
+[20-Dec-2025 10:42:28 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 10
+[20-Dec-2025 10:42:28 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 16
+[20-Dec-2025 10:42:28 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 17
+[20-Dec-2025 10:42:28 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 18
+[20-Dec-2025 10:42:28 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 63
+[20-Dec-2025 10:42:28 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 64
+[20-Dec-2025 10:42:31 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 8
+[20-Dec-2025 10:42:31 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 9
+[20-Dec-2025 10:42:31 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 10
+[20-Dec-2025 10:42:31 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 16
+[20-Dec-2025 10:42:31 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 17
+[20-Dec-2025 10:42:31 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 18
+[20-Dec-2025 10:42:31 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 63
+[20-Dec-2025 10:42:31 Europe/Berlin] PHP Warning:  Undefined variable $rootPath in C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\view\partials\footer.php on line 64

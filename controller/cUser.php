@@ -182,6 +182,26 @@ class cUser {
         $mUser = new mUser();
         return $mUser->mGetUserById($userId);
     }
+    
+    /**
+     * Check if user account is locked/deleted
+     * Used for security middleware
+     * @param int $userId
+     * @return array ['status' => string, 'is_locked' => bool]
+     */
+    public function cCheckUserAccountStatus($userId) {
+        $mUser = new mUser();
+        $user = $mUser->mGetUserById($userId);
+        
+        if (!$user) {
+            return ['status' => 'not_found', 'is_locked' => true];
+        }
+        
+        return [
+            'status' => $user['status'], // 'active' or 'locked'
+            'is_locked' => ($user['status'] === 'locked')
+        ];
+    }
 
     /**
      * Send password reset email

@@ -148,6 +148,8 @@ CREATE TABLE `host_application` (
   `user_id` BIGINT UNSIGNED NOT NULL,
   `business_name` VARCHAR(255) NOT NULL,
   `tax_code` VARCHAR(50) DEFAULT NULL,
+  `bank_account` VARCHAR(255) DEFAULT NULL,
+  `bank_name` VARCHAR(150) DEFAULT NULL,
   `status` ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
   `reviewed_by_admin_id` BIGINT UNSIGNED DEFAULT NULL,
   `reviewed_at` DATETIME DEFAULT NULL,

@@ -98,6 +98,18 @@ class mAdmin {
         
         if ($result && $result->num_rows > 0) {
             $data = $result->fetch_assoc();
+            
+            // Decrypt sensitive data for display
+            include_once(__DIR__ . '/../helper/EncryptionHelper.php');
+            
+            if (!empty($data['tax_code'])) {
+                $data['tax_code'] = EncryptionHelper::decrypt($data['tax_code']);
+            }
+            
+            if (!empty($data['bank_account'])) {
+                $data['bank_account'] = EncryptionHelper::decrypt($data['bank_account']);
+            }
+            
             $p->mDongKetNoi($conn);
             return $data;
         }

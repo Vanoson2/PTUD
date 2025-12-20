@@ -7,6 +7,15 @@ if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 
+// Initialize errors array
+$errors = [];
+
+// Check for session error message (from locked account)
+if (isset($_SESSION['login_error'])) {
+  $errors['general'] = $_SESSION['login_error'];
+  unset($_SESSION['login_error']);
+}
+
 // Store return URL if provided (server-side backup method)
 if (isset($_GET['returnUrl'])) {
   ReturnUrlHelper::storeReturnUrl($_GET['returnUrl']);
@@ -24,7 +33,6 @@ if (isset($_SESSION['user_id'])) {
   exit;
 }
 
-$errors = [];
 $formData = ['email_or_phone' => ''];
 
 // Xử lý form submit

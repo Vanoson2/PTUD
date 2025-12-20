@@ -22,6 +22,30 @@
   $isLoggedIn = isset($_SESSION['user_id']);
   $userName = $_SESSION['user_name'] ?? '';
   
+  // ⚠️ SECURITY CHECK: Verify user account status if logged in
+  if ($isLoggedIn) {
+    require_once __DIR__ . '/../../controller/cUser.php';
+    $cUser = new cUser();
+    $accountStatus = $cUser->cCheckUserAccountStatus($_SESSION['user_id']);
+    
+    // If account is locked, destroy session and redirect to login
+    if ($accountStatus['is_locked']) {
+      // Store error message before destroying session
+      $_SESSION['login_error'] = 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin.';
+      
+      session_unset();
+      session_destroy();
+      
+      // Start new session to preserve error message
+      session_start();
+      $_SESSION['login_error'] = 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ admin.';
+      
+      // Redirect to login
+      header('Location: /view/user/traveller/login.php');
+      exit;
+    }
+  }
+  
   // Check if user is an approved HOST
   $isApprovedHost = false;
   if ($isLoggedIn) {

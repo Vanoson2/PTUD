@@ -4,6 +4,7 @@
  */
 
 include_once(__DIR__ . "/mConnect.php");
+include_once(__DIR__ . "/../helper/EncryptionHelper.php");
 
 class mUserScore {
     
@@ -25,7 +26,14 @@ class mUserScore {
         $result = $conn->query($sql);
         
         if ($result && $result->num_rows > 0) {
-            return $result->fetch_assoc();
+            $data = $result->fetch_assoc();
+            
+            // Decrypt verification_docs if exists
+            if (!empty($data['verification_docs'])) {
+                $data['verification_docs'] = EncryptionHelper::decrypt($data['verification_docs']);
+            }
+            
+            return $data;
         }
         
         return null;
@@ -292,8 +300,10 @@ class mUserScore {
         
         if ($docs && $type === 'id') {
             $docsJson = json_encode($docs);
-            $docsJson = $conn->real_escape_string($docsJson);
-            $sql .= ", verification_docs = '$docsJson'";
+            // Encrypt verification_docs before storing
+            $encryptedDocs = EncryptionHelper::encrypt($docsJson);
+            $encryptedDocs = $conn->real_escape_string($encryptedDocs);
+            $sql .= ", verification_docs = '$encryptedDocs'";
         }
         
         $sql .= " WHERE user_id = $userId";
