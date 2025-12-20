@@ -26,9 +26,7 @@ if (!isset($formWrapperClass)) {
              name="location" 
              id="locationInput" 
              placeholder="Bạn muốn đi đâu?" 
-             value="<?php echo htmlspecialchars($location); ?>" 
-             autocomplete="off" 
-             required />
+             value="<?php echo htmlspecialchars($location); ?>"/>
     </div>
     
     <!-- Check in -->
