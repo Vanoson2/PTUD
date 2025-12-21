@@ -73,7 +73,14 @@ $totalPrice = $listing['price'] * $nights;
 <div class="detail-container">
   <!-- Back Button -->
   <div class="back-button-container mb-3">
-    <a href="listListings.php<?php echo isset($_GET['location']) || isset($_GET['checkin']) || isset($_GET['checkout']) || isset($_GET['guests']) ? '?' . http_build_query(array_filter(['location' => $_GET['location'] ?? '', 'checkin' => $_GET['checkin'] ?? '', 'checkout' => $_GET['checkout'] ?? '', 'guests' => $_GET['guests'] ?? ''])) : ''; ?>" class="btn-back">
+    <?php 
+    $backParams = [];
+    if (isset($_GET['location'])) $backParams['location'] = $_GET['location'];
+    if (isset($_GET['checkin'])) $backParams['checkin'] = $_GET['checkin'];
+    if (isset($_GET['checkout'])) $backParams['checkout'] = $_GET['checkout'];
+    if (isset($_GET['guests'])) $backParams['guests'] = $_GET['guests'];
+    ?>
+    <a href="listListings.php<?php echo !empty($backParams) ? '?' . http_build_query($backParams) : ''; ?>" class="btn-back">
       <i class="fas fa-arrow-left"></i> Quay lại danh sách
     </a>
   </div>
