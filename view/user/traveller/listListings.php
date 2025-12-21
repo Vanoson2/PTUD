@@ -328,7 +328,7 @@ $totalResults = count($listings);
           }
           $amenitiesStr = implode(',', $amenitiesIds);
           ?>
-          <a href="./detailListing.php?id=<?php echo $listing['listing_id']; ?>&checkin=<?php echo urlencode($checkin); ?>&checkout=<?php echo urlencode($checkout); ?>&guests=<?php echo urlencode($guests); ?>" 
+          <a href="./detailListing.php?id=<?php echo $listing['listing_id']; ?>&location=<?php echo urlencode($location); ?>&checkin=<?php echo urlencode($checkin); ?>&checkout=<?php echo urlencode($checkout); ?>&guests=<?php echo urlencode($guests); ?><?php echo !empty($amenityFilter) ? '&amenity=' . urlencode($amenityFilter) : ''; ?>" 
              class="listing-card-link">
             <article class="listing-card" 
                      data-place-type-id="<?php echo $listing['place_type_id'] ?? ''; ?>"

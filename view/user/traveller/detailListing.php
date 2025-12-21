@@ -79,6 +79,7 @@ $totalPrice = $listing['price'] * $nights;
     if (isset($_GET['checkin'])) $backParams['checkin'] = $_GET['checkin'];
     if (isset($_GET['checkout'])) $backParams['checkout'] = $_GET['checkout'];
     if (isset($_GET['guests'])) $backParams['guests'] = $_GET['guests'];
+    if (isset($_GET['amenity'])) $backParams['amenity'] = $_GET['amenity'];
     ?>
     <a href="listListings.php<?php echo !empty($backParams) ? '?' . http_build_query($backParams) : ''; ?>" class="btn-back">
       <i class="fas fa-arrow-left"></i> Quay lại danh sách
