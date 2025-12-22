@@ -46,9 +46,6 @@ $reviewCount = $ratingInfo['review_count'] ?? 0;
 // Get user_id from session
 $userId = $_SESSION['user_id'];
 
-<<<<<<< HEAD
-// Bỏ check user conflict - cho phép đặt nhiều phòng cùng lúc
-=======
 // CLEANUP: Auto-cancel expired bookings (đã quá 10 phút)
 require_once(__DIR__ . '/../../../model/mBooking.php');
 $mBookingCleanup = new mBooking();
@@ -69,7 +66,6 @@ if ($userConflictResult && $userConflictResult->num_rows > 0) {
   exit;
 }
 
->>>>>>> bae8384d57c302b18675c29de5e26bc79f829006
 // Check: Listing còn trống không?
 $cBooking = new cBooking();
 $listingAvailabilityResult = $cBooking->cCheckListingAvailability($listingId, $checkin, $checkout);
@@ -78,12 +74,6 @@ if ($listingAvailabilityResult && $listingAvailabilityResult->num_rows > 0) {
   $isListingAvailable = false;
 }
 
-<<<<<<< HEAD
-// Chỉ kiểm tra listing có sẵn hay không
-$canBook = $isListingAvailable;
-
-=======
->>>>>>> bae8384d57c302b18675c29de5e26bc79f829006
 // Get listing services
 $servicesResult = $cListing->cGetListingServices($listingId);
 $services = [];
