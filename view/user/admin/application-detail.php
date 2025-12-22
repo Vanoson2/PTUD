@@ -244,6 +244,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         <div class="info-label">Mã số thuế:</div>
         <div class="info-value"><?php echo $application['tax_code'] ? htmlspecialchars($application['tax_code']) : '<span class="text-muted">Chưa cung cấp</span>'; ?></div>
       </div>
+      <div class="info-row">
+        <div class="info-label">Ngân hàng:</div>
+        <div class="info-value"><?php echo $application['bank_name'] ? htmlspecialchars($application['bank_name']) : '<span class="text-muted">Chưa cung cấp</span>'; ?></div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Số tài khoản:</div>
+        <div class="info-value"><?php echo $application['bank_account'] ? htmlspecialchars($application['bank_account']) : '<span class="text-muted">Chưa cung cấp</span>'; ?></div>
+      </div>
     </div>
     
     <!-- Documents -->

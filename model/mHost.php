@@ -1,9 +1,10 @@
 <?php
 include_once __DIR__ . '/mConnect.php';
+include_once __DIR__ . '/../helper/EncryptionHelper.php';
 
 class mHost {
     
-    public function mCreateHostApplication($userId, $businessName, $taxCode = '') {
+    public function mCreateHostApplication($userId, $businessName, $taxCode = '', $bankAccount = '', $bankName = '') {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
         
@@ -16,7 +17,17 @@ class mHost {
         }
         
         $businessName = $conn->real_escape_string($businessName);
-        $taxCode = $conn->real_escape_string($taxCode);
+        
+        // Encrypt tax_code before saving
+        $taxCodeEncrypted = !empty($taxCode) ? EncryptionHelper::encrypt($taxCode) : '';
+        $taxCodeEncrypted = $conn->real_escape_string($taxCodeEncrypted);
+        
+        // Encrypt bank_account before saving
+        $bankAccountEncrypted = !empty($bankAccount) ? EncryptionHelper::encrypt($bankAccount) : '';
+        $bankAccountEncrypted = $conn->real_escape_string($bankAccountEncrypted);
+        
+        // bank_name stored as plaintext
+        $bankNameEscaped = !empty($bankName) ? $conn->real_escape_string($bankName) : '';
         
         // Check xem user đã có application pending chưa
         $checkSql = "SELECT host_application_id, status 
@@ -92,12 +103,14 @@ class mHost {
             }
         }
         
-        // Handle tax_code: NULL if empty, otherwise use value
-        $taxCodeValue = empty($taxCode) ? "NULL" : "'$taxCode'";
+        // Handle NULL values for optional fields
+        $taxCodeValue = empty($taxCodeEncrypted) ? "NULL" : "'$taxCodeEncrypted'";
+        $bankAccountValue = empty($bankAccountEncrypted) ? "NULL" : "'$bankAccountEncrypted'";
+        $bankNameValue = empty($bankNameEscaped) ? "NULL" : "'$bankNameEscaped'";
         
         // Tạo application mới
-        $sql = "INSERT INTO host_application (user_id, business_name, tax_code, status, created_at) 
-                VALUES ($userId, '$businessName', $taxCodeValue, 'pending', CURRENT_TIMESTAMP)";
+        $sql = "INSERT INTO host_application (user_id, business_name, tax_code, bank_account, bank_name, status, created_at) 
+                VALUES ($userId, '$businessName', $taxCodeValue, $bankAccountValue, $bankNameValue, 'pending', CURRENT_TIMESTAMP)";
         
         if ($conn->query($sql)) {
             $applicationId = $conn->insert_id;
@@ -142,8 +155,10 @@ class mHost {
         }
         
         $businessName = $conn->real_escape_string($businessName);
-        $taxCode = $conn->real_escape_string($taxCode);
-        $taxCodeValue = !empty($taxCode) ? "'$taxCode'" : "NULL";
+        // Encrypt tax_code before saving
+        $taxCodeEncrypted = !empty($taxCode) ? EncryptionHelper::encrypt($taxCode) : '';
+        $taxCodeEncrypted = $conn->real_escape_string($taxCodeEncrypted);
+        $taxCodeValue = !empty($taxCodeEncrypted) ? "'$taxCodeEncrypted'" : "NULL";
         
         // Create host with pending status
         $sql = "INSERT INTO host (user_id, legal_name, tax_code, status, created_at) 
@@ -207,6 +222,10 @@ class mHost {
         
         if ($result && $result->num_rows > 0) {
             $data = $result->fetch_assoc();
+            // Decrypt tax_code
+            if (!empty($data['tax_code'])) {
+                $data['tax_code'] = EncryptionHelper::decrypt($data['tax_code']);
+            }
             $p->mDongKetNoi($conn);
             return $data;
         }
@@ -282,6 +301,7 @@ class mHost {
         $app = $result->fetch_assoc();
         $userId = $app['user_id'];
         $businessName = $conn->real_escape_string($app['business_name']);
+        // tax_code from host_application is already encrypted, keep it as is
         $taxCode = $conn->real_escape_string($app['tax_code']);
         
         // Check xem đã là host chưa
@@ -289,11 +309,11 @@ class mHost {
         $checkResult = $conn->query($checkSql);
         
         if ($checkResult && $checkResult->num_rows > 0) {
-            // Đã là host rồi, chỉ update status
+            // Đã là host rồi, chỉ update status - tax_code already encrypted
             $updateSql = "UPDATE host SET status = 'approved', legal_name = '$businessName', tax_code = '$taxCode' WHERE user_id = $userId";
             $success = $conn->query($updateSql);
         } else {
-            // Tạo host mới - lưu tax_code nếu có
+            // Tạo host mới - tax_code already encrypted from host_application
             $taxCodeValue = !empty($taxCode) ? "'$taxCode'" : "NULL";
             $insertSql = "INSERT INTO host (user_id, legal_name, tax_code, status, created_at) 
                           VALUES ($userId, '$businessName', $taxCodeValue, 'approved', CURRENT_TIMESTAMP)";
@@ -323,6 +343,10 @@ class mHost {
         
         if ($result && $result->num_rows > 0) {
             $host = $result->fetch_assoc();
+            // Decrypt tax_code
+            if (!empty($host['tax_code'])) {
+                $host['tax_code'] = EncryptionHelper::decrypt($host['tax_code']);
+            }
         }
         
         $p->mDongKetNoi($conn);
@@ -350,6 +374,11 @@ class mHost {
         
         if ($result && $result->num_rows > 0) {
             $application = $result->fetch_assoc();
+            
+            // Decrypt tax_code for display
+            if (!empty($application['tax_code'])) {
+                $application['tax_code'] = EncryptionHelper::decrypt($application['tax_code']);
+            }
         }
         
         $p->mDongKetNoi($conn);

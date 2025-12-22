@@ -1,0 +1,144 @@
+# WeGo Travel - URL Rewriting Configuration
+# Purpose: Hide folder structure, remove .php extension, create SEO-friendly URLs
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Security: Block direct access to sensitive folders
+    RewriteRule ^(controller|model|config|helper|database|vendor|logs)(/.*)?$ - [F,L]
+    
+    # Security: Block access to config files
+    RewriteRule \.(sql|json|md)$ - [F,L]
+    
+    # Allow existing files and directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # ==========================================
+    # STATIC PAGES (public pages)
+    # ==========================================
+    
+    # Home page
+    RewriteRule ^$ index.php [L]
+    RewriteRule ^home$ index.php [L]
+    
+    # Static pages
+    RewriteRule ^about$ view/static/about.php [L]
+    RewriteRule ^contact$ view/static/contact.php [L]
+    RewriteRule ^help$ view/static/help-center.php [L]
+    RewriteRule ^terms$ view/static/terms.php [L]
+    RewriteRule ^privacy$ view/static/privacy.php [L]
+    RewriteRule ^safety$ view/static/safety.php [L]
+    RewriteRule ^cancellation$ view/static/cancellation.php [L]
+    RewriteRule ^careers$ view/static/careers.php [L]
+    
+    # ==========================================
+    # LISTING ROUTES (public)
+    # ==========================================
+    
+    # Listing search/list
+    RewriteRule ^listings$ view/user/traveller/listListings.php [L,QSA]
+    RewriteRule ^search$ view/user/traveller/listListings.php [L,QSA]
+    
+    # Listing detail
+    RewriteRule ^listing/([0-9]+)$ view/user/traveller/detailListing.php?id=$1 [L,QSA]
+    
+    # ==========================================
+    # AUTH ROUTES (public)
+    # ==========================================
+    
+    RewriteRule ^login$ view/user/traveller/login.php [L]
+    RewriteRule ^register$ view/user/traveller/register.php [L]
+    RewriteRule ^logout$ view/user/traveller/logout.php [L]
+    RewriteRule ^forgot-password$ view/user/traveller/forgot-password.php [L]
+    RewriteRule ^reset-password$ view/user/traveller/reset-password.php [L]
+    RewriteRule ^verify-email$ view/user/traveller/verify-email.php [L]
+    
+    # ==========================================
+    # BOOKING ROUTES (auth required)
+    # ==========================================
+    
+    RewriteRule ^booking/confirm$ view/user/traveller/confirm-booking.php [L,QSA]
+    RewriteRule ^booking/success$ view/user/traveller/booking-success.php [L,QSA]
+    RewriteRule ^booking/cancel/([0-9]+)$ view/user/traveller/cancel-booking.php?booking_id=$1 [L]
+    RewriteRule ^my-bookings$ view/user/traveller/my-bookings.php [L,QSA]
+    
+    # Review
+    RewriteRule ^review/create$ view/user/traveller/review-listing.php [L,QSA]
+    
+    # ==========================================
+    # USER PROFILE ROUTES (auth required)
+    # ==========================================
+    
+    RewriteRule ^profile$ view/user/traveller/traveller-profile.php [L]
+    RewriteRule ^profile/edit$ view/user/traveller/edit-profile.php [L]
+    
+    # ==========================================
+    # HOST ROUTES (host role required)
+    # ==========================================
+    
+    # Host registration
+    RewriteRule ^host/register$ view/user/host/register-host.php [L]
+    RewriteRule ^host/become$ view/user/host/become-host.php [L]
+    
+    # Host dashboard
+    RewriteRule ^host/dashboard$ view/user/host/host-dashboard.php [L]
+    RewriteRule ^host/bookings$ view/user/host/host-bookings.php [L,QSA]
+    RewriteRule ^host/reports$ view/user/host/host-reports.php [L]
+    
+    # Host listings management
+    RewriteRule ^host/listings$ view/user/host/my-listings.php [L]
+    RewriteRule ^host/listing/create$ view/user/host/create-listing.php [L]
+    RewriteRule ^host/listing/([0-9]+)/edit$ view/user/host/edit-listing.php?id=$1 [L]
+    RewriteRule ^host/listing/([0-9]+)$ view/user/host/listing-detail-host.php?id=$1 [L]
+    
+    # ==========================================
+    # ADMIN ROUTES (admin role required)
+    # ==========================================
+    
+    RewriteRule ^admin$ view/admin/dashboard.php [L]
+    RewriteRule ^admin/login$ view/admin/login.php [L]
+    RewriteRule ^admin/logout$ view/admin/logout.php [L]
+    RewriteRule ^admin/dashboard$ view/admin/dashboard.php [L]
+    
+    # Admin - Users
+    RewriteRule ^admin/users$ view/admin/users.php [L]
+    
+    # Admin - Hosts
+    RewriteRule ^admin/hosts$ view/admin/hosts.php [L]
+    RewriteRule ^admin/applications$ view/admin/applications.php [L]
+    RewriteRule ^admin/application/([0-9]+)$ view/admin/application-detail.php?id=$1 [L]
+    
+    # Admin - Listings
+    RewriteRule ^admin/listings$ view/admin/listings.php [L]
+    RewriteRule ^admin/listing/([0-9]+)$ view/admin/listing-detail.php?id=$1 [L]
+    
+    # Admin - Support
+    RewriteRule ^admin/support$ view/admin/support.php [L]
+    RewriteRule ^admin/support/([0-9]+)$ view/admin/support-detail.php?id=$1 [L]
+    
+    # Admin - Reports
+    RewriteRule ^admin/reports$ view/admin/admin-reports.php [L]
+    
+    # Admin - Amenities
+    RewriteRule ^admin/amenities$ view/admin/amenities-services.php [L]
+    
+    # ==========================================
+    # PAYMENT ROUTES
+    # ==========================================
+    
+    RewriteRule ^payment/momo/return$ payment/momo-return.php [L,QSA]
+    RewriteRule ^payment/momo/ipn$ payment/momo-ipn.php [L,QSA]
+    
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Hide server info
+ServerSignature Off

@@ -159,11 +159,20 @@ try {
                 if ($bookingId) {
                     require_once(__DIR__ . '/../model/mPayment.php');
                     $mPayment = new mPayment();
-                    $mPayment->mCancelBooking($bookingId, 'user', 'Hủy thanh toán MoMo');
+                    $cancelResult = $mPayment->mCancelBooking($bookingId, 'user', 'Hủy thanh toán MoMo');
+                    
+                    if (!$cancelResult) {
+                        // Nếu cancel thất bại, log error và thông báo
+                        logMoMoPayment('Cancel booking failed', [
+                            'bookingId' => $bookingId,
+                            'error' => 'mCancelBooking returned false'
+                        ]);
+                        $errorMessage = 'Đã xảy ra lỗi khi hủy đặt chỗ. Vui lòng liên hệ bộ phận hỗ trợ.';
+                    }
                 }
                 // Redirect về trang chi tiết listing để user có thể đặt lại
                 if ($booking) {
-                    $_SESSION['info'] = $errorMessage;
+                    $_SESSION['error'] = $errorMessage;
                     header('Location: ../view/user/traveller/detailListing.php?id=' . $booking['listing_id']);
                     exit;
                 }

@@ -46,7 +46,30 @@ $reviewCount = $ratingInfo['review_count'] ?? 0;
 // Get user_id from session
 $userId = $_SESSION['user_id'];
 
+<<<<<<< HEAD
 // Bỏ check user conflict - cho phép đặt nhiều phòng cùng lúc
+=======
+// CLEANUP: Auto-cancel expired bookings (đã quá 10 phút)
+require_once(__DIR__ . '/../../../model/mBooking.php');
+$mBookingCleanup = new mBooking();
+$mBookingCleanup->mCancelExpiredBookings();
+
+// Check user conflict - ngăn user đặt nhiều nơi cùng lúc
+$cBooking = new cBooking();
+$userConflictResult = $cBooking->cCheckUserBookingConflict($userId, $checkin, $checkout, $listingId);
+$hasUserConflict = false;
+$conflictingBooking = null;
+if ($userConflictResult && $userConflictResult->num_rows > 0) {
+  $hasUserConflict = true;
+  $conflictingBooking = $userConflictResult->fetch_assoc();
+  
+  // THÔNG BÁO cho user về booking pending và redirect đến my-bookings
+  $_SESSION['warning'] = 'Bạn đã có đơn đặt chỗ đang chờ thanh toán trong khoảng thời gian này. Vui lòng hoàn tất thanh toán hoặc hủy đơn trước khi đặt chỗ mới.';
+  header('Location: my-bookings.php');
+  exit;
+}
+
+>>>>>>> bae8384d57c302b18675c29de5e26bc79f829006
 // Check: Listing còn trống không?
 $cBooking = new cBooking();
 $listingAvailabilityResult = $cBooking->cCheckListingAvailability($listingId, $checkin, $checkout);
@@ -55,9 +78,12 @@ if ($listingAvailabilityResult && $listingAvailabilityResult->num_rows > 0) {
   $isListingAvailable = false;
 }
 
+<<<<<<< HEAD
 // Chỉ kiểm tra listing có sẵn hay không
 $canBook = $isListingAvailable;
 
+=======
+>>>>>>> bae8384d57c302b18675c29de5e26bc79f829006
 // Get listing services
 $servicesResult = $cListing->cGetListingServices($listingId);
 $services = [];
@@ -207,7 +233,7 @@ $subtotal = $listing['price'] * $nights;
 
           <button type="submit" 
                   class="btn btn-primary w-100 py-3 fw-bold"
-                  <?php echo !$canBook ? 'disabled' : ''; ?>>
+                  <?php echo !$isListingAvailable ? 'disabled' : ''; ?>>
             <?php if (!$isListingAvailable): ?>
               Chỗ ở đã được đặt
             <?php else: ?>

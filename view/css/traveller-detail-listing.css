@@ -1,5 +1,38 @@
 /* Detail Listing Page Styles */
 
+/* Back Button */
+.back-button-container {
+  margin-bottom: 16px;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: white;
+  color: #222;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn-back:hover {
+  background: #f7f7f7;
+  border-color: #222;
+  color: #222;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.btn-back i {
+  font-size: 14px;
+}
+
 .detail-container {
   max-width: 1280px;
   margin: 0 auto;

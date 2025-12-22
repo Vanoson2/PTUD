@@ -27,10 +27,16 @@ class cUser {
         // Validate password
         if (empty($password)) {
             $errors['password'] = 'Vui lòng nhập mật khẩu';
-        } elseif (strlen($password) < 6) {
-            $errors['password'] = 'Mật khẩu phải có ít nhất 6 ký tự';
+        } elseif (strlen($password) < 8) {
+            $errors['password'] = 'Mật khẩu phải có ít nhất 8 ký tự';
         } elseif (strlen($password) > 255) {
             $errors['password'] = 'Mật khẩu quá dài';
+        } elseif (!preg_match('/[A-Z]/', $password)) {
+            $errors['password'] = 'Mật khẩu phải có ít nhất 1 chữ hoa';
+        } elseif (!preg_match('/[a-z]/', $password)) {
+            $errors['password'] = 'Mật khẩu phải có ít nhất 1 chữ thường';
+        } elseif (!preg_match('/[0-9]/', $password)) {
+            $errors['password'] = 'Mật khẩu phải có ít nhất 1 chữ số';
         }
         
         // Validate confirm password
@@ -175,6 +181,26 @@ class cUser {
     public function cGetUserById($userId) {
         $mUser = new mUser();
         return $mUser->mGetUserById($userId);
+    }
+    
+    /**
+     * Check if user account is locked/deleted
+     * Used for security middleware
+     * @param int $userId
+     * @return array ['status' => string, 'is_locked' => bool]
+     */
+    public function cCheckUserAccountStatus($userId) {
+        $mUser = new mUser();
+        $user = $mUser->mGetUserById($userId);
+        
+        if (!$user) {
+            return ['status' => 'not_found', 'is_locked' => true];
+        }
+        
+        return [
+            'status' => $user['status'], // 'active' or 'locked'
+            'is_locked' => ($user['status'] === 'locked')
+        ];
     }
 
     /**

@@ -77,6 +77,16 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
   </div>
 <?php endif; ?>
 
+<?php if (isset($_SESSION['warning'])): ?>
+  <div class="alert alert-warning">
+    <i class="fas fa-exclamation-triangle"></i>
+    <?php 
+      echo htmlspecialchars($_SESSION['warning']); 
+      unset($_SESSION['warning']);
+    ?>
+  </div>
+<?php endif; ?>
+
 <!-- Tabs -->
 <div class="bookings-tabs">
   <a href="?tab=upcoming" class="tab-button <?php echo $activeTab === 'upcoming' ? 'active' : ''; ?>">
@@ -140,7 +150,24 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
         <div class="booking-actions">
           <?php if ($activeTab === 'upcoming'): ?>
             <?php if ($booking['status'] === 'pending' && in_array($booking['payment_status'], ['unpaid', 'pending'])): ?>
-              <!-- Booking chưa thanh toán - Hiển thị nút thanh toán -->
+              <!-- Booking chưa thanh toán - Hiển thị countdown và nút thanh toán -->
+              <?php if (!empty($booking['expires_at'])): ?>
+                <?php
+                $expiresAt = strtotime($booking['expires_at']);
+                $now = time();
+                $timeLeft = $expiresAt - $now;
+                ?>
+                <?php if ($timeLeft > 0): ?>
+                  <div class="payment-countdown" data-expires="<?php echo $expiresAt; ?>" data-booking-id="<?php echo $booking['booking_id']; ?>">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span class="countdown-text">Còn <strong class="countdown-timer">--:--</strong> để thanh toán</span>
+                  </div>
+                <?php else: ?>
+                  <span class="badge badge-expired">
+                    <i class="fas fa-exclamation-triangle"></i> Hết hạn
+                  </span>
+                <?php endif; ?>
+              <?php endif; ?>
               <a href="retry-payment.php?booking_id=<?php echo $booking['booking_id']; ?>" 
                  class="btn-payment">
                 <i class="fas fa-credit-card"></i> Thanh toán ngay
@@ -187,5 +214,44 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
 </div>
 
 <?php include __DIR__ . '/../partials/profile-layout-end.php'; ?>
+
+<script>
+// Countdown timer for payment expiration
+function updateCountdowns() {
+  const countdowns = document.querySelectorAll('.payment-countdown');
+  
+  countdowns.forEach(countdown => {
+    const expiresAt = parseInt(countdown.dataset.expires);
+    const bookingId = countdown.dataset.bookingId;
+    const timerElement = countdown.querySelector('.countdown-timer');
+    
+    const now = Math.floor(Date.now() / 1000);
+    const timeLeft = expiresAt - now;
+    
+    if (timeLeft <= 0) {
+      // Expired - reload page to update status
+      countdown.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <span class="badge badge-expired">Hết hạn</span>';
+      setTimeout(() => location.reload(), 2000);
+      return;
+    }
+    
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    
+    timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Warning color when less than 2 minutes
+    if (timeLeft <= 120) {
+      countdown.classList.add('countdown-warning');
+    }
+  });
+}
+
+// Update every second
+if (document.querySelectorAll('.payment-countdown').length > 0) {
+  updateCountdowns();
+  setInterval(updateCountdowns, 1000);
+}
+</script>
 
 <?php include __DIR__ . '/../../partials/footer.php'; ?>

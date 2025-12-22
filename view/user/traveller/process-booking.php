@@ -86,11 +86,16 @@ $paymentResult = $cPayment->cInitiateMoMoPayment(
 );
 
 if (!$paymentResult['success']) {
-  // Nếu không thể khởi tạo thanh toán, báo lỗi rõ ràng
+  // Nếu không thể khởi tạo thanh toán, HỦY BOOKING ngay lập tức
   error_log('MoMo payment init failed: ' . ($paymentResult['message'] ?? 'Unknown error'));
   
+  // CANCEL BOOKING để không block listing
+  require_once(__DIR__ . '/../../../model/mPayment.php');
+  $mPayment = new mPayment();
+  $mPayment->mCancelBooking($bookingId, 'system', 'Không thể khởi tạo thanh toán MoMo');
+  
   // Hiển thị lỗi chi tiết cho user
-  $_SESSION['error'] = 'Không thể khởi tạo thanh toán MoMo: ' . ($paymentResult['message'] ?? 'Vui lòng thử lại sau');
+  $_SESSION['error'] = 'Không thể khởi tạo thanh toán MoMo: ' . ($paymentResult['message'] ?? 'Vui lòng thử lại sau. Vui lòng đặt lại.');
   
   // Redirect về trang confirm để user thử lại
   header("Location: confirm-booking.php?listing_id=$listingId&checkin=$checkin&checkout=$checkout&guests=$guests&error=payment_init_failed");

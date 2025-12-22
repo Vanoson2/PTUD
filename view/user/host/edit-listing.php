@@ -45,9 +45,15 @@ $existingImages = $mListing->mGetListingImages($listingId);
 // Lấy amenities hiện tại
 $currentAmenities = $mListing->mGetListingAmenities($listingId);
 $currentAmenityIds = [];
-if (is_array($currentAmenities)) {
-    foreach ($currentAmenities as $amenity) {
-        $currentAmenityIds[] = $amenity['amenity_id'];
+if ($currentAmenities) {
+    if (is_array($currentAmenities)) {
+        foreach ($currentAmenities as $amenity) {
+            $currentAmenityIds[] = $amenity['amenity_id'];
+        }
+    } elseif ($currentAmenities instanceof mysqli_result) {
+        while ($amenity = $currentAmenities->fetch_assoc()) {
+            $currentAmenityIds[] = $amenity['amenity_id'];
+        }
     }
 }
 
@@ -246,7 +252,21 @@ foreach ($amenities as $amenity) {
           <div class="existing-images">
             <?php foreach ($existingImages as $image): ?>
               <div class="existing-image-item <?php echo $image['is_cover'] ? 'is-cover' : ''; ?>" id="image-<?php echo $image['image_id']; ?>">
-                <img src="../../../<?php echo htmlspecialchars($image['file_url']); ?>" alt="Listing image">
+                <?php
+                // Handle both cases: with or without leading slash
+                $imagePath = $image['file_url'];
+                if (strpos($imagePath, 'http://') === 0 || strpos($imagePath, 'https://') === 0) {
+                  // External URL (Pexels, etc.)
+                  $displayPath = $imagePath;
+                } elseif (strpos($imagePath, '/') === 0) {
+                  // Already has leading slash: /public/uploads/...
+                  $displayPath = '../../..' . $imagePath;
+                } else {
+                  // No leading slash: public/uploads/...
+                  $displayPath = '../../../' . $imagePath;
+                }
+                ?>
+                <img src="<?php echo htmlspecialchars($displayPath); ?>" alt="Listing image">
                 <?php if ($image['is_cover']): ?>
                   <span class="cover-badge"><i class="fas fa-star"></i> Ảnh bìa</span>
                 <?php endif; ?>
@@ -382,8 +402,11 @@ foreach ($amenities as $amenity) {
             <div class="services-list">
               <?php foreach ($services as $service): ?>
                 <?php 
+                // Check if service exists (accept price = 0)
+                $currentPrice = $currentServicePrices[$service['service_id']] ?? null;
                 $isSelected = isset($currentServicePrices[$service['service_id']]);
-                $currentPrice = $currentServicePrices[$service['service_id']] ?? '';
+                // Display price, default to 0 if selected but no price
+                $displayPrice = $isSelected ? ($currentPrice ?? 0) : 0;
                 ?>
                 <div class="service-item-input">
                   <div class="service-checkbox">
@@ -403,8 +426,8 @@ foreach ($amenities as $amenity) {
                       <input type="number" class="form-control service-price" 
                              name="services[<?php echo $service['service_id']; ?>]" 
                              id="price_<?php echo $service['service_id']; ?>"
-                             placeholder="Giá (VNĐ)" min="0" step="1000"
-                             value="<?php echo $currentPrice; ?>"
+                             placeholder="Giá (VNĐ) - 0đ = miễn phí" min="0" step="1000"
+                             value="<?php echo $displayPrice; ?>"
                              <?php echo !$isSelected ? 'disabled' : ''; ?>>
                       <span class="input-group-text">đ</span>
                     </div>
@@ -590,10 +613,15 @@ foreach ($amenities as $amenity) {
         
         if (this.checked) {
           priceInput.disabled = false;
+          // Nếu giá đang rỗng, set về 0
+          if (!priceInput.value) {
+            priceInput.value = '0';
+          }
           priceInput.focus();
         } else {
+          // Khi uncheck, set giá về 0 (không xóa service)
+          priceInput.value = '0';
           priceInput.disabled = true;
-          priceInput.value = '';
         }
       });
     });

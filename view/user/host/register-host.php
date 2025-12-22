@@ -90,9 +90,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         move_uploaded_file($_FILES['business_license']['tmp_name'], $uploadDir . $businessLicenseImage);
       }
       
-      // Create host application
+      // Create host application with bank info
       $fullName = $user['full_name'];
-      $appResult = $cHost->cCreateHostApplication($userId, $fullName, $taxCode);
+      $appResult = $cHost->cCreateHostApplication($userId, $fullName, $taxCode, $bankAccount, $bankName);
       
       if ($appResult['success']) {
         $applicationId = $appResult['application_id'];

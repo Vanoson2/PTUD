@@ -194,7 +194,21 @@ if (isset($_GET['success']) && $_GET['success'] == 1) {
             <div class="booking-card">
               <div class="booking-image">
                 <?php if (!empty($booking['listing_image'])): ?>
-                  <img src="../../../<?php echo htmlspecialchars($booking['listing_image']); ?>" alt="Listing">
+                  <?php
+                  // Handle both cases: with or without leading slash
+                  $imagePath = $booking['listing_image'];
+                  if (strpos($imagePath, 'http://') === 0 || strpos($imagePath, 'https://') === 0) {
+                    // External URL (Pexels, etc.)
+                    $displayPath = $imagePath;
+                  } elseif (strpos($imagePath, '/') === 0) {
+                    // Already has leading slash: /public/uploads/...
+                    $displayPath = '../../..' . $imagePath;
+                  } else {
+                    // No leading slash: public/uploads/...
+                    $displayPath = '../../../' . $imagePath;
+                  }
+                  ?>
+                  <img src="<?php echo htmlspecialchars($displayPath); ?>" alt="Listing">
                 <?php else: ?>
                   <img src="../../../public/img/placeholder_listing/placeholder1.jpg" alt="Listing">
                 <?php endif; ?>

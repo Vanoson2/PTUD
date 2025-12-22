@@ -71,6 +71,21 @@ $totalPrice = $listing['price'] * $nights;
 <link rel="stylesheet" href="../../../view/css/traveller-detail-listing.css?v=<?php echo time(); ?>">
 
 <div class="detail-container">
+  <!-- Back Button -->
+  <div class="back-button-container mb-3">
+    <?php 
+    $backParams = [];
+    if (isset($_GET['location'])) $backParams['location'] = $_GET['location'];
+    if (isset($_GET['checkin'])) $backParams['checkin'] = $_GET['checkin'];
+    if (isset($_GET['checkout'])) $backParams['checkout'] = $_GET['checkout'];
+    if (isset($_GET['guests'])) $backParams['guests'] = $_GET['guests'];
+    if (isset($_GET['amenity'])) $backParams['amenity'] = $_GET['amenity'];
+    ?>
+    <a href="listListings.php<?php echo !empty($backParams) ? '?' . http_build_query($backParams) : ''; ?>" class="btn-back">
+      <i class="fas fa-arrow-left"></i> Quay lại danh sách
+    </a>
+  </div>
+
   <?php if (isset($_SESSION['info'])): ?>
     <div class="alert alert-info alert-dismissible fade show" role="alert">
       <i class="fa-solid fa-info-circle"></i>
