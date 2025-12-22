@@ -118,7 +118,7 @@ $totalPrice = $listing['price'] * $nights;
 
   <!-- Images Gallery -->
   <div class="images-gallery">
-    <div class="main-image" onclick="openImageModal(this)" style="cursor: pointer;">
+    <div class="main-image">
       <?php 
       // Hiển thị ảnh listing từ DB hoặc placeholder
       $mainImageUrl = '../../../public/img/placeholder_listing/demo.png';
@@ -151,7 +151,7 @@ $totalPrice = $listing['price'] * $nights;
           }
         }
         ?>
-        <div class="thumbnail-item" onclick="openImageModal(this)" style="cursor: pointer;">
+        <div class="thumbnail-item">
           <img src="<?php echo htmlspecialchars($thumbUrl); ?>" 
                alt="Image <?php echo $i; ?>">
         </div>
@@ -500,42 +500,14 @@ const pricePerNight = <?php echo $listing['price']; ?>;
         document.getElementById('amenitiesModal').classList.add('active');
       });
     }
-    
-    // Image modal functions
-    function openImageModal(element) {
-      const img = element.querySelector('img');
-      const modal = document.getElementById('imageModal');
-      const modalImg = document.getElementById('modalImage');
-      
-      modal.classList.add('active');
-      modalImg.src = img.src;
-      
-      // Prevent body scroll
-      document.body.style.overflow = 'hidden';
-    }
-    
-    function closeImageModal() {
-      const modal = document.getElementById('imageModal');
-      modal.classList.remove('active');
-      
-      // Restore body scroll
-      document.body.style.overflow = 'auto';
-    }
-    
-    // Close modal on Escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        closeImageModal();
-      }
-    });
   </script>
 </body>
 </html>
 
 <!-- Image Modal -->
 <div class="image-modal" id="imageModal" onclick="closeImageModal()">
-  <span class="image-modal-close" onclick="event.stopPropagation(); closeImageModal();">&times;</span>
-  <img class="image-modal-content" id="modalImage" onclick="event.stopPropagation();">
+  <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
+  <img class="image-modal-content" id="modalImage">
 </div>
 
 <!-- Amenities Modal -->

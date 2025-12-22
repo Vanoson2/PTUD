@@ -46,23 +46,17 @@ $reviewCount = $ratingInfo['review_count'] ?? 0;
 // Get user_id from session
 $userId = $_SESSION['user_id'];
 
-// Check user conflict - ngăn user đặt nhiều nơi cùng lúc
-$cBooking = new cBooking();
-$userConflictResult = $cBooking->cCheckUserBookingConflict($userId, $checkin, $checkout, $listingId);
-$hasUserConflict = false;
-if ($userConflictResult && $userConflictResult->num_rows > 0) {
-  $hasUserConflict = true;
-}
-
+// Bỏ check user conflict - cho phép đặt nhiều phòng cùng lúc
 // Check: Listing còn trống không?
+$cBooking = new cBooking();
 $listingAvailabilityResult = $cBooking->cCheckListingAvailability($listingId, $checkin, $checkout);
 $isListingAvailable = true;
 if ($listingAvailabilityResult && $listingAvailabilityResult->num_rows > 0) {
   $isListingAvailable = false;
 }
 
-// Cả 2 điều kiện phải thỏa: user không bị conflict VÀ listing còn trống
-$canBook = !$hasUserConflict && $isListingAvailable;
+// Chỉ kiểm tra listing có sẵn hay không
+$canBook = $isListingAvailable;
 
 // Get listing services
 $servicesResult = $cListing->cGetListingServices($listingId);
