@@ -220,11 +220,11 @@ if (!$scoreData) {
     <div class="score-card">
       <div class="score-main">
         <div class="score-number"><?php echo $scoreData['trust_score'] ?? 0; ?></div>
-        <div class="score-label">/ 100 điểm</div>
+        <div class="score-label">/ 150 điểm</div>
         
         <div class="progress-bar-container">
           <div class="progress-bar-fill" 
-               style="width: <?php echo $scoreData['trust_score'] ?? 0; ?>%; background: <?php echo $scoreData['level']['color'] ?? '#999999'; ?>">
+               style="width: <?php echo min(100, ($scoreData['trust_score'] ?? 0) / 1.5); ?>%; background: <?php echo $scoreData['level']['color'] ?? '#999999'; ?>">
           </div>
         </div>
         
