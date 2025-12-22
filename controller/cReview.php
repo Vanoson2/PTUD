@@ -4,16 +4,16 @@ include_once(__DIR__ . "/../model/mBooking.php");
 
 class cReview {
     
-    /**
-     * Submit review with validation
-     * @param int $userId User ID submitting review
-     * @param int $listingId Listing ID
-     * @param int $bookingId Booking ID
-     * @param int $rating Rating (1-5)
-     * @param string $comment Review comment
-     * @param array $filesData $_FILES data for image uploads
-     * @return array ['success' => bool, 'message' => string, 'review_id' => int|null]
-     */
+    // Gửi đánh giá với đầy đủ validation
+    // Validate rating (1-5), comment (10-2000 ký tự), verify booking ownership và status
+    // Cho phép upload ảnh kèm theo, mark booking là đã rated
+    // int $userId - ID user gửi đánh giá
+    // int $listingId - ID listing
+    // int $bookingId - ID booking
+    // int $rating - Số sao (1-5)
+    // string $comment - Nội dung đánh giá
+    // array $filesData - Dữ liệu $_FILES cho ảnh upload
+    // return array - ['success' => bool, 'message' => string, 'review_id' => int|null]
     public function cSubmitReview($userId, $listingId, $bookingId, $rating, $comment, $filesData = []) {
         // Validate inputs
         if (empty($listingId) || empty($bookingId) || empty($rating) || empty($comment)) {
@@ -90,11 +90,10 @@ class cReview {
         ];
     }
 
-    /**
-     * Process review image uploads
-     * @param array $images $_FILES['images'] data
-     * @return array ['success' => bool, 'urls' => array, 'message' => string]
-     */
+    // Xử lý upload ảnh review
+    // Validate file type (jpg, jpeg, png, webp), size (max 5MB), tối đa 5 ảnh
+    // array $images - Dữ liệu $_FILES['images']
+    // return array - ['success' => bool, 'urls' => array, 'message' => string]
     private function processReviewImages($images) {
         $uploadDir = __DIR__ . '/../public/uploads/reviews/';
         

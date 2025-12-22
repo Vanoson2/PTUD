@@ -1,8 +1,6 @@
 <?php
-/**
- * Controller: Revenue Management
- * Xử lý logic và validation cho thống kê doanh thu
- */
+// Controller: Quản lý doanh thu
+// Xử lý logic và validation cho thống kê doanh thu
 
 require_once(__DIR__ . '/../model/mRevenue.php');
 
@@ -13,13 +11,12 @@ class cRevenue {
         $this->model = new mRevenue();
     }
     
-    /**
-     * Lấy tổng doanh thu của host
-     * @param int $hostId
-     * @param string $startDate (optional)
-     * @param string $endDate (optional)
-     * @return array
-     */
+    // Lấy tổng doanh thu của host
+    // Validate host ID và date range nếu có
+    // int $hostId - ID host
+    // string|null $startDate - Ngày bắt đầu (Y-m-d)
+    // string|null $endDate - Ngày kết thúc (Y-m-d)
+    // return array - ['success' => bool, 'data' => array, 'message' => string]
     public function cGetHostTotalRevenue($hostId, $startDate = null, $endDate = null) {
         if (!is_numeric($hostId) || $hostId <= 0) {
             return ['success' => false, 'message' => 'Host ID không hợp lệ'];
@@ -40,13 +37,11 @@ class cRevenue {
         return ['success' => true, 'data' => $data];
     }
     
-    /**
-     * Lấy doanh thu theo từng phòng của host
-     * @param int $hostId
-     * @param string $startDate (optional)
-     * @param string $endDate (optional)
-     * @return array
-     */
+    // Lấy doanh thu theo từng phòng/listing của host
+    // int $hostId - ID host
+    // string|null $startDate - Ngày bắt đầu (Y-m-d)
+    // string|null $endDate - Ngày kết thúc (Y-m-d)
+    // return array - ['success' => bool, 'data' => array]
     public function cGetRevenueByListing($hostId, $startDate = null, $endDate = null) {
         if (!is_numeric($hostId) || $hostId <= 0) {
             return ['success' => false, 'message' => 'Host ID không hợp lệ'];
@@ -56,12 +51,10 @@ class cRevenue {
         return ['success' => true, 'data' => $data];
     }
     
-    /**
-     * Lấy doanh thu theo tháng (cho biểu đồ)
-     * @param int $hostId
-     * @param int $year
-     * @return array
-     */
+    // Lấy doanh thu theo tháng (cho biểu đồ)
+    // int $hostId - ID host
+    // int|null $year - Năm (mặc định năm hiện tại, phải từ 2020-2100)
+    // return array - ['success' => bool, 'data' => array, 'message' => string]
     public function cGetMonthlyRevenue($hostId, $year = null) {
         if (!is_numeric($hostId) || $hostId <= 0) {
             return ['success' => false, 'message' => 'Host ID không hợp lệ'];
@@ -80,11 +73,9 @@ class cRevenue {
         return ['success' => true, 'data' => $data];
     }
     
-    /**
-     * Lấy thống kê booking của host
-     * @param int $hostId
-     * @return array
-     */
+    // Lấy thống kê booking của host (tổng, completed, cancelled, etc.)
+    // int $hostId - ID host
+    // return array - ['success' => bool, 'data' => array]
     public function cGetBookingStatistics($hostId) {
         if (!is_numeric($hostId) || $hostId <= 0) {
             return ['success' => false, 'message' => 'Host ID không hợp lệ'];
@@ -94,24 +85,20 @@ class cRevenue {
         return ['success' => true, 'data' => $data];
     }
     
-    /**
-     * ADMIN: Lấy tổng doanh thu toàn hệ thống
-     * @param string $startDate (optional)
-     * @param string $endDate (optional)
-     * @return array
-     */
+    // ADMIN: Lấy tổng doanh thu toàn hệ thống
+    // string|null $startDate - Ngày bắt đầu (Y-m-d)
+    // string|null $endDate - Ngày kết thúc (Y-m-d)
+    // return array - ['success' => bool, 'data' => array]
     public function cGetSystemTotalRevenue($startDate = null, $endDate = null) {
         $data = $this->model->mGetSystemTotalRevenue($startDate, $endDate);
         return ['success' => true, 'data' => $data];
     }
     
-    /**
-     * ADMIN: Lấy doanh thu theo từng host
-     * @param string $startDate (optional)
-     * @param string $endDate (optional)
-     * @param int $limit
-     * @return array
-     */
+    // ADMIN: Lấy doanh thu theo từng host (top hosts)
+    // string|null $startDate - Ngày bắt đầu (Y-m-d)
+    // string|null $endDate - Ngày kết thúc (Y-m-d)
+    // int $limit - Số lượng host (1-100, mặc định 10)
+    // return array - ['success' => bool, 'data' => array]
     public function cGetRevenueByHost($startDate = null, $endDate = null, $limit = 10) {
         if (!is_numeric($limit) || $limit <= 0 || $limit > 100) {
             $limit = 10;
@@ -121,11 +108,9 @@ class cRevenue {
         return ['success' => true, 'data' => $data];
     }
     
-    /**
-     * ADMIN: Lấy doanh thu theo tháng (toàn hệ thống)
-     * @param int $year
-     * @return array
-     */
+    // ADMIN: Lấy doanh thu theo tháng toàn hệ thống (cho biểu đồ admin)
+    // int|null $year - Năm (mặc định năm hiện tại, phải từ 2020-2100)
+    // return array - ['success' => bool, 'data' => array, 'message' => string]
     public function cGetSystemMonthlyRevenue($year = null) {
         if (!$year) {
             $year = date('Y');
@@ -139,21 +124,17 @@ class cRevenue {
         return ['success' => true, 'data' => $data];
     }
     
-    /**
-     * Format tiền VNĐ
-     * @param float $amount
-     * @return string
-     */
+    // Format tiền VNĐ với dấu phẩy và ký hiệu đ
+    // float $amount - Số tiền
+    // return string - Số tiền đã format (vd: "1.000.000đ")
     public static function formatCurrency($amount) {
         return number_format($amount, 0, ',', '.') . 'đ';
     }
     
-    /**
-     * Format số với dấu phẩy
-     * @param float $number
-     * @param int $decimals
-     * @return string
-     */
+    // Format số với dấu phẩy phân cách hàng nghìn
+    // float $number - Số cần format
+    // int $decimals - Số chữ số thập phân (mặc định 0)
+    // return string - Số đã format (vd: "1.000")
     public static function formatNumber($number, $decimals = 0) {
         return number_format($number, $decimals, ',', '.');
     }

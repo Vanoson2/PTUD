@@ -43,11 +43,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   
   if ($action === 'reply') {
     $content = trim($_POST['content'] ?? '');
+    
+    // Check if this is the first admin reply BEFORE inserting new message
+    $messages = $cAdmin->cGetTicketMessages($ticketId);
+    $hasAdminReplied = false;
+    
+    // Debug: Log message count and admin messages
+    error_log("=== FIRST REPLY CHECK ===");
+    error_log("Total messages: " . (is_array($messages) ? count($messages) : 0));
+    
+    if ($messages) {
+      foreach ($messages as $msg) {
+        error_log("Message sender: " . $msg['sender_type']);
+        if ($msg['sender_type'] === 'admin') {
+          $hasAdminReplied = true;
+          error_log("Found admin message - NOT first reply");
+          break;
+        }
+      }
+    }
+    
+    $isFirstAdminReply = !$hasAdminReplied;
+    error_log("Is first admin reply: " . ($isFirstAdminReply ? 'YES' : 'NO'));
+    
+    // Now insert the reply
     $result = $cAdmin->cReplyToTicket($ticketId, $adminId, $content);
     $message = $result['message'];
     $messageType = $result['success'] ? 'success' : 'error';
     
     if ($result['success']) {
+      // Only send email notification on first admin reply
+      if ($isFirstAdminReply) {
+        error_log("Sending email notification...");
+        $emailModel = new mEmailPHPMailer();
+        
+        // Get ticket details for email
+        $ticket = $cAdmin->cGetTicketById($ticketId);
+        if ($ticket && isset($ticket['user_id']) && $ticket['user_id'] > 0) {
+          // Get user email
+          $userInfo = $cAdmin->cGetUserById($ticket['user_id']);
+          if ($userInfo && !empty($userInfo['email'])) {
+            $emailModel->sendSupportReply(
+              $userInfo['email'],
+              $userInfo['full_name'],
+              $ticketId,
+              $ticket['title'],
+              $content,
+              $adminName
+            );
+          }
+        } elseif ($ticket && !empty($ticket['guest_email'])) {
+          // Guest ticket - send to guest email
+          $emailModel->sendSupportReply(
+            $ticket['guest_email'],
+            $ticket['guest_name'] ?? 'Khách',
+            $ticketId,
+            $ticket['title'],
+            $content,
+            $adminName
+          );
+        }
+      }
+      
       // Refresh to show new message
       header("Refresh: 1");
     }
@@ -260,10 +317,10 @@ $statusLabels = [
                 <input type="hidden" name="action" value="reply">
                 <div class="mb-3">
                   <textarea name="content" class="form-control" rows="5" required
-                            placeholder="Nhập nội dung trả lời... (Email sẽ tự động được gửi đến khách hàng)"></textarea>
+                            placeholder="Nhập nội dung trả lời... (Email chỉ được gửi ở lần trả lời đầu tiên)"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary btn-lg">
-                  <i class="fas fa-paper-plane"></i> Gửi trả lời & Email
+                  <i class="fas fa-paper-plane"></i> Gửi trả lời
                 </button>
               </form>
             </div>

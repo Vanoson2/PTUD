@@ -3,6 +3,9 @@ include_once(__DIR__ . "/mConnect.php");
 
 class mUser {
     
+    // Kiểm tra email đã tồn tại trong hệ thống chưa
+    // string $email - Email cần kiểm tra
+    // return bool - true nếu email đã tồn tại
     public function mCheckEmailExists($email) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -19,6 +22,9 @@ class mUser {
         return false;
     }
     
+    // Kiểm tra số điện thoại đã tồn tại trong hệ thống chưa
+    // string $phone - Số điện thoại cần kiểm tra
+    // return bool - true nếu phone đã tồn tại
     public function mCheckPhoneExists($phone) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -35,6 +41,14 @@ class mUser {
         return false;
     }
     
+    // Đăng ký tài khoản user mới
+    // Hash password bằng bcrypt, khởi tạo trust_score = 100
+    // Tự động tạo mã xác thực email 6 số
+    // string $email - Email (unique)
+    // string $phone - Số điện thoại (unique)
+    // string $password - Mật khẩu (plain text, sẽ hash bcrypt)
+    // string $fullName - Họ tên
+    // return array - ['success' => bool, 'message' => string, 'user_id' => int, 'verification_code' => string]
     public function mRegisterUser($email, $phone, $password, $fullName) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -84,6 +98,9 @@ class mUser {
         }
     }
     
+    // Lấy thông tin user theo email
+    // string $email - Email user
+    // return array|null - Thông tin user hoặc null nếu không tìm thấy
     public function mGetUserByEmail($email) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -109,6 +126,10 @@ class mUser {
         return null;
     }
     
+    // Tạo mã xác thực email 6 chữ số
+    // Lưu vào bảng email_verification với thời hạn 15 phút
+    // int $userId - ID user cần tạo mã xác thực
+    // return string|null - Mã 6 số hoặc null nếu lỗi
     public function mGenerateVerifyCode($userId) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -137,6 +158,12 @@ class mUser {
         return false;
     }
     
+    // Xác thực mã code email
+    // Kiểm tra code đúng và còn hạn (15 phút)
+    // Cập nhật is_email_verified = 1 và thêm +5 điểm tín nhiệm
+    // int $userId - ID user
+    // string $code - Mã 6 số cần xác thực
+    // return array - ['success' => bool, 'message' => string]
     public function mVerifyCode($userId, $code) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -224,6 +251,10 @@ class mUser {
         ];
     }
     
+    // Lấy thông tin user theo ID
+    // Join với user_profile để lấy thêm thông tin chi tiết
+    // int $userId - ID user cần lấy
+    // return array|null - Thông tin user kèm profile hoặc null
     public function mGetUserById($userId) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -248,6 +279,12 @@ class mUser {
         return null;
     }
     
+    // Đăng nhập user bằng email hoặc số điện thoại
+    // Kiểm tra account lock, verify password bcrypt
+    // Hiển thị cảnh báo nếu trust_score thấp (30-49)
+    // string $emailOrPhone - Email hoặc SĐT
+    // string $password - Mật khẩu (plain text)
+    // return array - ['success' => bool, 'message' => string, 'user' => array, 'has_warning' => bool, 'trust_score' => int]
     public function mLoginUser($emailOrPhone, $password) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -341,6 +378,15 @@ class mUser {
         ];
     }
     
+    // Cập nhật thông tin profile user
+    // Update bảng user (full_name) và user_profile (job, hobbies, location, gender)
+    // int $userId - ID user
+    // string $fullName - Họ tên mới
+    // string $job - Nghề nghiệp
+    // string $hobbies - Sở thích
+    // string $location - Địa chỉ
+    // string $gender - Giới tính (male/female/other)
+    // return array - ['success' => bool, 'message' => string]
     public function mUpdateProfile($userId, $fullName, $job, $hobbies, $location, $gender) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -378,6 +424,12 @@ class mUser {
         }
     }
     
+    // Đổi mật khẩu user
+    // Verify mật khẩu cũ, hash mật khẩu mới bằng bcrypt
+    // int $userId - ID user
+    // string $currentPassword - Mật khẩu hiện tại (plain text)
+    // string $newPassword - Mật khẩu mới (plain text)
+    // return array - ['success' => bool, 'message' => string]
     public function mChangePassword($userId, $currentPassword, $newPassword) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -420,11 +472,10 @@ class mUser {
         }
     }
 
-    /**
-     * Generate password reset token for user
-     * @param string $email User's email
-     * @return array Result with success status and token or error message
-     */
+    // Tạo token reset password
+    // Token ngẫu nhiên 64 ký tự, thời hạn 1 giờ
+    // string $email - Email user cần reset
+    // return array - ['success' => bool, 'message' => string, 'token' => string, 'user_id' => int]
     public function mGeneratePasswordResetToken($email) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -472,11 +523,10 @@ class mUser {
         }
     }
 
-    /**
-     * Verify password reset token
-     * @param string $token Reset token in format: randomstring_userid_version
-     * @return array Result with success status and user info
-     */
+    // Xác thực token reset password
+    // Kiểm tra token có tồn tại và còn hạn không (1 giờ)
+    // string $token - Token reset password
+    // return array - ['success' => bool, 'message' => string, 'user' => array]
     public function mVerifyResetToken($token) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -524,12 +574,11 @@ class mUser {
         ];
     }
 
-    /**
-     * Reset user password with token
-     * @param string $token Reset token
-     * @param string $newPassword New password
-     * @return array Result with success status and message
-     */
+    // Reset mật khẩu bằng token
+    // Verify token còn hạn, hash mật khẩu mới, xóa token
+    // string $token - Token reset
+    // string $newPassword - Mật khẩu mới (plain text)
+    // return array - ['success' => bool, 'message' => string]
     public function mResetPasswordWithToken($token, $newPassword) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -584,12 +633,11 @@ class mUser {
         }
     }
 
-    /**
-     * Resend verification code with email sending
-     * @param int $userId User ID
-     * @param string $email User email
-     * @return array ['success' => bool, 'message' => string]
-     */
+    // Gửi lại mã xác thực email
+    // Tạo mã mới và gửi email
+    // int $userId - ID user
+    // string $email - Email nhận mã
+    // return array - ['success' => bool, 'message' => string, 'code' => string]
     public function mResendVerificationCode($userId, $email) {
         // Generate new code
         $newCode = $this->mGenerateVerifyCode($userId);

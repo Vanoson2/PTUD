@@ -5,6 +5,16 @@ include_once(__DIR__ . "/../model/mUserScore.php");
 
 class cUser {
     
+    // ===== XÁC THỰC & ĐĂNG KÝ =====
+    
+    // Đăng ký user mới
+    // Validate email, phone, password, gọi Model để tạo user và gửi email xác thực
+    // string $email - Email
+    // string $phone - Số điện thoại
+    // string $password - Mật khẩu
+    // string $confirmPassword - Xác nhận mật khẩu
+    // string $fullName - Họ tên
+    // return array - ['success' => bool, 'errors' => array, 'user_id' => int]
     public function cRegisterUser($email, $phone, $password, $confirmPassword, $fullName) {
         $errors = [];
         
@@ -134,6 +144,11 @@ class cUser {
         }
     }
     
+    // Đăng nhập user
+    // Validate input, gọi Model để verify và trả về thông tin user
+    // string $emailOrPhone - Email hoặc SĐT
+    // string $password - Mật khẩu
+    // return array - ['success' => bool, 'message' => string, 'user' => array, 'has_warning' => bool]
     public function cLoginUser($emailOrPhone, $password) {
         $errors = [];
         
@@ -178,17 +193,105 @@ class cUser {
         }
     }
     
+    // Xác thực mã code email
+    // Validate mã 6 số và cập nhật trạng thái xác thực
+    // int $userId - ID user
+    // string $code - Mã xác thực 6 số
+    // return array - ['success' => bool, 'message' => string, 'user' => array|null]
+    public function cVerifyCode($userId, $code) {
+        // Validate code
+        if (empty($code)) {
+            return ['success' => false, 'message' => 'Vui lòng nhập mã xác thực'];
+        }
+        
+        $code = trim($code);
+        
+        if (strlen($code) !== 6 || !ctype_digit($code)) {
+            return ['success' => false, 'message' => 'Mã xác thực phải là 6 chữ số'];
+        }
+
+        // Call Model to verify
+        $mUser = new mUser();
+        $result = $mUser->mVerifyCode($userId, $code);
+        
+        if ($result['success']) {
+            // Get user data for auto-login
+            $user = $mUser->mGetUserById($userId);
+            $result['user'] = $user;
+        }
+        
+        return $result;
+    }
+
+    // Gửi lại mã xác thực email
+    // Tạo mã mới và gửi email cho user
+    // int $userId - ID user
+    // string $email - Email user
+    // return array - ['success' => bool, 'message' => string]
+    public function cResendVerificationCode($userId, $email) {
+        if (empty($userId) || empty($email)) {
+            return ['success' => false, 'message' => 'Thông tin không hợp lệ'];
+        }
+        
+        // Validate email format
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return ['success' => false, 'message' => 'Email không hợp lệ'];
+        }
+
+        $mUser = new mUser();
+        return $mUser->mResendVerificationCode($userId, $email);
+    }
+
+    // ===== QUẢN LÝ TÀI KHOẢN & THÔNG TIN =====
+    
     public function cGetUserById($userId) {
         $mUser = new mUser();
         return $mUser->mGetUserById($userId);
     }
     
-    /**
-     * Check if user account is locked/deleted
-     * Used for security middleware
-     * @param int $userId
-     * @return array ['status' => string, 'is_locked' => bool]
-     */
+    // Lấy thông tin profile user theo ID
+    // int $userId - ID user
+    // return array|null - Dữ liệu user hoặc null nếu không tìm thấy
+    public function cGetUserProfile($userId) {
+        if (!is_numeric($userId) || $userId <= 0) {
+            return null;
+        }
+
+        $mUser = new mUser();
+        return $mUser->mGetUserById($userId);
+    }
+
+    // Cập nhật thông tin profile user
+    // Cho phép user cập nhật họ tên, nghề nghiệp, sở thích, địa chỉ, giới tính
+    // int $userId - ID user
+    // string $fullName - Họ tên (bắt buộc, tối đa 150 ký tự)
+    // string|null $job - Nghề nghiệp
+    // string|null $hobbies - Sở thích
+    // string|null $location - Địa chỉ
+    // string|null $gender - Giới tính
+    // return array - ['success' => bool, 'message' => string]
+    public function cUpdateUserProfile($userId, $fullName, $job = null, $hobbies = null, $location = null, $gender = null) {
+        // Validation
+        if (!is_numeric($userId) || $userId <= 0) {
+            return ['success' => false, 'message' => 'User ID không hợp lệ'];
+        }
+
+        if (empty($fullName)) {
+            return ['success' => false, 'message' => 'Vui lòng nhập họ tên'];
+        }
+
+        if (strlen($fullName) > 150) {
+            return ['success' => false, 'message' => 'Họ tên quá dài (tối đa 150 ký tự)'];
+        }
+
+        $mUser = new mUser();
+        return $mUser->mUpdateProfile($userId, $fullName, $job, $hobbies, $location, $gender);
+    }
+    
+    // Kiểm tra trạng thái tài khoản user (locked/active)
+    // Dùng cho security middleware để verify trước khi cho phép truy cập
+    // int $userId - ID user cần kiểm tra
+    // return array - ['status' => string, 'is_locked' => bool]
     public function cCheckUserAccountStatus($userId) {
         $mUser = new mUser();
         $user = $mUser->mGetUserById($userId);
@@ -203,11 +306,78 @@ class cUser {
         ];
     }
 
-    /**
-     * Send password reset email
-     * @param string $email User's email
-     * @return array Result with success status and message
-     */
+    // ===== QUẢN LÝ MẬT KHẨU =====
+    
+    // Đổi mật khẩu user
+    // Validate độ mạnh mật khẩu: tối thiểu 8 ký tự, có chữ hoa, chữ thường, số
+    // int $userId - ID user
+    // string $currentPassword - Mật khẩu hiện tại
+    // string $newPassword - Mật khẩu mới
+    // string $confirmPassword - Xác nhận mật khẩu mới
+    // return array - ['success' => bool, 'message' => string]
+    public function cChangePassword($userId, $currentPassword, $newPassword, $confirmPassword) {
+        // Validate dữ liệu đầu vào
+        if (!is_numeric($userId) || $userId <= 0) {
+            return ['success' => false, 'message' => 'User ID không hợp lệ'];
+        }
+
+        if (empty($currentPassword)) {
+            return ['success' => false, 'message' => 'Vui lòng nhập mật khẩu hiện tại'];
+        }
+
+        if (empty($newPassword)) {
+            return ['success' => false, 'message' => 'Vui lòng nhập mật khẩu mới'];
+        }
+
+        if (strlen($newPassword) < 8) {
+            return ['success' => false, 'message' => 'Mật khẩu mới phải có ít nhất 8 ký tự'];
+        }
+
+        if (strlen($newPassword) > 255) {
+            return ['success' => false, 'message' => 'Mật khẩu mới quá dài'];
+        }
+
+        // Validate độ mạnh mật khẩu: phải có chữ hoa, chữ thường, và số
+        if (!preg_match('/[A-Z]/', $newPassword)) {
+            return ['success' => false, 'message' => 'Mật khẩu phải chứa ít nhất 1 chữ hoa'];
+        }
+
+        if (!preg_match('/[a-z]/', $newPassword)) {
+            return ['success' => false, 'message' => 'Mật khẩu phải chứa ít nhất 1 chữ thường'];
+        }
+
+        if (!preg_match('/[0-9]/', $newPassword)) {
+            return ['success' => false, 'message' => 'Mật khẩu phải chứa ít nhất 1 chữ số'];
+        }
+
+        if (empty($confirmPassword)) {
+            return ['success' => false, 'message' => 'Vui lòng xác nhận mật khẩu mới'];
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            return ['success' => false, 'message' => 'Mật khẩu xác nhận không khớp'];
+        }
+
+        $mUser = new mUser();
+        
+        // Verify current password
+        $user = $mUser->mGetUserById($userId);
+        if (!$user) {
+            return ['success' => false, 'message' => 'Người dùng không tồn tại'];
+        }
+
+        if (!password_verify($currentPassword, $user['password_hash'])) {
+            return ['success' => false, 'message' => 'Mật khẩu hiện tại không đúng'];
+        }
+
+        // Update password - Model sẽ verify lại currentPassword
+        return $mUser->mChangePassword($userId, $currentPassword, $newPassword);
+    }
+
+    // Gửi email reset password
+    // Tạo token và gửi link reset qua email
+    // string $email - Email user
+    // return array - ['success' => bool, 'message' => string]
     public function cSendPasswordResetEmail($email) {
         // Validate email
         if (empty($email)) {
@@ -272,11 +442,9 @@ class cUser {
         }
     }
 
-    /**
-     * Verify reset token
-     * @param string $token Reset token
-     * @return array Result with success status and user info
-     */
+    // Xác thực token reset password
+    // string $token - Token reset
+    // return array - ['success' => bool, 'message' => string, 'user' => array]
     public function cVerifyResetToken($token) {
         if (empty($token)) {
             return ['success' => false, 'message' => 'Token không hợp lệ'];
@@ -286,13 +454,12 @@ class cUser {
         return $mUser->mVerifyResetToken($token);
     }
 
-    /**
-     * Reset password with token
-     * @param string $token Reset token
-     * @param string $newPassword New password
-     * @param string $confirmPassword Confirm password
-     * @return array Result with success status and message
-     */
+    // Reset mật khẩu bằng token
+    // Validate password, gọi Model để đổi mật khẩu
+    // string $token - Token reset
+    // string $newPassword - Mật khẩu mới
+    // string $confirmPassword - Xác nhận mật khẩu
+    // return array - ['success' => bool, 'message' => string]
     public function cResetPassword($token, $newPassword, $confirmPassword) {
         // Validate inputs
         if (empty($token)) {
@@ -303,8 +470,25 @@ class cUser {
             return ['success' => false, 'message' => 'Vui lòng nhập mật khẩu mới'];
         }
         
-        if (strlen($newPassword) < 6) {
-            return ['success' => false, 'message' => 'Mật khẩu phải có ít nhất 6 ký tự'];
+        if (strlen($newPassword) < 8) {
+            return ['success' => false, 'message' => 'Mật khẩu phải có ít nhất 8 ký tự'];
+        }
+
+        if (strlen($newPassword) > 255) {
+            return ['success' => false, 'message' => 'Mật khẩu quá dài'];
+        }
+
+        // Validate password strength
+        if (!preg_match('/[A-Z]/', $newPassword)) {
+            return ['success' => false, 'message' => 'Mật khẩu phải chứa ít nhất 1 chữ hoa'];
+        }
+
+        if (!preg_match('/[a-z]/', $newPassword)) {
+            return ['success' => false, 'message' => 'Mật khẩu phải chứa ít nhất 1 chữ thường'];
+        }
+
+        if (!preg_match('/[0-9]/', $newPassword)) {
+            return ['success' => false, 'message' => 'Mật khẩu phải chứa ít nhất 1 chữ số'];
         }
         
         if ($newPassword !== $confirmPassword) {
@@ -316,13 +500,11 @@ class cUser {
         return $mUser->mResetPasswordWithToken($token, $newPassword);
     }
 
-    // ========== TRUST SCORE METHODS ==========
+    // ===== QUẢN LÝ ĐIỂM TÍN NHIỆM =====
 
-    /**
-     * Lấy thông tin điểm tín nhiệm của user
-     * @param int $userId
-     * @return array ['success' => bool, 'data' => [...], 'message' => string]
-     */
+    // Lấy thông tin điểm tín nhiệm của user
+    // int $userId - ID user
+    // return array - ['success' => bool, 'data' => array, 'message' => string]
     public function cGetUserScore($userId) {
         if (!is_numeric($userId) || $userId <= 0) {
             return ['success' => false, 'message' => 'User ID không hợp lệ'];
@@ -350,12 +532,10 @@ class cUser {
         ];
     }
 
-    /**
-     * Lấy lịch sử thay đổi điểm
-     * @param int $userId
-     * @param int $limit
-     * @return array
-     */
+    // Lấy lịch sử thay đổi điểm tín nhiệm
+    // int $userId - ID user
+    // int $limit - Số lượng bản ghi (mặc định 20)
+    // return array - ['success' => bool, 'data' => array]
     public function cGetScoreHistory($userId, $limit = 20) {
         if (!is_numeric($userId) || $userId <= 0) {
             return ['success' => false, 'message' => 'User ID không hợp lệ'];
@@ -370,14 +550,13 @@ class cUser {
         ];
     }
 
-    /**
-     * Admin cập nhật điểm user (thủ công)
-     * @param int $userId
-     * @param int $scoreChange (+/-)
-     * @param string $reason
-     * @param int $adminId
-     * @return array
-     */
+    // Admin cập nhật điểm user thủ công
+    // Cho phép admin thêm/trừ điểm với lý do cụ thể
+    // int $userId - ID user
+    // int $scoreChange - Điểm thay đổi (+/-)
+    // string $reason - Lý do thay đổi
+    // int $adminId - ID admin thực hiện
+    // return array - ['success' => bool, 'message' => string]
     public function cUpdateUserScore($userId, $scoreChange, $reason, $adminId) {
         if (!is_numeric($userId) || $userId <= 0) {
             return ['success' => false, 'message' => 'User ID không hợp lệ'];
@@ -399,11 +578,10 @@ class cUser {
         return $mUserScore->mUpdateUserScore($userId, $scoreChange, $reason, null, null, $adminId);
     }
 
-    /**
-     * Lấy gợi ý cải thiện điểm cho user
-     * @param int $userId
-     * @return array
-     */
+    // Lấy gợi ý cải thiện điểm tín nhiệm cho user
+    // Phân tích trạng thái hiện tại và đưa ra các gợi ý hành động
+    // int $userId - ID user
+    // return array - ['success' => bool, 'data' => array]
     public function cGetImprovementSuggestions($userId) {
         if (!is_numeric($userId) || $userId <= 0) {
             return ['success' => false, 'message' => 'User ID không hợp lệ'];
@@ -418,13 +596,12 @@ class cUser {
         ];
     }
 
-    /**
-     * Cập nhật trạng thái xác thực (email/phone/ID)
-     * @param int $userId
-     * @param string $type 'email'|'phone'|'id'
-     * @param bool $status
-     * @return array
-     */
+    // Cập nhật trạng thái xác thực (email/phone/ID)
+    // Admin hoặc hệ thống cập nhật trạng thái đã xác thực
+    // int $userId - ID user
+    // string $type - Loại xác thực: 'email', 'phone', 'id'
+    // bool $status - Trạng thái xác thực
+    // return array - ['success' => bool, 'message' => string]
     public function cUpdateVerificationStatus($userId, $type, $status) {
         if (!is_numeric($userId) || $userId <= 0) {
             return ['success' => false, 'message' => 'User ID không hợp lệ'];
@@ -439,14 +616,13 @@ class cUser {
         return $mUserScore->mUpdateVerificationStatus($userId, $type, $status);
     }
 
-    /**
-     * Tự động cộng điểm theo action (được gọi từ các controller khác)
-     * @param int $userId
-     * @param string $actionType Ví dụ: 'complete_booking', 'receive_5_star', 'cancel_booking'
-     * @param string|null $relatedType Ví dụ: 'booking', 'review'
-     * @param int|null $relatedId
-     * @return array
-     */
+    // Tự động cộng điểm theo hành động user
+    // Được gọi từ các controller khác khi user thực hiện hành động
+    // int $userId - ID user
+    // string $actionType - Loại hành động: 'complete_booking', 'receive_5_star', 'cancel_booking'
+    // string|null $relatedType - Loại liên quan: 'booking', 'review'
+    // int|null $relatedId - ID liên quan
+    // return array - ['success' => bool, 'message' => string]
     public function cAddScoreByAction($userId, $actionType, $relatedType = null, $relatedId = null) {
         if (!is_numeric($userId) || $userId <= 0) {
             return ['success' => false, 'message' => 'User ID không hợp lệ'];
@@ -458,153 +634,6 @@ class cUser {
 
         $mUserScore = new mUserScore();
         return $mUserScore->mAddScoreByAction($userId, $actionType, $relatedType, $relatedId);
-    }
-
-    /**
-     * Get user profile by ID
-     * @param int $userId
-     * @return array|null User data or null if not found
-     */
-    public function cGetUserProfile($userId) {
-        if (!is_numeric($userId) || $userId <= 0) {
-            return null;
-        }
-
-        $mUser = new mUser();
-        return $mUser->mGetUserById($userId);
-    }
-
-    /**
-     * Update user profile
-     * @param int $userId
-     * @param string $fullName
-     * @param string|null $job
-     * @param string|null $hobbies
-     * @param string|null $location
-     * @param string|null $gender
-     * @return array ['success' => bool, 'message' => string]
-     */
-    public function cUpdateUserProfile($userId, $fullName, $job = null, $hobbies = null, $location = null, $gender = null) {
-        // Validation
-        if (!is_numeric($userId) || $userId <= 0) {
-            return ['success' => false, 'message' => 'User ID không hợp lệ'];
-        }
-
-        if (empty($fullName)) {
-            return ['success' => false, 'message' => 'Vui lòng nhập họ tên'];
-        }
-
-        if (strlen($fullName) > 150) {
-            return ['success' => false, 'message' => 'Họ tên quá dài (tối đa 150 ký tự)'];
-        }
-
-        $mUser = new mUser();
-        return $mUser->mUpdateProfile($userId, $fullName, $job, $hobbies, $location, $gender);
-    }
-
-    /**
-     * Change user password
-     * @param int $userId
-     * @param string $currentPassword
-     * @param string $newPassword
-     * @param string $confirmPassword
-     * @return array ['success' => bool, 'message' => string]
-     */
-    public function cChangePassword($userId, $currentPassword, $newPassword, $confirmPassword) {
-        // Validation
-        if (!is_numeric($userId) || $userId <= 0) {
-            return ['success' => false, 'message' => 'User ID không hợp lệ'];
-        }
-
-        if (empty($currentPassword)) {
-            return ['success' => false, 'message' => 'Vui lòng nhập mật khẩu hiện tại'];
-        }
-
-        if (empty($newPassword)) {
-            return ['success' => false, 'message' => 'Vui lòng nhập mật khẩu mới'];
-        }
-
-        if (strlen($newPassword) < 6) {
-            return ['success' => false, 'message' => 'Mật khẩu mới phải có ít nhất 6 ký tự'];
-        }
-
-        if (strlen($newPassword) > 255) {
-            return ['success' => false, 'message' => 'Mật khẩu mới quá dài'];
-        }
-
-        if (empty($confirmPassword)) {
-            return ['success' => false, 'message' => 'Vui lòng xác nhận mật khẩu mới'];
-        }
-
-        if ($newPassword !== $confirmPassword) {
-            return ['success' => false, 'message' => 'Mật khẩu xác nhận không khớp'];
-        }
-
-        $mUser = new mUser();
-        
-        // Verify current password
-        $user = $mUser->mGetUserById($userId);
-        if (!$user) {
-            return ['success' => false, 'message' => 'Người dùng không tồn tại'];
-        }
-
-        if (!password_verify($currentPassword, $user['password'])) {
-            return ['success' => false, 'message' => 'Mật khẩu hiện tại không đúng'];
-        }
-
-        // Update password - Model sẽ verify lại currentPassword
-        return $mUser->mChangePassword($userId, $currentPassword, $newPassword);
-    }
-
-    /**
-     * Verify user email with code
-     * @param int $userId User ID
-     * @param string $code Verification code
-     * @return array ['success' => bool, 'message' => string, 'user' => array|null]
-     */
-    public function cVerifyCode($userId, $code) {
-        // Validate code
-        if (empty($code)) {
-            return ['success' => false, 'message' => 'Vui lòng nhập mã xác thực'];
-        }
-        
-        $code = trim($code);
-        
-        if (strlen($code) !== 6 || !ctype_digit($code)) {
-            return ['success' => false, 'message' => 'Mã xác thực phải là 6 chữ số'];
-        }
-
-        // Call Model to verify
-        $mUser = new mUser();
-        $result = $mUser->mVerifyCode($userId, $code);
-        
-        if ($result['success']) {
-            // Get user data for auto-login
-            $user = $mUser->mGetUserById($userId);
-            $result['user'] = $user;
-        }
-        
-        return $result;
-    }
-
-    /**
-     * Resend verification code
-     * @param int $userId User ID
-     * @param string $email User email
-     * @return array ['success' => bool, 'message' => string]
-     */
-    public function cResendVerificationCode($userId, $email) {
-        if (empty($userId) || empty($email)) {
-            return ['success' => false, 'message' => 'Thông tin không hợp lệ'];
-        }
-        
-        // Validate email format
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return ['success' => false, 'message' => 'Email không hợp lệ'];
-        }
-
-        $mUser = new mUser();
-        return $mUser->mResendVerificationCode($userId, $email);
     }
 }
 ?>

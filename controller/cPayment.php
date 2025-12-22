@@ -1,16 +1,19 @@
 <?php
-/**
- * Controller xử lý Payment
- */
+// Controller xử lý Payment (MoMo)
 
 include_once(__DIR__ . '/../model/mPayment.php');
 include_once(__DIR__ . '/../helper/MoMoHelper.php');
 
 class cPayment {
     
-    /**
-     * Khởi tạo thanh toán MoMo cho booking
-     */
+    // Khởi tạo thanh toán MoMo cho booking
+    // Tạo payment URL, lưu transaction vào DB, cập nhật booking status sang pending
+    // int $bookingId - ID booking
+    // float $amount - Số tiền thanh toán
+    // string $bookingCode - Mã booking
+    // string $listingTitle - Tên listing
+    // array $userInfo - Thông tin user (full_name, email)
+    // return array - ['success' => bool, 'payUrl' => string, 'orderId' => string, 'message' => string]
     public function cInitiateMoMoPayment($bookingId, $amount, $bookingCode, $listingTitle, $userInfo = []) {
         try {
             // Tạo order info
@@ -79,9 +82,10 @@ class cPayment {
         }
     }
     
-    /**
-     * Xử lý IPN callback từ MoMo
-     */
+    // Xử lý IPN callback từ MoMo
+    // Verify signature, cập nhật transaction và booking payment status
+    // array $ipnData - Dữ liệu IPN từ MoMo
+    // return array - ['success' => bool, 'message' => string, 'booking_id' => int]
     public function cProcessMoMoIPN($ipnData) {
         try {
             // Verify signature
@@ -168,9 +172,10 @@ class cPayment {
         }
     }
     
-    /**
-     * Kiểm tra trạng thái thanh toán của booking
-     */
+    // Kiểm tra trạng thái thanh toán của booking
+    // Lấy thông tin transaction từ DB
+    // int $bookingId - ID booking
+    // return array - ['success' => bool, 'status' => string, 'transaction' => array]
     public function cCheckPaymentStatus($bookingId) {
         $mPayment = new mPayment();
         $transaction = $mPayment->mGetTransactionByBookingId($bookingId);
@@ -193,9 +198,10 @@ class cPayment {
         ];
     }
     
-    /**
-     * Query transaction từ MoMo (để check lại status)
-     */
+    // Query transaction từ MoMo để check lại status
+    // Gọi API MoMo query và cập nhật transaction nếu có thay đổi
+    // int $bookingId - ID booking
+    // return array - ['success' => bool, 'result' => array, 'message' => string]
     public function cQueryMoMoTransaction($bookingId) {
         $mPayment = new mPayment();
         $transaction = $mPayment->mGetTransactionByBookingId($bookingId);

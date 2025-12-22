@@ -3,46 +3,90 @@ include_once(__DIR__ . '/../model/mBooking.php');
 
 class cBooking {
     
+    // Đếm số booking của user
+    // int $userId - ID user
+    // return int - Số lượng booking
     public function cCountUserBookings($userId) {
         $mBooking = new mBooking();
         return $mBooking->mCountUserBookings($userId);
     }
     
+    // Kiểm tra user có booking trùng thời gian không
+    // Tránh user đặt nhiều chỗ cùng lúc
+    // int $userId - ID user
+    // string $checkIn - Ngày check-in (Y-m-d)
+    // string $checkOut - Ngày check-out (Y-m-d)
+    // int|null $excludeListingId - Loại trừ listing này (khi edit booking)
+    // return bool - true nếu bị trùng
     public function cCheckUserBookingConflict($userId, $checkIn, $checkOut, $excludeListingId = null){
         $mBooking = new mBooking();
         return $mBooking->mCheckUserBookingConflict($userId, $checkIn, $checkOut, $excludeListingId);
     }
     
+    // Kiểm tra listing có sẵn trong khoảng thời gian không
+    // int $listingId - ID listing
+    // string $checkIn - Ngày check-in (Y-m-d)
+    // string $checkOut - Ngày check-out (Y-m-d)
+    // return bool - true nếu available
     public function cCheckListingAvailability($listingId, $checkIn, $checkOut){
         $mBooking = new mBooking();
         return $mBooking->mCheckListingAvailability($listingId, $checkIn, $checkOut);
     }
     
+    // Tạo booking mới
+    // int $userId - ID user
+    // int $listingId - ID listing
+    // string $checkIn - Ngày check-in (Y-m-d)
+    // string $checkOut - Ngày check-out (Y-m-d)
+    // int $guests - Số khách
+    // float $totalAmount - Tổng tiền
+    // string|null $note - Ghi chú
+    // return array - ['success' => bool, 'message' => string, 'booking_id' => int|null]
     public function cCreateBooking($userId, $listingId, $checkIn, $checkOut, $guests, $totalAmount, $note = null){
         $mBooking = new mBooking();
         return $mBooking->mCreateBooking($userId, $listingId, $checkIn, $checkOut, $guests, $totalAmount, $note);
     }
     
+    // Thêm dịch vụ cho booking
+    // int $bookingId - ID booking
+    // array $services - Mảng dịch vụ [['service_id' => int, 'price' => float], ...]
+    // return array - ['success' => bool, 'message' => string]
     public function cAddBookingServices($bookingId, $services){
         $mBooking = new mBooking();
         return $mBooking->mAddBookingServices($bookingId, $services);
     }
     
+    // Lấy thông tin booking theo ID
+    // int $bookingId - ID booking
+    // return array|null - Dữ liệu booking hoặc null
     public function cGetBookingById($bookingId){
         $mBooking = new mBooking();
         return $mBooking->mGetBookingById($bookingId);
     }
     
+    // Lấy danh sách dịch vụ của booking
+    // int $bookingId - ID booking
+    // return array - Danh sách services
     public function cGetBookingServices($bookingId){
         $mBooking = new mBooking();
         return $mBooking->mGetBookingServices($bookingId);
     }
     
+    // Lấy danh sách booking của user
+    // int $userId - ID user
+    // string $status - Trạng thái: 'upcoming', 'completed', 'cancelled', 'all'
+    // return array - Danh sách bookings
     public function cGetUserBookings($userId, $status = 'upcoming'){
         $mBooking = new mBooking();
         return $mBooking->mGetUserBookings($userId, $status);
     }
     
+    // Hủy booking
+    // Tự động trừ điểm tín nhiệm nếu hủy gần ngày check-in
+    // int $bookingId - ID booking
+    // int $userId - ID user (để verify ownership)
+    // string|null $cancelReason - Lý do hủy
+    // return array - ['success' => bool, 'message' => string, 'booking' => array]
     public function cCancelBooking($bookingId, $userId, $cancelReason = null){
         $mBooking = new mBooking();
         $result = $mBooking->mCancelBooking($bookingId, $userId, $cancelReason);
@@ -69,18 +113,17 @@ class cBooking {
         return $result;
     }
 
-    /**
-     * Process booking with all validations and business logic
-     * @param int $userId
-     * @param int $listingId
-     * @param string $checkin
-     * @param string $checkout
-     * @param int $guests
-     * @param int $nights
-     * @param float $listingPrice
-     * @param array $selectedServices
-     * @return array ['success' => bool, 'booking_id' => int|null, 'message' => string, 'redirect' => string|null]
-     */
+    // Xử lý đặt phòng với đầy đủ validation và logic
+    // Kiểm tra conflict, availability, tính tổng tiền, tạo booking và thêm dịch vụ
+    // int $userId - ID user
+    // int $listingId - ID listing
+    // string $checkin - Ngày check-in (Y-m-d)
+    // string $checkout - Ngày check-out (Y-m-d)
+    // int $guests - Số khách
+    // int $nights - Số đêm
+    // float $listingPrice - Giá listing/đêm
+    // array $selectedServices - Mảng ID dịch vụ đã chọn
+    // return array - ['success' => bool, 'booking_id' => int|null, 'message' => string, 'redirect' => string|null]
     public function cProcessBooking($userId, $listingId, $checkin, $checkout, $guests, $nights, $listingPrice, $selectedServices = []) {
         // Validation
         if (empty($listingId) || empty($checkin) || empty($checkout)) {

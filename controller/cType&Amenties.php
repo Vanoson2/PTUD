@@ -1,6 +1,8 @@
 <?php
 include_once(__DIR__ . "/../model/mType&Amenties.php"); 
 class cTypeAndAmenties{
+    // Lấy tất cả loại nơi ở (place types)
+    // return mysqli_result|false - Danh sách types
     public function cGetAllTypes(){
         $mType = new mType();
         $tbl = $mType->mGetAllTypes();
@@ -11,6 +13,8 @@ class cTypeAndAmenties{
         }
     }
     
+    // Lấy tất cả tiện nghi (amenities)
+    // return mysqli_result|false - Danh sách amenities
     public function cGetAllAmenities(){
         $mType = new mType();
         $tbl = $mType->mGetAllAmenities();
@@ -21,6 +25,8 @@ class cTypeAndAmenties{
         }
     }
     
+    // Lấy tất cả dịch vụ (services)
+    // return mysqli_result|false - Danh sách services
     public function cGetAllServices(){
         $mType = new mType();
         $tbl = $mType->mGetAllServices();
@@ -31,7 +37,11 @@ class cTypeAndAmenties{
         }
     }
     
-    // AMENITY METHODS
+    // ===== AMENITY FUNCTIONS =====
+    
+    // Lấy thông tin amenity theo ID
+    // int $amenityId - ID amenity
+    // return mysqli_result|false - Dữ liệu amenity
     public function cGetAmenityById($amenityId){
         // Validate
         if(!is_numeric($amenityId) || $amenityId <= 0){
@@ -42,6 +52,12 @@ class cTypeAndAmenties{
         return $mType->mGetAmenityById($amenityId);
     }
     
+    // Thêm amenity mới
+    // Validate tên (max 120), group name (max 120)
+    // string $name - Tên amenity (bắt buộc)
+    // string $groupName - Tên nhóm
+    // string $description - Mô tả
+    // return array - ['success' => bool, 'message' => string]
     public function cInsertAmenity($name, $groupName, $description){
         // Validate input
         $errors = [];
@@ -76,6 +92,13 @@ class cTypeAndAmenties{
         }
     }
     
+    // Cập nhật amenity
+    // Validate ID, tên (max 120), group name (max 120), description (max 500)
+    // int $amenityId - ID amenity
+    // string $name - Tên amenity (bắt buộc)
+    // string $groupName - Tên nhóm
+    // string $description - Mô tả
+    // return array - ['success' => bool, 'message' => string, 'errors' => array]
     public function cUpdateAmenity($amenityId, $name, $groupName, $description){
         // Validate
         if(!is_numeric($amenityId) || $amenityId <= 0){
@@ -114,6 +137,9 @@ class cTypeAndAmenties{
         }
     }
     
+    // Xóa amenity
+    // int $amenityId - ID amenity
+    // return array - ['success' => bool, 'message' => string, 'errors' => array]
     public function cDeleteAmenity($amenityId){
         // Validate
         if(!is_numeric($amenityId) || $amenityId <= 0){
@@ -130,7 +156,11 @@ class cTypeAndAmenties{
         }
     }
     
-    // SERVICE METHODS
+    // ===== SERVICE FUNCTIONS =====
+    
+    // Lấy thông tin service theo ID
+    // int $serviceId - ID service
+    // return mysqli_result|false - Dữ liệu service
     public function cGetServiceById($serviceId){
         // Validate
         if(!is_numeric($serviceId) || $serviceId <= 0){
@@ -141,6 +171,11 @@ class cTypeAndAmenties{
         return $mType->mGetServiceById($serviceId);
     }
     
+    // Thêm service mới
+    // Validate tên (max 120), description (max 500)
+    // string $name - Tên service (bắt buộc)
+    // string $description - Mô tả
+    // return array - ['success' => bool, 'message' => string, 'errors' => array]
     public function cInsertService($name, $description){
         // Validate input
         $errors = [];
@@ -171,6 +206,12 @@ class cTypeAndAmenties{
         }
     }
     
+    // Cập nhật service
+    // Validate ID, tên (max 120), description (max 500)
+    // int $serviceId - ID service
+    // string $name - Tên service (bắt buộc)
+    // string $description - Mô tả
+    // return array - ['success' => bool, 'message' => string, 'errors' => array]
     public function cUpdateService($serviceId, $name, $description){
         // Validate
         if(!is_numeric($serviceId) || $serviceId <= 0){
@@ -205,6 +246,9 @@ class cTypeAndAmenties{
         }
     }
     
+    // Xóa service
+    // int $serviceId - ID service
+    // return array - ['success' => bool, 'message' => string, 'errors' => array]
     public function cDeleteService($serviceId){
         // Validate
         if(!is_numeric($serviceId) || $serviceId <= 0){

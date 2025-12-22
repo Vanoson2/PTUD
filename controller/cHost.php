@@ -4,26 +4,49 @@ include_once(__DIR__ . "/../model/mListing.php");
 
 class cHost {
     
+    // Kiểm tra user có phải host không
+    // int $userId - ID user
+    // return bool - true nếu là host
     public function cIsUserHost($userId) {
         $mHost = new mHost();
         return $mHost->mIsUserHost($userId);
     }
     
+    // Lấy thông tin host theo user ID
+    // int $userId - ID user
+    // return array|null - Dữ liệu host hoặc null
     public function cGetHostByUserId($userId) {
         $mHost = new mHost();
         return $mHost->mGetHostByUserId($userId);
     }
     
+    // Lấy danh sách listing của host
+    // int $hostId - ID host
+    // string|null $status - Trạng thái listing ('active', 'inactive', null = tất cả)
+    // return array - Danh sách listing
     public function cGetHostListings($hostId, $status = null) {
         $mListing = new mListing();
         return $mListing->mGetHostListings($hostId, $status);
     }
     
+    // Xóa listing
+    // Kiểm tra quyền sở hữu trước khi xóa
+    // int $listingId - ID listing
+    // int $hostId - ID host (để verify ownership)
+    // return array - ['success' => bool, 'message' => string]
     public function cDeleteListing($listingId, $hostId) {
         $mListing = new mListing();
         return $mListing->mDeleteListing($listingId, $hostId);
     }
     
+    // Tạo đơn đăng ký làm host
+    // Validate dữ liệu và tạo application với trạng thái pending
+    // int $userId - ID user đăng ký
+    // string $businessName - Tên doanh nghiệp (bắt buộc, max 255)
+    // string $taxCode - Mã số thuế (max 50)
+    // string $bankAccount - Số tài khoản (max 50)
+    // string $bankName - Tên ngân hàng (max 150)
+    // return array - ['success' => bool, 'message' => string, 'application_id' => int|null]
     public function cCreateHostApplication($userId, $businessName, $taxCode = '', $bankAccount = '', $bankName = '') {
         // Validate input
         $errors = [];
@@ -59,21 +82,39 @@ class cHost {
         return $mHost->mCreateHostApplication($userId, $businessName, $taxCode, $bankAccount, $bankName);
     }
     
+    // Lấy thông tin đơn đăng ký host của user
+    // int $userId - ID user
+    // return array|null - Dữ liệu application hoặc null
     public function cGetUserHostApplication($userId) {
         $mHost = new mHost();
         return $mHost->mGetUserHostApplication($userId);
     }
     
+    // Lưu tài liệu host (CCCD, giấy phép kinh doanh)
+    // int $applicationId - ID đơn đăng ký
+    // string $docType - Loại tài liệu: 'cccd_front', 'cccd_back', 'business_license'
+    // string $fileUrl - Đường dẫn file
+    // string $mimeType - Loại file (image/jpeg, application/pdf)
+    // int $fileSizeBytes - Kích thước file (bytes)
+    // return array - ['success' => bool, 'message' => string]
     public function cSaveHostDocument($applicationId, $docType, $fileUrl, $mimeType, $fileSizeBytes) {
         $mHost = new mHost();
         return $mHost->mSaveHostDocument($applicationId, $docType, $fileUrl, $mimeType, $fileSizeBytes);
     }
     
+    // Lấy thống kê host (tổng listing, booking, doanh thu)
+    // int $userId - ID user/host
+    // return array - Dữ liệu thống kê
     public function cGetHostStatistics($userId) {
         $mHost = new mHost();
         return $mHost->mGetHostStatistics($userId);
     }
     
+    // Tạo listing mới
+    // Validate tất cả dữ liệu đầu vào trước khi gọi Model
+    // int $hostId - ID host
+    // array $data - Dữ liệu listing (title, description, address, etc.)
+    // return array - ['success' => bool, 'message' => string, 'listing_id' => int|null]
     public function cCreateListing($hostId, $data) {
         // Validate dữ liệu
         $errors = [];
@@ -105,21 +146,21 @@ class cHost {
         return $mListing->mCreateListing($hostId, $data);
     }
     
-    /**
-     * Update listing with validation
-     * @param int $listingId Listing ID
-     * @param int $hostId Host ID (for authorization)
-     * @param string $title Listing title
-     * @param string $description Description
-     * @param string $address Address
-     * @param string $wardCode Ward code
-     * @param int $placeTypeId Place type ID
-     * @param float $price Price per night
-     * @param int $capacity Number of guests
-     * @param string $status Listing status
-     * @param array $amenities Array of amenity IDs
-     * @return array ['success' => bool, 'message' => string]
-     */
+    // Cập nhật listing
+    // Validate đầy đủ: title (10-200 ký tự), description (max 5000), address (max 500)
+    // price (>0, <100M), capacity (1-50), status (active/inactive/pending)
+    // int $listingId - ID listing
+    // int $hostId - ID host (để verify ownership)
+    // string $title - Tiêu đề
+    // string $description - Mô tả
+    // string $address - Địa chỉ
+    // string $wardCode - Mã phường/xã
+    // int $placeTypeId - ID loại nơi ở
+    // float $price - Giá/đêm
+    // int $capacity - Sức chứa
+    // string $status - Trạng thái
+    // array $amenities - Mảng ID tiện nghi
+    // return array - ['success' => bool, 'message' => string]
     public function cUpdateListing($listingId, $hostId, $title, $description, $address, $wardCode, $placeTypeId, $price, $capacity, $status, $amenities = []) {
         // Validate listing ID
         if (empty($listingId) || $listingId <= 0) {
@@ -207,83 +248,130 @@ class cHost {
         }
     }
     
+    // Lấy thông tin chi tiết listing theo ID
+    // int $listingId - ID listing
+    // return array|null - Dữ liệu listing hoặc null
     public function cGetListingById($listingId) {
         $mListing = new mListing();
         return $mListing->mGetListingById($listingId);
     }
     
+    // Kiểm tra host có phải chủ listing không
+    // int $listingId - ID listing
+    // int $hostId - ID host
+    // return bool - true nếu là chủ
     public function cIsListingOwner($listingId, $hostId) {
         $mListing = new mListing();
         return $mListing->mIsListingOwner($listingId, $hostId);
     }
     
+    // Upload ảnh listing
+    // int $listingId - ID listing
+    // string $fileUrl - Đường dẫn file ảnh
+    // bool $isCover - Ảnh bìa hay không
+    // int $sortOrder - Thứ tự hiển thị
+    // return array - ['success' => bool, 'message' => string]
     public function cUploadListingImage($listingId, $fileUrl, $isCover = false, $sortOrder = 0) {
         $mListing = new mListing();
         return $mListing->mUploadListingImage($listingId, $fileUrl, $isCover, $sortOrder);
     }
     
+    // Xóa ảnh listing
+    // int $imageId - ID ảnh
+    // int $listingId - ID listing (để verify)
+    // return array - ['success' => bool, 'message' => string]
     public function cDeleteListingImage($imageId, $listingId) {
         $mListing = new mListing();
         return $mListing->mDeleteListingImage($imageId, $listingId);
     }
     
+    // Lấy danh sách tất cả loại nơi ở (căn hộ, nhà riêng, villa, etc.)
+    // return array - Danh sách place_types
     public function cGetAllPlaceTypes() {
         $mListing = new mListing();
         return $mListing->mGetAllPlaceTypes();
     }
     
+    // Lấy danh sách tất cả tiện nghi (wifi, bếp, máy lạnh, etc.)
+    // return array - Danh sách amenities
     public function cGetAllAmenities() {
         $mListing = new mListing();
         return $mListing->mGetAllAmenities();
     }
     
+    // Lấy danh sách tất cả dịch vụ (đón sân bay, thuê xe, etc.)
+    // return array - Danh sách services
     public function cGetAllServices() {
         $mListing = new mListing();
         return $mListing->mGetAllServices();
     }
     
+    // Lưu tiện nghi cho listing
+    // Xóa tiện nghi cũ và thêm tiện nghi mới
+    // int $listingId - ID listing
+    // array $amenityIds - Mảng ID tiện nghi
+    // return array - ['success' => bool, 'message' => string]
     public function cSaveListingAmenities($listingId, $amenityIds) {
         $mListing = new mListing();
         return $mListing->mSaveListingAmenities($listingId, $amenityIds);
     }
     
+    // Lưu dịch vụ cho listing
+    // Lưu dịch vụ với giá tùy chỉnh cho từng listing
+    // int $listingId - ID listing
+    // array $services - Mảng dịch vụ [['service_id' => int, 'price' => float], ...]
+    // return array - ['success' => bool, 'message' => string]
     public function cSaveListingServices($listingId, $services) {
         $mListing = new mListing();
         return $mListing->mSaveListingServices($listingId, $services);
     }
     
+    // Lấy danh sách tất cả tỉnh/thành phố
+    // return array - Danh sách provinces
     public function cGetAllProvinces() {
         $mListing = new mListing();
         return $mListing->mGetAllProvinces();
     }
     
+    // Lấy danh sách phường/xã theo tỉnh
+    // string $provinceCode - Mã tỉnh/thành phố
+    // return array - Danh sách wards
     public function cGetWardsByProvince($provinceCode) {
         $mListing = new mListing();
         return $mListing->mGetWardsByProvince($provinceCode);
     }
     
+    // Lấy tất cả ảnh của listing
+    // int $listingId - ID listing
+    // return array - Danh sách images
     public function cGetListingImages($listingId) {
         $mListing = new mListing();
         return $mListing->mGetListingImages($listingId);
     }
     
+    // Kiểm tra mã số thuế đã tồn tại chưa
+    // string $taxCode - Mã số thuế
+    // return bool - true nếu đã tồn tại
     public function cCheckTaxCodeExists($taxCode) {
         $mHost = new mHost();
         return $mHost->mCheckTaxCodeExists($taxCode);
     }
     
+    // Toggle trạng thái listing (active <-> inactive)
+    // int $listingId - ID listing
+    // int $hostId - ID host (để verify ownership)
+    // return array - ['success' => bool, 'message' => string]
     public function cToggleListingStatus($listingId, $hostId) {
         $mListing = new mListing();
         return $mListing->mToggleListingStatus($listingId, $hostId);
     }
 
-    /**
-     * Validate and process listing creation with images
-     * @param int $hostId
-     * @param array $postData POST data from form
-     * @param array $filesData FILES data (images)
-     * @return array ['success' => bool, 'message' => string, 'listing_id' => int|null, 'errors' => array]
-     */
+    // Validate và xử lý tạo listing kèm upload ảnh
+    // Kiểm tra đầy đủ dữ liệu POST và FILES, tạo listing, upload và lưu ảnh
+    // int $hostId - ID host
+    // array $postData - Dữ liệu POST từ form
+    // array $filesData - Dữ liệu FILES (images)
+    // return array - ['success' => bool, 'message' => string, 'listing_id' => int|null, 'errors' => array]
     public function cProcessCreateListing($hostId, $postData, $filesData) {
         // Extract and sanitize input
         $title = trim($postData['title'] ?? '');
@@ -440,14 +528,13 @@ class cHost {
         ];
     }
     
-    /**
-     * Process image uploads for listing
-     * @param int $listingId
-     * @param array $filesData
-     * @param int $coverIndex
-     * @param int $userId
-     * @return array
-     */
+    // Xử lý upload ảnh cho listing
+    // Upload nhiều ảnh, set ảnh cover, lưu vào database
+    // int $listingId - ID listing
+    // array $filesData - Dữ liệu FILES
+    // int $coverIndex - Index ảnh làm cover
+    // int $userId - ID user (để tạo folder upload)
+    // return array - ['success' => bool, 'uploaded' => int]
     private function processImageUploads($listingId, $filesData, $coverIndex, $userId) {
         if (!isset($filesData['images']) || empty($filesData['images']['name'][0])) {
             return ['success' => false, 'uploaded' => 0];
@@ -499,18 +586,18 @@ class cHost {
         return ['success' => true, 'uploaded' => $uploadedCount];
     }
 
-    /**
-     * Register user as host with full validation
-     * @param int $userId User ID
-     * @param string $idNumber CMND/CCCD number
-     * @param string $address Full address
-     * @param string $phone Phone number
-     * @param string $bankAccount Bank account number
-     * @param string $bankName Bank name
-     * @param string $taxCode Tax code (MST)
-     * @param array $filesData $_FILES data for ID card images
-     * @return array ['success' => bool, 'message' => string, 'errors' => array]
-     */
+    // Đăng ký user thành host với đầy đủ validation
+    // Validate CMND (9-12 số), phone (10-11 số), bank account, tax code
+    // Upload ảnh CMND mặt trước và mặt sau
+    // int $userId - ID user
+    // string $idNumber - Số CMND/CCCD
+    // string $address - Địa chỉ đầy đủ
+    // string $phone - Số điện thoại
+    // string $bankAccount - Số tài khoản ngân hàng
+    // string $bankName - Tên ngân hàng
+    // string $taxCode - Mã số thuế (MST)
+    // array $filesData - Dữ liệu $_FILES cho ảnh CMND
+    // return array - ['success' => bool, 'message' => string, 'errors' => array]
     public function cRegisterHost($userId, $idNumber, $address, $phone, $bankAccount, $bankName, $taxCode, $filesData = []) {
         $errors = [];
         
@@ -616,12 +703,11 @@ class cHost {
         ];
     }
 
-    /**
-     * Process ID card image uploads
-     * @param int $userId User ID
-     * @param array $filesData $_FILES data
-     * @return array ['success' => bool, 'front' => string, 'back' => string, 'message' => string]
-     */
+    // Xử lý upload ảnh CMND/CCCD (mặt trước và mặt sau)
+    // Validate file type (jpg, jpeg, png), size (max 5MB)
+    // int $userId - ID user (để tạo folder upload)
+    // array $filesData - Dữ liệu $_FILES
+    // return array - ['success' => bool, 'front' => string, 'back' => string, 'message' => string]
     private function processIdCardImages($userId, $filesData) {
         $uploadDir = __DIR__ . '/../public/uploads/id_cards/';
         

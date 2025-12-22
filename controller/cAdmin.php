@@ -5,6 +5,13 @@ include_once(__DIR__ . "/../model/mListing.php");
 
 class cAdmin {
     
+    // ===== XÁC THỰC & DASHBOARD =====
+    
+    // Đăng nhập admin
+    // Validate username và password trước khi gọi Model
+    // string $username - Tên đăng nhập
+    // string $password - Mật khẩu
+    // return array - ['success' => bool, 'admin' => array, 'message' => string]
     public function cAdminLogin($username, $password) {
         // Validate input
         $errors = [];
@@ -30,11 +37,19 @@ class cAdmin {
         return $mAdmin->mAdminLogin($username, $password);
     }
     
+    // Lấy thống kê dashboard cho admin
+    // Trả về số liệu tổng quan: users, hosts, bookings, revenue
+    // return array - Dữ liệu dashboard
     public function cGetDashboardStats() {
         $mAdmin = new mAdmin();
         return $mAdmin->mGetDashboardStats();
     }
     
+    // ===== QUẢN LÝ ĐƠN ĐĂNG KÝ HOST =====
+    
+    // Lấy tất cả đơn đăng ký host
+    // string|null $status - Lọc theo trạng thái: 'pending', 'approved', 'rejected'
+    // return array - Danh sách đơn đăng ký
     public function cGetAllHostApplications($status = null) {
         // Validate status
         if ($status !== null) {
@@ -48,6 +63,9 @@ class cAdmin {
         return $mAdmin->mGetAllHostApplications($status);
     }
     
+    // Lấy chi tiết đơn đăng ký host
+    // int $applicationId - ID đơn đăng ký
+    // return array|null - Thông tin chi tiết đơn
     public function cGetHostApplicationDetail($applicationId) {
         if (!is_numeric($applicationId) || $applicationId <= 0) {
             return null;
@@ -57,6 +75,11 @@ class cAdmin {
         return $mAdmin->mGetHostApplicationDetail($applicationId);
     }
     
+    // Duyệt đơn đăng ký host
+    // Approve đơn và tự động tạo host record
+    // int $applicationId - ID đơn đăng ký
+    // int $adminId - ID admin duyệt
+    // return array - ['success' => bool, 'message' => string]
     public function cApproveHostApplication($applicationId, $adminId) {
         // Validate input
         if (!is_numeric($applicationId) || $applicationId <= 0) {
@@ -118,6 +141,12 @@ class cAdmin {
         }
     }
     
+    // Từ chối đơn đăng ký host
+    // Reject đơn và lưu lý do từ chối
+    // int $applicationId - ID đơn đăng ký
+    // int $adminId - ID admin từ chối
+    // string $reason - Lý do từ chối (tối đa 500 ký tự)
+    // return array - ['success' => bool, 'message' => string]
     public function cRejectHostApplication($applicationId, $adminId, $reason) {
         // Validate input
         if (!is_numeric($applicationId) || $applicationId <= 0) {
@@ -182,7 +211,12 @@ class cAdmin {
         }
     }
     
-    // Listing management methods
+    // ===== QUẢN LÝ LISTING (PHÒNG/NHÀ) =====
+    
+    // Lấy tất cả listing
+    // Admin xem toàn bộ listing (trừ draft), có thể lọc theo status
+    // string|null $status - Lọc: 'draft', 'pending', 'active', 'rejected'
+    // return array - Danh sách listing
     public function cGetAllListings($status = null) {
         // Validate status
         if ($status !== null) {
@@ -199,6 +233,10 @@ class cAdmin {
         return $mListing->mGetAllListings($status, $excludeDraft);
     }
     
+    // Duyệt listing (chuyển sang active)
+    // int $listingId - ID listing cần duyệt
+    // int $adminId - ID admin duyệt
+    // return array - ['success' => bool, 'message' => string]
     public function cApproveListing($listingId, $adminId) {
         // Validate input
         if (!is_numeric($listingId) || $listingId <= 0) {
@@ -224,6 +262,12 @@ class cAdmin {
         }
     }
     
+    // Từ chối listing
+    // Chuyển status sang rejected và lưu lý do
+    // int $listingId - ID listing
+    // int $adminId - ID admin từ chối
+    // string $reason - Lý do từ chối
+    // return array - ['success' => bool, 'message' => string]
     public function cRejectListing($listingId, $adminId, $reason) {
         // Validate input
         if (!is_numeric($listingId) || $listingId <= 0) {
@@ -256,7 +300,13 @@ class cAdmin {
         }
     }
     
-    // User Management Methods
+    // ===== QUẢN LÝ USER =====
+    
+    // Lấy danh sách tất cả user (có phân trang và search)
+    // int $page - Trang hiện tại
+    // int $limit - Số bản ghi mỗi trang (tối đa 100)
+    // string $search - Từ khóa tìm kiếm (email, phone, họ tên)
+    // return array - ['users' => array, 'total' => int, 'page' => int, 'limit' => int]
     public function cGetAllUsers($page = 1, $limit = 10, $search = '') {
         // Validate pagination
         $page = max(1, intval($page));
@@ -266,6 +316,9 @@ class cAdmin {
         return $mAdmin->mGetAllUsers($page, $limit, $search);
     }
     
+    // Lấy thông tin user theo ID
+    // int $userId - ID user
+    // return array|null - Thông tin user
     public function cGetUserById($userId) {
         if (!is_numeric($userId) || $userId <= 0) {
             return null;
@@ -275,6 +328,13 @@ class cAdmin {
         return $mAdmin->mGetUserById($userId);
     }
     
+    // Tạo user mới (Admin)
+    // Validate email, password, phone trước khi tạo
+    // string $email - Email
+    // string $password - Mật khẩu (tối thiểu 6 ký tự)
+    // string $phone - Số điện thoại (10-11 số)
+    // string $fullName - Họ tên
+    // return array - ['success' => bool, 'message' => string]
     public function cCreateUser($email, $password, $phone, $fullName = '') {
         // Validate input
         $errors = [];
@@ -309,6 +369,14 @@ class cAdmin {
         return $mAdmin->mCreateUser($email, $password, $phone, $fullName);
     }
     
+    // Cập nhật thông tin user
+    // Cho phép admin sửa email, phone, họ tên, và đổi mật khẩu
+    // int $userId - ID user
+    // string $email - Email mới
+    // string $phone - Số điện thoại mới
+    // string $fullName - Họ tên mới
+    // string|null $password - Mật khẩu mới (nullable)
+    // return array - ['success' => bool, 'message' => string]
     public function cUpdateUser($userId, $email, $phone, $fullName, $password = null) {
         // Validate input
         if (!is_numeric($userId) || $userId <= 0) {
@@ -348,6 +416,10 @@ class cAdmin {
         return $mAdmin->mUpdateUser($userId, $email, $phone, $fullName, $password);
     }
     
+    // Khóa/Mở khóa tài khoản user
+    // Toggle trạng thái active <-> locked
+    // int $userId - ID user cần toggle
+    // return array - ['success' => bool, 'message' => string]
     public function cToggleUserStatus($userId) {
         if (!is_numeric($userId) || $userId <= 0) {
             return [
@@ -360,7 +432,13 @@ class cAdmin {
         return $mAdmin->mToggleUserStatus($userId);
     }
     
-    // Host Management Methods
+    // ===== QUẢN LÝ HOST =====
+    
+    // Lấy danh sách tất cả host (có phân trang và search)
+    // int $page - Trang hiện tại
+    // int $limit - Số bản ghi mỗi trang (tối đa 100)
+    // string $search - Từ khóa tìm kiếm
+    // return array - ['hosts' => array, 'total' => int, 'page' => int, 'limit' => int]
     public function cGetAllHosts($page = 1, $limit = 10, $search = '') {
         $page = max(1, intval($page));
         $limit = max(1, min(100, intval($limit)));
@@ -369,6 +447,9 @@ class cAdmin {
         return $mAdmin->mGetAllHosts($page, $limit, $search);
     }
     
+    // Lấy chi tiết host theo ID
+    // int $hostId - ID host
+    // return array|null - Thông tin chi tiết host
     public function cGetHostDetail($hostId) {
         if (!is_numeric($hostId) || $hostId <= 0) {
             return null;
@@ -378,6 +459,10 @@ class cAdmin {
         return $mAdmin->mGetHostDetail($hostId);
     }
     
+    // Khóa/Mở khóa tài khoản host
+    // Toggle trạng thái active <-> inactive
+    // int $hostId - ID host cần toggle
+    // return array - ['success' => bool, 'message' => string]
     public function cToggleHostStatus($hostId) {
         if (!is_numeric($hostId) || $hostId <= 0) {
             return [
@@ -390,7 +475,14 @@ class cAdmin {
         return $mAdmin->mToggleHostStatus($hostId);
     }
     
-    // Support Ticket Methods
+    // ===== QUẢN LÝ HỖ TRỢ (SUPPORT TICKETS) =====
+    
+    // Lấy tất cả ticket hỗ trợ (có phân trang và filter)
+    // string|null $status - Lọc: 'open', 'in_progress', 'resolved', 'closed'
+    // string|null $category - Lọc: 'dat_phong', 'tai_khoan', 'nha_cung_cap', 'de_xuat_dich_vu', 'khac'
+    // int $page - Trang hiện tại
+    // int $limit - Số bản ghi mỗi trang
+    // return array - Danh sách tickets
     public function cGetAllSupportTickets($status = null, $category = null, $page = 1, $limit = 10) {
         $page = max(1, intval($page));
         $limit = max(1, min(100, intval($limit)));
@@ -413,6 +505,9 @@ class cAdmin {
         return $mAdmin->mGetAllSupportTickets($status, $category, $page, $limit);
     }
     
+    // Lấy chi tiết ticket
+    // int $ticketId - ID ticket
+    // return array|null - Thông tin ticket
     public function cGetTicketDetail($ticketId) {
         if (!is_numeric($ticketId) || $ticketId <= 0) {
             return null;
@@ -422,6 +517,9 @@ class cAdmin {
         return $mAdmin->mGetTicketDetail($ticketId);
     }
     
+    // Lấy tất cả tin nhắn của ticket
+    // int $ticketId - ID ticket
+    // return array - Danh sách messages
     public function cGetTicketMessages($ticketId) {
         if (!is_numeric($ticketId) || $ticketId <= 0) {
             return [];
@@ -431,6 +529,12 @@ class cAdmin {
         return $mAdmin->mGetTicketMessages($ticketId);
     }
     
+    // Admin trả lời ticket
+    // Validate input trước khi gọi Model
+    // int $ticketId - ID ticket
+    // int $adminId - ID admin đang reply
+    // string $content - Nội dung trả lời
+    // return array - ['success' => bool, 'message' => string]
     public function cReplyToTicket($ticketId, $adminId, $content) {
         if (!is_numeric($ticketId) || $ticketId <= 0) {
             return [
@@ -450,6 +554,23 @@ class cAdmin {
         return $mAdmin->mReplyToTicket($ticketId, $adminId, $content);
     }
     
+    // Lấy chi tiết ticket theo ID
+    // Dùng để lấy thông tin user/guest cho việc gửi email
+    // int $ticketId - ID ticket
+    // return array|null - Thông tin ticket
+    public function cGetTicketById($ticketId) {
+        if (!is_numeric($ticketId) || $ticketId <= 0) {
+            return null;
+        }
+        
+        $mAdmin = new mAdmin();
+        return $mAdmin->mGetTicketById($ticketId);
+    }
+    
+    // Cập nhật trạng thái ticket (open/in_progress/closed)
+    // int $ticketId - ID ticket cần update
+    // string $status - Trạng thái mới
+    // return array - ['success' => bool, 'message' => string]
     public function cUpdateTicketStatus($ticketId, $status) {
         if (!is_numeric($ticketId) || $ticketId <= 0) {
             return [
@@ -470,13 +591,22 @@ class cAdmin {
         return $mAdmin->mUpdateTicketStatus($ticketId, $status);
     }
     
-    // ========== ADMIN MANAGEMENT (SUPERADMIN ONLY) ==========
+    // ===== QUẢN LÝ ADMIN (SUPERADMIN ONLY) =====
     
+    // Lấy danh sách tất cả admin
+    // return array - Danh sách admin
     public function cGetAllAdmins() {
         $mAdmin = new mAdmin();
         return $mAdmin->mGetAllAdmins();
     }
     
+    // Tạo admin mới (Superadmin only)
+    // Validate username, password, role trước khi tạo
+    // string $username - Tên đăng nhập (3-50 ký tự, chỉ chữ, số, gạch dưới)
+    // string $password - Mật khẩu (tối thiểu 6 ký tự)
+    // string $fullName - Họ tên
+    // string $role - Vai trò: 'superadmin', 'manager', 'support'
+    // return array - ['success' => bool, 'message' => string]
     public function cCreateAdmin($username, $password, $fullName, $role) {
         // Validate inputs
         if (empty($username) || empty($password) || empty($fullName) || empty($role)) {
@@ -503,6 +633,10 @@ class cAdmin {
         return $mAdmin->mCreateAdmin($username, $password, $fullName, $role);
     }
     
+    // Cập nhật vai trò admin
+    // int $adminId - ID admin
+    // string $newRole - Vai trò mới: 'superadmin', 'manager', 'support'
+    // return array - ['success' => bool, 'message' => string]
     public function cUpdateAdminRole($adminId, $newRole) {
         $adminId = (int)$adminId;
         if ($adminId <= 0) {
@@ -518,6 +652,9 @@ class cAdmin {
         return $mAdmin->mUpdateAdminRole($adminId, $newRole);
     }
     
+    // Xóa admin
+    // int $adminId - ID admin cần xóa
+    // return array - ['success' => bool, 'message' => string]
     public function cDeleteAdmin($adminId) {
         $adminId = (int)$adminId;
         if ($adminId <= 0) {
@@ -528,6 +665,10 @@ class cAdmin {
         return $mAdmin->mDeleteAdmin($adminId);
     }
     
+    // Reset mật khẩu admin
+    // int $adminId - ID admin
+    // string $newPassword - Mật khẩu mới (tối thiểu 6 ký tự)
+    // return array - ['success' => bool, 'message' => string]
     public function cResetAdminPassword($adminId, $newPassword) {
         $adminId = (int)$adminId;
         if ($adminId <= 0) {

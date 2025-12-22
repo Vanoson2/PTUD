@@ -3,6 +3,11 @@ include_once __DIR__ . '/mConnect.php';
 
 class mAdmin {
     
+    // Đăng nhập admin
+    // Kiểm tra username và password (md5)
+    // string $username - Tên đăng nhập
+    // string $password - Mật khẩu (plain text, sẽ hash md5)
+    // return array - ['success' => bool, 'message' => string, 'admin' => array|null]
     public function mAdminLogin($username, $password) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -42,6 +47,9 @@ class mAdmin {
         ];
     }
     
+    // Lấy danh sách tất cả đơn đăng ký host
+    // string $status - Lọc theo trạng thái (pending/approved/rejected), null = tất cả
+    // return array - Danh sách applications với thông tin user và admin reviewer
     public function mGetAllHostApplications($status = null) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -77,6 +85,10 @@ class mAdmin {
         return $applications;
     }
     
+    // Lấy chi tiết đơn đăng ký host theo ID
+    // Tự động decrypt các thông tin nhạy cảm (tax_code, bank_account)
+    // int $applicationId - ID đơn đăng ký
+    // return array|null - Chi tiết application hoặc null nếu không tìm thấy
     public function mGetHostApplicationDetail($applicationId) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -118,6 +130,11 @@ class mAdmin {
         return null;
     }
     
+    // Duyệt đơn đăng ký host
+    // Cập nhật status = 'approved' và ghi log vào history
+    // int $applicationId - ID đơn đăng ký
+    // int $adminId - ID admin đang duyệt
+    // return bool - true nếu thành công
     public function mApproveHostApplication($applicationId, $adminId) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -146,6 +163,12 @@ class mAdmin {
         return $result ? true : false;
     }
     
+    // Từ chối đơn đăng ký host
+    // Cập nhật status = 'rejected' với lý do và ghi log
+    // int $applicationId - ID đơn đăng ký
+    // int $adminId - ID admin từ chối
+    // string $reason - Lý do từ chối
+    // return bool - true nếu thành công
     public function mRejectHostApplication($applicationId, $adminId, $reason) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -177,6 +200,9 @@ class mAdmin {
         return $result ? true : false;
     }
     
+    // Lấy thống kê cho admin dashboard
+    // Bao gồm: số applications, users, hosts, support tickets
+    // return array - Các con số thống kê
     public function mGetDashboardStats() {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -234,7 +260,13 @@ class mAdmin {
         return $stats;
     }
     
-    // User Management Methods
+    // ===== QUẢN LÝ USER =====
+    
+    // Lấy danh sách tất cả users với phân trang và tìm kiếm
+    // int $page - Trang hiện tại
+    // int $limit - Số user mỗi trang
+    // string $search - Từ khóa tìm kiếm (tên, email, phone)
+    // return array - ['users' => array, 'total' => int, 'pages' => int, 'current_page' => int]
     public function mGetAllUsers($page = 1, $limit = 10, $search = '') {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -295,6 +327,9 @@ class mAdmin {
         ];
     }
     
+    // Lấy thông tin user theo ID
+    // int $userId - ID user cần lấy
+    // return array|null - Thông tin user hoặc null
     public function mGetUserById($userId) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -316,6 +351,12 @@ class mAdmin {
         return null;
     }
     
+    // Tạo user mới từ admin panel
+    // string $email - Email user
+    // string $password - Mật khẩu (plain text, sẽ hash md5)
+    // string $phone - Số điện thoại
+    // string $fullName - Họ tên (optional)
+    // return array - ['success' => bool, 'message' => string, 'user_id' => int]
     public function mCreateUser($email, $password, $phone, $fullName = '') {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -365,6 +406,13 @@ class mAdmin {
         ];
     }
     
+    // Cập nhật thông tin user
+    // int $userId - ID user cần update
+    // string $email - Email mới
+    // string $phone - SĐT mới
+    // string $fullName - Họ tên mới
+    // string $password - Mật khẩu mới (optional, null = không đổi)
+    // return array - ['success' => bool, 'message' => string]
     public function mUpdateUser($userId, $email, $phone, $fullName, $password = null) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -420,6 +468,10 @@ class mAdmin {
         ];
     }
     
+    // Khóa/Mở khóa tài khoản user
+    // Toggle giữa status 'active' và 'locked'
+    // int $userId - ID user cần thay đổi status
+    // return array - ['success' => bool, 'message' => string, 'new_status' => string]
     public function mToggleUserStatus($userId) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -465,7 +517,13 @@ class mAdmin {
         ];
     }
     
-    // Host Management Methods
+    // ===== QUẢN LÝ HOST =====
+    
+    // Lấy danh sách tất cả host với phân trang và tìm kiếm
+    // int $page - Trang hiện tại (mặc định 1)
+    // int $limit - Số host mỗi trang (mặc định 10)
+    // string $search - Từ khóa tìm kiếm (tên, email, legal_name)
+    // return array - ['hosts' => array, 'total' => int, 'pages' => int]
     public function mGetAllHosts($page = 1, $limit = 10, $search = '') {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -477,7 +535,7 @@ class mAdmin {
         $offset = ($page - 1) * $limit;
         $search = $conn->real_escape_string($search);
         
-        // Build WHERE clause
+        // Xây dựng điều kiện WHERE cho tìm kiếm
         $whereClause = "";
         if (!empty($search)) {
             $whereClause = " WHERE u.full_name LIKE '%$search%' 
@@ -485,7 +543,7 @@ class mAdmin {
                             OR h.legal_name LIKE '%$search%'";
         }
         
-        // Get total count
+        // Đếm tổng số host
         $countSql = "SELECT COUNT(*) as total 
                      FROM host h
                      INNER JOIN user u ON h.user_id = u.user_id" . $whereClause;
@@ -496,7 +554,7 @@ class mAdmin {
             $total = (int)$row['total'];
         }
         
-        // Get hosts with pagination
+        // Lấy danh sách host với phân trang
         $sql = "SELECT h.*, u.full_name, u.email, u.phone, u.status as user_status,
                        COUNT(DISTINCT l.listing_id) as total_listings,
                        COUNT(DISTINCT CASE WHEN l.status = 'active' THEN l.listing_id END) as active_listings
@@ -528,6 +586,9 @@ class mAdmin {
         ];
     }
     
+    // Lấy chi tiết host theo ID
+    // int $hostId - ID host
+    // return array|null - Thông tin host kèm user info
     public function mGetHostDetail($hostId) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -554,6 +615,10 @@ class mAdmin {
         return null;
     }
     
+    // Đình chỉ/Kích hoạt host
+    // Toggle giữa status 'approved' và 'rejected'
+    // int $hostId - ID host cần toggle
+    // return array - ['success' => bool, 'message' => string, 'new_status' => string]
     public function mToggleHostStatus($hostId) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -599,7 +664,14 @@ class mAdmin {
         ];
     }
     
-    // Support Ticket Methods
+    // ===== QUẢN LÝ SUPPORT TICKET =====
+    
+    // Lấy danh sách tất cả support tickets với filter và phân trang
+    // string $status - Lọc theo trạng thái (open/in_progress/closed)
+    // string $category - Lọc theo category
+    // int $page - Trang hiện tại
+    // int $limit - Số ticket mỗi trang
+    // return array - ['tickets' => array, 'total' => int, 'pages' => int]
     public function mGetAllSupportTickets($status = null, $category = null, $page = 1, $limit = 10) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -664,6 +736,10 @@ class mAdmin {
         ];
     }
     
+    // Lấy chi tiết ticket theo ID
+    // Hỗ trợ cả user ticket và guest ticket
+    // int $ticketId - ID ticket
+    // return array|null - Chi tiết ticket kèm user info
     public function mGetTicketDetail($ticketId) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -692,6 +768,10 @@ class mAdmin {
         return null;
     }
     
+    // Lấy tất cả tin nhắn trong ticket
+    // Kèm thông tin người gửi (user hoặc admin)
+    // int $ticketId - ID ticket
+    // return array - Danh sách messages sắp xếp theo thời gian tăng dần
     public function mGetTicketMessages($ticketId) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -722,6 +802,12 @@ class mAdmin {
         return $messages;
     }
     
+    // Admin trả lời ticket của user
+    // Insert message mới vào support_message và update ticket status
+    // int $ticketId - ID ticket cần reply
+    // int $adminId - ID admin đang reply
+    // string $content - Nội dung trả lời
+    // return array - ['success' => bool, 'message' => string]
     public function mReplyToTicket($ticketId, $adminId, $content) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -766,22 +852,13 @@ class mAdmin {
                          WHERE ticket_id = $ticketId";
             $conn->query($updateSql);
             
-            // Send email notification to user
-            require_once(__DIR__ . '/mEmailPHPMailer.php');
-            $emailModel = new mEmailPHPMailer();
-            $emailModel->sendSupportReply(
-                $ticketInfo['email'],
-                $ticketInfo['full_name'],
-                $ticketId,
-                $ticketInfo['title'],
-                $content,
-                $ticketInfo['admin_name'] ?? 'WeGo Support'
-            );
+            // Thông báo email được xử lý ở tầng view (support-detail.php)
+            // để kiểm soát khi nào gửi email (chỉ gửi khi admin reply lần đầu)
             
             $p->mDongKetNoi($conn);
             return [
                 'success' => true,
-                'message' => 'Đã gửi tin nhắn và email thông báo'
+                'message' => 'Đã gửi tin nhắn'
             ];
         }
         
@@ -792,6 +869,42 @@ class mAdmin {
         ];
     }
     
+    // Lấy thông tin chi tiết ticket theo ID
+    // Dùng để gửi email thông báo khi admin reply
+    // int $ticketId - ID của ticket cần lấy
+    // return array|null - Thông tin ticket bao gồm user_id, email, title, guest info
+    public function mGetTicketById($ticketId) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return null;
+        }
+        
+        $ticketId = (int)$ticketId;
+        $sql = "SELECT st.*, u.full_name, u.email
+                FROM support_ticket st
+                LEFT JOIN user u ON st.user_id = u.user_id
+                WHERE st.ticket_id = $ticketId
+                LIMIT 1";
+        
+        $result = $conn->query($sql);
+        
+        if ($result && $result->num_rows > 0) {
+            $ticket = $result->fetch_assoc();
+            $p->mDongKetNoi($conn);
+            return $ticket;
+        }
+        
+        $p->mDongKetNoi($conn);
+        return null;
+    }
+    
+    // Cập nhật trạng thái ticket
+    // Tự động set closed_at nếu status = 'closed'
+    // int $ticketId - ID ticket
+    // string $status - Trạng thái mới (open/in_progress/closed)
+    // return array - ['success' => bool, 'message' => string]
     public function mUpdateTicketStatus($ticketId, $status) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -825,8 +938,11 @@ class mAdmin {
         ];
     }
     
-    // ========== ADMIN MANAGEMENT (SUPERADMIN ONLY) ==========
+    // ===== QUẢN LÝ ADMIN (SUPERADMIN ONLY) =====
     
+    // Lấy danh sách tất cả admin accounts
+    // Sắp xếp theo role: superadmin > manager > support
+    // return array - Danh sách admin (không bao gồm password)
     public function mGetAllAdmins() {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -858,6 +974,12 @@ class mAdmin {
         return $admins;
     }
     
+    // Tạo tài khoản admin mới
+    // string $username - Tên đăng nhập (unique)
+    // string $password - Mật khẩu (plain text, hash md5)
+    // string $fullName - Họ tên admin
+    // string $role - Quyền (superadmin/manager/support)
+    // return array - ['success' => bool, 'message' => string, 'admin_id' => int]
     public function mCreateAdmin($username, $password, $fullName, $role) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -899,6 +1021,10 @@ class mAdmin {
         return ['success' => false, 'message' => 'Lỗi khi tạo admin: ' . $errorMessage];
     }
     
+    // Cập nhật quyền admin
+    // int $adminId - ID admin cần update
+    // string $newRole - Quyền mới (superadmin/manager/support)
+    // return array - ['success' => bool, 'message' => string]
     public function mUpdateAdminRole($adminId, $newRole) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -922,6 +1048,10 @@ class mAdmin {
         return ['success' => false, 'message' => 'Lỗi khi cập nhật: ' . $errorMessage];
     }
     
+    // Xóa tài khoản admin
+    // Không cho phép xóa superadmin
+    // int $adminId - ID admin cần xóa
+    // return array - ['success' => bool, 'message' => string]
     public function mDeleteAdmin($adminId) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();
@@ -956,6 +1086,10 @@ class mAdmin {
         return ['success' => false, 'message' => 'Lỗi khi xóa: ' . $errorMessage];
     }
     
+    // Đặt lại mật khẩu admin
+    // int $adminId - ID admin
+    // string $newPassword - Mật khẩu mới (plain text, hash md5)
+    // return array - ['success' => bool, 'message' => string]
     public function mResetAdminPassword($adminId, $newPassword) {
         $p = new mConnect();
         $conn = $p->mMoKetNoi();

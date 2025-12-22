@@ -105,8 +105,7 @@ $subtotal = $listing['price'] * $nights;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Xác nhận đơn đặt - WEGO</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Bootstrap & FontAwesome already loaded in header.php -->
   <link rel="stylesheet" href="../../css/shared-style.css?v=<?php echo time(); ?>">
   <link rel="stylesheet" href="../../css/components-header.css?v=<?php echo time(); ?>">
   <link rel="stylesheet" href="../../css/confirm-booking.css?v=<?php echo time(); ?>">
