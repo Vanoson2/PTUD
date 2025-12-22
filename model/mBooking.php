@@ -332,5 +332,41 @@ class mBooking {
             return ['success' => false, 'message' => 'Lỗi kết nối database'];
         }
     }
+    
+    /**
+     * Auto-cancel expired pending bookings
+     * Hủy các booking pending đã quá thời hạn thanh toán (10 phút)
+     * 
+     * @return array ['cancelled' => int, 'errors' => int]
+     */
+    public function mCancelExpiredBookings() {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return ['cancelled' => 0, 'errors' => 1];
+        }
+        
+        // Update expired bookings in one query
+        $sql = "UPDATE bookings 
+                SET status = 'cancelled',
+                    payment_status = 'unpaid',
+                    cancelled_by = 'system',
+                    cancel_reason = 'Hết hạn thanh toán (10 phút)',
+                    cancelled_at = NOW()
+                WHERE status = 'pending' 
+                  AND payment_status IN ('unpaid', 'pending')
+                  AND expires_at IS NOT NULL 
+                  AND expires_at < NOW()";
+        
+        $result = $conn->query($sql);
+        $affected = $conn->affected_rows;
+        
+        $p->mDongKetNoi($conn);
+        
+        return [
+            'cancelled' => $result ? $affected : 0,
+            'errors' => $result ? 0 : 1
+        ];
+    }
 }
-?>
