@@ -77,6 +77,16 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
   </div>
 <?php endif; ?>
 
+<?php if (isset($_SESSION['warning'])): ?>
+  <div class="alert alert-warning">
+    <i class="fas fa-exclamation-triangle"></i>
+    <?php 
+      echo htmlspecialchars($_SESSION['warning']); 
+      unset($_SESSION['warning']);
+    ?>
+  </div>
+<?php endif; ?>
+
 <!-- Tabs -->
 <div class="bookings-tabs">
   <a href="?tab=upcoming" class="tab-button <?php echo $activeTab === 'upcoming' ? 'active' : ''; ?>">

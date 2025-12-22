@@ -46,12 +46,24 @@ $reviewCount = $ratingInfo['review_count'] ?? 0;
 // Get user_id from session
 $userId = $_SESSION['user_id'];
 
+// CLEANUP: Auto-cancel expired bookings (đã quá 10 phút)
+require_once(__DIR__ . '/../../../model/mBooking.php');
+$mBookingCleanup = new mBooking();
+$mBookingCleanup->mCancelExpiredBookings();
+
 // Check user conflict - ngăn user đặt nhiều nơi cùng lúc
 $cBooking = new cBooking();
 $userConflictResult = $cBooking->cCheckUserBookingConflict($userId, $checkin, $checkout, $listingId);
 $hasUserConflict = false;
+$conflictingBooking = null;
 if ($userConflictResult && $userConflictResult->num_rows > 0) {
   $hasUserConflict = true;
+  $conflictingBooking = $userConflictResult->fetch_assoc();
+  
+  // THÔNG BÁO cho user về booking pending và redirect đến my-bookings
+  $_SESSION['warning'] = 'Bạn đã có đơn đặt chỗ đang chờ thanh toán trong khoảng thời gian này. Vui lòng hoàn tất thanh toán hoặc hủy đơn trước khi đặt chỗ mới.';
+  header('Location: my-bookings.php');
+  exit;
 }
 
 // Check: Listing còn trống không?
@@ -60,9 +72,6 @@ $isListingAvailable = true;
 if ($listingAvailabilityResult && $listingAvailabilityResult->num_rows > 0) {
   $isListingAvailable = false;
 }
-
-// Cả 2 điều kiện phải thỏa: user không bị conflict VÀ listing còn trống
-$canBook = !$hasUserConflict && $isListingAvailable;
 
 // Get listing services
 $servicesResult = $cListing->cGetListingServices($listingId);
@@ -213,7 +222,7 @@ $subtotal = $listing['price'] * $nights;
 
           <button type="submit" 
                   class="btn btn-primary w-100 py-3 fw-bold"
-                  <?php echo !$canBook ? 'disabled' : ''; ?>>
+                  <?php echo !$isListingAvailable ? 'disabled' : ''; ?>>
             <?php if (!$isListingAvailable): ?>
               Chỗ ở đã được đặt
             <?php else: ?>

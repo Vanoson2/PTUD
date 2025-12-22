@@ -41,11 +41,11 @@ class mBooking {
             $checkOut = $conn->real_escape_string($checkOut);
             
             // Kiểm tra user có booking nào conflict không (trừ listing hiện tại nếu có)
-            // Logic: Hai khoảng thời gian KHÔNG overlap chỉ khi:
+            // Logic: Hai khoảng thời gian KHÔNG overlap chềEkhi:
             // - check_out của booking cũ < check_in mới HOẶC
             // - check_in của booking cũ > check_out mới
             // Ngược lại = overlap = conflict
-            // LƯU Ý: Booking pending đã hết hạn sẽ KHÔNG được tính là conflict
+            // LƯU ÁE Booking pending đã hết hạn sẽ KHÔNG được tính là conflict
             $strSelect = "SELECT b.booking_id, b.code, b.check_in, b.check_out, l.title as listing_title
                          FROM bookings b
                          INNER JOIN listing l ON b.listing_id = l.listing_id
@@ -58,7 +58,7 @@ class mBooking {
                             b.check_out < '$checkIn' OR b.check_in > '$checkOut'
                          )";
             
-            // Nếu có excludeListingId, loại trừ listing đó ra (cho phép đặt cùng chỗ nhiều lần)
+            // Nếu có excludeListingId, loại trừ listing đó ra (cho phép đặt cùng chềEnhiều lần)
             if ($excludeListingId) {
                 $excludeListingId = intval($excludeListingId);
                 $strSelect .= " AND b.listing_id != $excludeListingId";
@@ -82,12 +82,12 @@ class mBooking {
             $checkIn = $conn->real_escape_string($checkIn);
             $checkOut = $conn->real_escape_string($checkOut);
             
-            // Kiểm tra có booking nào ở listing này conflict không
-            // Logic: Hai khoảng thời gian KHÔNG overlap (cho phép đặt) chỉ khi:
+            // Kiểm tra có booking nào ềElisting này conflict không
+            // Logic: Hai khoảng thời gian KHÔNG overlap (cho phép đặt) chềEkhi:
             // - check_out của booking cũ < check_in mới (ví dụ: cũ 7-8, mới 9-10 OK)
             // - check_in của booking cũ > check_out mới (ví dụ: cũ 10-11, mới 7-8 OK)
             // Ngược lại = overlap = không cho đặt
-            // LƯU Ý: Nếu booking cũ 8-9 và mới 9-10 thì check_out(9) = check_in(9) -> CONFLICT
+            // LƯU ÁE Nếu booking cũ 8-9 và mới 9-10 thì check_out(9) = check_in(9) -> CONFLICT
             $strSelect = "SELECT booking_id 
                          FROM bookings 
                          WHERE listing_id = $listingId 
@@ -127,7 +127,7 @@ class mBooking {
             
             $code = $this->generateBookingCode();
             
-            // ⚠️ Tạo booking với status='pending' và expires_at sau 10 phút
+            // ⚠�E�ETạo booking với status='pending' và expires_at sau 10 phút
             // MoMo payment cũng sẽ expire sau 10 phút thông qua orderExpireTime
             $strInsert = "INSERT INTO bookings 
                          (code, user_id, listing_id, check_in, check_out, guests, total_amount, note, status, expires_at)
@@ -271,7 +271,7 @@ class mBooking {
             $bookingId = intval($bookingId);
             $userId = intval($userId);
             
-            // Đảm bảo chỉ update booking của user này
+            // Đảm bảo chềEupdate booking của user này
             $strUpdate = "UPDATE bookings 
                          SET is_rated = TRUE 
                          WHERE booking_id = $bookingId 
@@ -292,7 +292,7 @@ class mBooking {
             $userId = intval($userId);
             $cancelReason = $cancelReason ? $conn->real_escape_string($cancelReason) : null;
             
-            // Kiểm tra booking có thuộc về user này không và status = 'confirmed'
+            // Kiểm tra booking có thuộc vềEuser này không và status = 'confirmed'
             $strCheck = "SELECT booking_id, status, check_in 
                         FROM bookings 
                         WHERE booking_id = $bookingId 
@@ -301,7 +301,7 @@ class mBooking {
             
             $checkResult = $conn->query($strCheck);
             if (!$checkResult || $checkResult->num_rows === 0) {
-                return ['success' => false, 'message' => 'Không tìm thấy booking hoặc không thể hủy'];
+                return ['success' => false, 'message' => 'Không tìm thấy booking hoặc không thềEhủy'];
             }
             
             $booking = $checkResult->fetch_assoc();
@@ -327,7 +327,7 @@ class mBooking {
                     'booking' => $booking
                 ];
             }
-            return ['success' => false, 'message' => 'Không thể hủy booking'];
+            return ['success' => false, 'message' => 'Không thềEhủy booking'];
         }else{
             return ['success' => false, 'message' => 'Lỗi kết nối database'];
         }
@@ -358,6 +358,101 @@ class mBooking {
                   AND payment_status IN ('unpaid', 'pending')
                   AND expires_at IS NOT NULL 
                   AND expires_at < NOW()";
+        
+        $result = $conn->query($sql);
+        $affected = $conn->affected_rows;
+        
+        $p->mDongKetNoi($conn);
+        
+        return [
+            'cancelled' => $result ? $affected : 0,
+            'errors' => $result ? 0 : 1
+        ];
+    }
+    
+    /**
+     * Cancel pending booking c?a user t?i listing c? th? trong kho?ng dates
+     * Dung khi user mu?n ??t l?i sau khi h?y/th?t b?i thanh toan
+     * 
+     * @param int $userId User ID
+     * @param int $listingId Listing ID
+     * @param string $checkIn Check-in date
+     * @param string $checkOut Check-out date
+     * @return array ['cancelled' => int, 'errors' => int]
+     */
+    public function mCancelUserPendingBookingAtListing($userId, $listingId, $checkIn, $checkOut) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return ['cancelled' => 0, 'errors' => 1];
+        }
+        
+        $userId = intval($userId);
+        $listingId = intval($listingId);
+        $checkIn = $conn->real_escape_string($checkIn);
+        $checkOut = $conn->real_escape_string($checkOut);
+        
+        // Cancel t?t c? booking pending c?a user t?i listing nay trong kho?ng dates
+        $sql = "UPDATE bookings 
+                SET status = 'cancelled',
+                    payment_status = 'unpaid',
+                    cancelled_by = 'system',
+                    cancel_reason = 'Auto-cancel ?? user ??t l?i',
+                    cancelled_at = NOW()
+                WHERE user_id = $userId
+                  AND listing_id = $listingId
+                  AND status = 'pending' 
+                  AND payment_status IN ('unpaid', 'pending')
+                  AND check_in = '$checkIn'
+                  AND check_out = '$checkOut'";
+        
+        $result = $conn->query($sql);
+        $affected = $conn->affected_rows;
+        
+        $p->mDongKetNoi($conn);
+        
+        return [
+            'cancelled' => $result ? $affected : 0,
+            'errors' => $result ? 0 : 1
+        ];
+    }
+    
+    /**
+     * Cancel TẤT CẢ pending bookings của user trong khoảng dates
+     * Dùng khi user muốn đặt lại sau khi hủy/thất bại thanh toán
+     * Cancel cả booking ở listing khác để user có thể đặt bất kỳ listing nào
+     * 
+     * @param int $userId User ID
+     * @param string $checkIn Check-in date
+     * @param string $checkOut Check-out date
+     * @return array ['cancelled' => int, 'errors' => int]
+     */
+    public function mCancelUserPendingBookingsInDateRange($userId, $checkIn, $checkOut) {
+        $p = new mConnect();
+        $conn = $p->mMoKetNoi();
+        
+        if (!$conn) {
+            return ['cancelled' => 0, 'errors' => 1];
+        }
+        
+        $userId = intval($userId);
+        $checkIn = $conn->real_escape_string($checkIn);
+        $checkOut = $conn->real_escape_string($checkOut);
+        
+        // Cancel tất cả booking pending của user có dates overlap với dates mới
+        $sql = "UPDATE bookings 
+                SET status = 'cancelled',
+                    payment_status = 'unpaid',
+                    cancelled_by = 'system',
+                    cancel_reason = 'Auto-cancel để user đặt lại',
+                    cancelled_at = NOW()
+                WHERE user_id = $userId
+                  AND status = 'pending' 
+                  AND payment_status IN ('unpaid', 'pending')
+                  AND NOT (
+                    check_out < '$checkIn' OR check_in > '$checkOut'
+                  )";
         
         $result = $conn->query($sql);
         $affected = $conn->affected_rows;

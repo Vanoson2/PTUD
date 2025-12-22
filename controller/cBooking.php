@@ -91,6 +91,12 @@ class cBooking {
             ];
         }
 
+        // CLEANUP: Tự động hủy các booking pending hết hạn TRƯỚC KHI check conflict
+        // Đảm bảo booking đã hủy MoMo không còn block user
+        require_once(__DIR__ . '/../model/mBooking.php');
+        $mBookingCleanup = new mBooking();
+        $mBookingCleanup->mCancelExpiredBookings();
+
         // Check: User có booking nào trùng ngày không?
         $userConflictResult = $this->cCheckUserBookingConflict($userId, $checkin, $checkout, $listingId);
         if ($userConflictResult && $userConflictResult->num_rows > 0) {
