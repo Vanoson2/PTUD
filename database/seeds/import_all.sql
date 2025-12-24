@@ -12,6 +12,25 @@ SET FOREIGN_KEY_CHECKS=0;
 
 USE we_go;
 
+-- =====================================================
+-- Step 1: Fix payment_status for bookings
+-- =====================================================
+-- Seed data không có payment_status, cần set trước khi fix timestamps
+
+-- Set payment_status='paid' cho bookings đã confirmed
+UPDATE bookings
+SET payment_status = 'paid'
+WHERE status = 'confirmed';
+
+-- Set payment_status='paid' cho bookings đã completed
+UPDATE bookings
+SET payment_status = 'paid'
+WHERE status = 'completed';
+
+-- =====================================================
+-- Step 2: Fix timestamps cho các bookings
+-- =====================================================
+
 -- Fix CONFIRMED bookings (already paid)
 UPDATE bookings
 SET 
