@@ -153,8 +153,15 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
               <!-- Booking chưa thanh toán - Hiển thị countdown và nút thanh toán -->
               <?php if (!empty($booking['expires_at'])): ?>
                 <?php
-                $expiresAt = strtotime($booking['expires_at']);
-                $now = time();
+                // Use MySQL UNIX_TIMESTAMP to avoid timezone issues
+                include_once(__DIR__ . '/../../../model/mConnect.php');
+                $mConnect = new mConnect();
+                $conn = $mConnect->mMoKetNoi();
+                $bookingId = $booking['booking_id'];
+                $result = $conn->query("SELECT UNIX_TIMESTAMP(expires_at) as expires_unix, UNIX_TIMESTAMP(NOW()) as now_unix FROM bookings WHERE booking_id = $bookingId");
+                $timestamps = $result->fetch_assoc();
+                $expiresAt = $timestamps['expires_unix'];
+                $now = $timestamps['now_unix'];
                 $timeLeft = $expiresAt - $now;
                 ?>
                 <?php if ($timeLeft > 0): ?>

@@ -1,7 +1,5 @@
 <?php
-// Enable error reporting for debugging (REMOVE AFTER FIXING)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Error reporting disabled in production
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/../../../logs/php_errors.log');
 

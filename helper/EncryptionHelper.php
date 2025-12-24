@@ -1,19 +1,15 @@
 <?php
-/**
- * Encryption Helper for sensitive data
- * Uses AES-256-CBC encryption
- */
+// Encryption Helper cho dữ liệu nhạy cảm
+// Sử dụng mã hóa AES-256-CBC
 class EncryptionHelper {
     
-    // IMPORTANT: Change this key in production! Store in environment variable
-    private static $encryptionKey = 'WeGo2025SecureKeyChangeThis!!32'; // Must be 32 chars for AES-256
+    // QUAN TRỌNG: Đổi key này trong production! Lưu trong environment variable
+    private static $encryptionKey = 'WeGo2025SecureKeyChangeThis!!32'; // Phải 32 ký tự cho AES-256
     private static $cipher = 'AES-256-CBC';
     
-    /**
-     * Encrypt sensitive data
-     * @param string $data Data to encrypt
-     * @return string Encrypted data (base64 encoded)
-     */
+    // Mã hóa dữ liệu nhạy cảm
+    // string $data - Dữ liệu cần mã hóa
+    // return string - Dữ liệu đã mã hóa (base64 encoded)
     public static function encrypt($data) {
         if (empty($data)) {
             return '';
@@ -38,11 +34,9 @@ class EncryptionHelper {
         return $result;
     }
     
-    /**
-     * Decrypt sensitive data
-     * @param string $encryptedData Encrypted data (base64 encoded)
-     * @return string Decrypted data
-     */
+    // Giải mã dữ liệu nhạy cảm
+    // string $encryptedData - Dữ liệu đã mã hóa (base64 encoded)
+    // return string - Dữ liệu đã giải mã
     public static function decrypt($encryptedData) {
         if (empty($encryptedData)) {
             return '';
@@ -68,12 +62,10 @@ class EncryptionHelper {
         return $decrypted;
     }
     
-    /**
-     * Mask sensitive data for display (show last 4 chars)
-     * @param string $data Data to mask
-     * @param int $visibleChars Number of chars to show at end
-     * @return string Masked data
-     */
+    // Che dữ liệu nhạy cảm để hiển thị (show 4 ký tự cuối)
+    // string $data - Dữ liệu cần che
+    // int $visibleChars - Số ký tự hiển thị ở cuối
+    // return string - Dữ liệu đã che
     public static function mask($data, $visibleChars = 4) {
         if (empty($data)) {
             return '';
@@ -88,12 +80,10 @@ class EncryptionHelper {
         return $masked;
     }
     
-    /**
-     * Generate SHA-256 hash for searchable fields
-     * Used for phone_hash, tax_code_hash to enable queries on encrypted data
-     * @param string $data Data to hash
-     * @return string|null SHA-256 hash or null if data is empty
-     */
+    // Tạo SHA-256 hash cho các field có thể search
+    // Dùng cho phone_hash, tax_code_hash để query trên dữ liệu đã mã hóa
+    // string $data - Dữ liệu cần hash
+    // return string|null - SHA-256 hash hoặc null nếu data trống
     public static function generateHash($data) {
         if (empty($data)) {
             return null;

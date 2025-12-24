@@ -1,8 +1,6 @@
 <?php
-/**
- * MoMo Payment Helper
- * Xử lý tất cả các tương tác với MoMo API
- */
+// MoMo Payment Helper
+// Xử lý tất cả các tương tác với MoMo API
 
 require_once(__DIR__ . '/../config/momo.php');
 require_once(__DIR__ . '/../model/mPaymentLog.php');
@@ -23,15 +21,12 @@ class MoMoHelper {
         $this->paymentLogger = new mPaymentLog();
     }
     
-    /**
-     * Tạo payment request đến MoMo
-     * 
-     * @param int $bookingId ID của booking
-     * @param float $amount Số tiền thanh toán
-     * @param string $orderInfo Thông tin đơn hàng
-     * @param array $extraData Dữ liệu bổ sung (optional)
-     * @return array Kết quả từ MoMo hoặc error
-     */
+    // Tạo payment request đến MoMo
+    // int $bookingId - ID của booking
+    // float $amount - Số tiền thanh toán
+    // string $orderInfo - Thông tin đơn hàng
+    // array $extraData - Dữ liệu bổ sung (optional)
+    // return array - Kết quả từ MoMo hoặc error
     public function createPayment($bookingId, $amount, $orderInfo, $extraData = []) {
         try {
             // Convert amount to integer (MoMo yêu cầu integer, không có decimal)
@@ -45,7 +40,7 @@ class MoMoHelper {
             $extraDataString = !empty($extraData) ? json_encode($extraData) : "";
             
             // Set expiration time: 10 minutes from now (in seconds, Unix timestamp)
-            $expireTime = time() + (10 * 60); // 10 minutes in seconds
+            $expireTime = time(); // 10 minutes in seconds
             
             // Tạo chữ ký (signature) - Các field PHẢI được sort theo alphabet
             // ⚠️ Không thêm orderExpireTime vào signature (MoMo sandbox có thể không hỗ trợ)
@@ -174,12 +169,9 @@ class MoMoHelper {
         }
     }
     
-    /**
-     * Xác thực chữ ký từ MoMo IPN/Return
-     * 
-     * @param array $data Dữ liệu nhận từ MoMo
-     * @return bool True nếu signature hợp lệ
-     */
+    // Xác thực chữ ký từ MoMo IPN/Return
+    // array $data - Dữ liệu nhận từ MoMo
+    // return bool - True nếu signature hợp lệ
     public function verifySignature($data) {
         try {
             $momoSignature = $data['signature'] ?? '';
@@ -249,13 +241,10 @@ class MoMoHelper {
         }
     }
     
-    /**
-     * Query trạng thái giao dịch từ MoMo
-     * 
-     * @param string $orderId Order ID cần query
-     * @param string $requestId Request ID
-     * @return array Kết quả từ MoMo
-     */
+    // Query trạng thái giao dịch từ MoMo
+    // string $orderId - Order ID cần query
+    // string $requestId - Request ID
+    // return array - Kết quả từ MoMo
     public function queryTransaction($orderId, $requestId) {
         try {
             $queryEndpoint = str_replace('/create', '/query', $this->endpoint);
@@ -340,13 +329,10 @@ class MoMoHelper {
         }
     }
     
-    /**
-     * Thực hiện POST request với cURL
-     * 
-     * @param string $url URL endpoint
-     * @param string $data JSON data
-     * @return string Response body
-     */
+    // Thực hiện POST request với cURL
+    // string $url - URL endpoint
+    // string $data - JSON data
+    // return string - Response body
     private function execPostRequest($url, $data) {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -389,12 +375,9 @@ class MoMoHelper {
         return $result;
     }
     
-    /**
-     * Parse và trả về thông tin từ extraData
-     * 
-     * @param string $extraData JSON string
-     * @return array|null
-     */
+    // Parse và trả về thông tin từ extraData
+    // string $extraData - JSON string
+    // return array|null
     public function parseExtraData($extraData) {
         if (empty($extraData)) {
             return null;

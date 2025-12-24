@@ -48,23 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $messages = $cAdmin->cGetTicketMessages($ticketId);
     $hasAdminReplied = false;
     
-    // Debug: Log message count and admin messages
-    error_log("=== FIRST REPLY CHECK ===");
-    error_log("Total messages: " . (is_array($messages) ? count($messages) : 0));
-    
     if ($messages) {
       foreach ($messages as $msg) {
-        error_log("Message sender: " . $msg['sender_type']);
         if ($msg['sender_type'] === 'admin') {
           $hasAdminReplied = true;
-          error_log("Found admin message - NOT first reply");
           break;
         }
       }
     }
     
     $isFirstAdminReply = !$hasAdminReplied;
-    error_log("Is first admin reply: " . ($isFirstAdminReply ? 'YES' : 'NO'));
     
     // Now insert the reply
     $result = $cAdmin->cReplyToTicket($ticketId, $adminId, $content);

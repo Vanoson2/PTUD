@@ -1,14 +1,10 @@
 <?php
-/**
- * Cron Job: Cancel Expired Bookings
- * 
- * Tự động hủy các booking pending đã hết hạn (quá 10 phút chưa thanh toán)
- * 
- * Cách chạy:
- * - Windows Task Scheduler: php "C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\helper\cancel-expired-bookings.php"
- * - Linux Cron: * * * * * php /path/to/cancel-expired-bookings.php
- * - Nên chạy mỗi phút một lần
- */
+// Cron Job: Hủy Booking Hết Hạn
+// Tự động hủy các booking pending đã hết hạn (quá 10 phút chưa thanh toán)
+// Cách chạy:
+// - Windows Task Scheduler: php "C:\xampp\htdocs\PTUD(Version 2)-TichHopMoMo\helper\cancel-expired-bookings.php"
+// - Linux Cron: * * * * * php /path/to/cancel-expired-bookings.php
+// - Nên chạy mỗi phút một lần
 
 // Prevent direct browser access
 if (php_sapi_name() !== 'cli' && !isset($_GET['secret_key'])) {

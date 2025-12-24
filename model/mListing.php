@@ -325,10 +325,6 @@ class mListing {
         
         if ($conn->query($sql)) {
             return $conn->insert_id;
-        } else {
-            // Log lỗi để debug
-            error_log("MySQL Error in mCreateListing: " . $conn->error);
-            error_log("SQL Query: " . $sql);
         }
         
         return false;

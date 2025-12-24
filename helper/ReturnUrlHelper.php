@@ -1,21 +1,16 @@
 <?php
-/**
- * Helper functions for handling return URL after login
- * Provides security validation against open redirect attacks
- */
+// Helper functions xử lý return URL sau khi đăng nhập
+// Bảo mật chống tấn công open redirect
 
 class ReturnUrlHelper {
     
-    // Timeout for return URL (in seconds)
-    const TIMEOUT = 1800; // 30 minutes
+    // Thời gian timeout cho return URL (giây)
+    const TIMEOUT = 1800; // 30 phút
     
-    /**
-     * Validate if a return URL is safe to redirect to
-     * Prevents open redirect vulnerabilities
-     * 
-     * @param string $url The URL to validate
-     * @return bool True if URL is safe, false otherwise
-     */
+    // Kiểm tra xem return URL có an toàn để redirect không
+    // Ngăn chặn lỗ hổng open redirect
+    // string $url - URL cần kiểm tra
+    // return bool - True nếu URL an toàn, false nếu không
     public static function isValidReturnUrl($url) {
         if (empty($url)) {
             return false;
@@ -61,11 +56,8 @@ class ReturnUrlHelper {
         }
     }
     
-    /**
-     * Store return URL in session with timestamp
-     * 
-     * @param string $url The URL to store
-     */
+    // Lưu return URL vào session kèm timestamp
+    // string $url - URL cần lưu
     public static function storeReturnUrl($url) {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -79,12 +71,9 @@ class ReturnUrlHelper {
         }
     }
     
-    /**
-     * Get stored return URL if valid and not expired
-     * Automatically clears the stored URL after retrieval
-     * 
-     * @return string|null The return URL or null if invalid/expired
-     */
+    // Lấy return URL đã lưu nếu còn hợp lệ và chưa hết hạn
+    // Tự động xóa URL sau khi lấy
+    // return string|null - Return URL hoặc null nếu không hợp lệ/hết hạn
     public static function getAndClearReturnUrl() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -112,9 +101,7 @@ class ReturnUrlHelper {
         return $data['url'];
     }
     
-    /**
-     * Clear stored return URL
-     */
+    // Xóa return URL đã lưu
     public static function clearReturnUrl() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

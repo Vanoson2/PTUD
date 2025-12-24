@@ -11,9 +11,9 @@
             $initials = '';
             $nameParts = explode(' ', $user['full_name']);
             if (count($nameParts) >= 2) {
-              $initials = strtoupper(substr($nameParts[0], 0, 1) . substr($nameParts[count($nameParts) - 1], 0, 1));
+              $initials = mb_strtoupper(mb_substr($nameParts[0], 0, 1, 'UTF-8') . mb_substr($nameParts[count($nameParts) - 1], 0, 1, 'UTF-8'), 'UTF-8');
             } else {
-              $initials = strtoupper(substr($user['full_name'], 0, 2));
+              $initials = mb_strtoupper(mb_substr($user['full_name'], 0, 2, 'UTF-8'), 'UTF-8');
             }
             echo $initials;
             ?>

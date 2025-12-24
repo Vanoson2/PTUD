@@ -1,12 +1,8 @@
 <?php
-/**
- * Email Helper Class
- * 
- * Quản lý việc gửi email xác thực và các loại email khác
- * 
- * Requirements: PHPMailer (install via Composer)
- * Run: composer require phpmailer/phpmailer
- */
+// Email Helper Class
+// Quản lý việc gửi email xác thực và các loại email khác
+// Requirements: PHPMailer (install via Composer)
+// Run: composer require phpmailer/phpmailer
 
 // Load Composer autoload (PHPMailer will be autoloaded)
 require_once __DIR__ . '/../vendor/autoload.php';  // Composer autoload
@@ -18,9 +14,7 @@ class EmailHelper {
     private $config;
     private $mail;
     
-    /**
-     * Get base URL dynamically for email links
-     */
+    // Lấy base URL động cho email links
     private function getBaseUrl() {
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
@@ -36,9 +30,7 @@ class EmailHelper {
         $this->setupSMTP();
     }
     
-    /**
-     * Cấu hình SMTP
-     */
+    // Cấu hình SMTP
     private function setupSMTP() {
         try {
             // Server settings

@@ -1,0 +1,177 @@
+@startuml WeGo_UseCase_Diagram
+left to right direction
+skinparam packageStyle rectangle
+
+' Actors
+actor "Guest\n(Khách)" as Guest
+actor "User\n(Người dùng)" as User
+actor "Traveler\n(Du khách)" as Traveler
+actor "Host\n(Chủ nhà)" as Host
+actor "Admin\n(Quản trị)" as Admin
+actor "System\n(Hệ thống)" as System
+actor "MoMo\nGateway" as MoMo
+
+' Inheritance relationships
+Guest <|-- User
+User <|-- Traveler
+User <|-- Host
+
+rectangle "WeGo System" {
+  
+  ' Authentication Module
+  package "Authentication" {
+    usecase "UC-01: Đăng ký tài khoản" as UC01
+    usecase "UC-02: Đăng nhập" as UC02
+    usecase "UC-03: Xác thực Email" as UC03
+    usecase "UC-04: Quên mật khẩu" as UC04
+  }
+  
+  ' Host Management Module
+  package "Host Management" {
+    usecase "UC-05: Đăng ký làm Host" as UC05
+    usecase "UC-06: Admin duyệt Host" as UC06
+  }
+  
+  ' Listing Module
+  package "Listing Management" {
+    usecase "UC-07: Tạo Listing" as UC07
+    usecase "UC-08: Chỉnh sửa Listing" as UC08
+    usecase "UC-09: Xóa Listing" as UC09
+    usecase "UC-10: Quản lý Amenities" as UC10
+  }
+  
+  ' Search & Booking Module
+  package "Search & Booking" {
+    usecase "UC-11: Tìm kiếm Listing" as UC11
+    usecase "UC-12: Xem chi tiết Listing" as UC12
+    usecase "UC-13: Đặt phòng" as UC13
+    usecase "UC-14: Hủy đặt phòng" as UC14
+  }
+  
+  ' Payment Module
+  package "Payment" {
+    usecase "UC-15: Thanh toán MoMo" as UC15
+    usecase "UC-16: Xử lý IPN callback" as UC16
+    usecase "UC-17: Xử lý return URL" as UC17
+  }
+  
+  ' Review Module
+  package "Review System" {
+    usecase "UC-18: Viết đánh giá" as UC18
+    usecase "UC-19: Xóa đánh giá" as UC19
+  }
+  
+  ' Support Module
+  package "Support" {
+    usecase "UC-20: Tạo ticket hỗ trợ" as UC20
+    usecase "UC-21: Admin xử lý ticket" as UC21
+  }
+  
+  ' Admin Module
+  package "Admin Management" {
+    usecase "UC-22: Quản lý User" as UC22
+    usecase "UC-23: Quản lý Listing" as UC23
+  }
+  
+  ' Reports Module
+  package "Reports" {
+    usecase "UC-24: Báo cáo doanh thu" as UC24
+    usecase "UC-25: Thống kê hệ thống" as UC25
+  }
+  
+  ' Trust Score Module
+  package "Trust Score System" {
+    usecase "UC-26: Tính điểm tín nhiệm" as UC26
+    usecase "UC-27: Khóa tài khoản\nkhi điểm < 30" as UC27
+  }
+}
+
+' Actor relationships
+Guest --> UC11
+Guest --> UC12
+
+User --> UC02
+User --> UC04
+User --> UC20
+
+Traveler --> UC13
+Traveler --> UC14
+Traveler --> UC15
+Traveler --> UC18
+Traveler --> UC19
+
+Host --> UC05
+Host --> UC07
+Host --> UC08
+Host --> UC09
+Host --> UC24
+
+Admin --> UC06
+Admin --> UC10
+Admin --> UC21
+Admin --> UC22
+Admin --> UC23
+Admin --> UC25
+
+MoMo --> UC16
+MoMo --> UC17
+
+System --> UC26
+System --> UC27
+
+' Dependencies (sequence flow)
+UC01 ..> UC02 : <<next>>
+UC02 ..> UC03 : <<send email>>
+UC05 ..> UC06 : <<requires>>
+UC06 ..> UC07 : <<enables>>
+UC07 ..> UC13 : <<required>>
+UC13 ..> UC15 : <<optional>>
+UC15 ..> UC16 : <<async>>
+UC15 ..> UC17 : <<sync>>
+UC13 ..> UC18 : <<after complete>>
+UC14 ..> UC26 : <<penalty>>
+UC13 ..> UC26 : <<reward>>
+UC18 ..> UC26 : <<reward>>
+UC26 ..> UC27 : <<trigger>>
+
+' Extends relationships
+UC14 ..> UC26 : <<extends>>\n4-tier penalty
+UC03 ..> UC26 : <<extends>>\n+5 points
+UC18 ..> UC26 : <<extends>>\n+5 points
+
+' Include relationships
+UC13 ..> UC12 : <<includes>>
+UC15 ..> UC16 : <<includes>>
+UC15 ..> UC17 : <<includes>>
+UC23 ..> UC09 : <<includes>>
+
+note right of UC26
+  **Trust Score Penalties:**
+  • Unpaid >24h: -5
+  • Unpaid <24h: -10
+  • Paid >24h: -15
+  • Paid <24h: -25
+  
+  **Rewards:**
+  • Email verify: +5
+  • Complete booking: +10
+  • Write review: +5
+end note
+
+note right of UC15
+  **MoMo Integration:**
+  • Timeout: 10 minutes
+  • Signature: HMAC SHA256
+  • IPN: Async callback
+  • Return: Sync redirect
+end note
+
+note bottom of UC27
+  **Auto-lock when:**
+  trust_score < 30
+  
+  **Warning when:**
+  30 ≤ trust_score < 50
+end note
+
+@enduml

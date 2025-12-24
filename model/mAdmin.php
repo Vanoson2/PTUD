@@ -719,10 +719,6 @@ class mAdmin {
             while ($row = $result->fetch_assoc()) {
                 $tickets[] = $row;
             }
-        } else {
-            // DEBUG: Log SQL error
-            error_log("SQL Error in mGetAllSupportTickets: " . $conn->error);
-            error_log("SQL Query: " . $sql);
         }
         
         $pages = ceil($total / $limit);

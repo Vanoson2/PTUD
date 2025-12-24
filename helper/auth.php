@@ -1,32 +1,24 @@
 <?php
-/**
- * Authentication Helper
- * Centralized authentication logic to avoid duplication in View files
- * Following MVC pattern: Helper provides utilities but doesn't contain business logic
- */
+// Authentication Helper
+// Logic xác thực tập trung để tránh trùng lặp trong View files
+// Theo pattern MVC: Helper cung cấp utilities nhưng không chứa business logic
 
-/**
- * Start session if not already started
- */
+// Khởi động session nếu chưa được khởi động
 function ensureSessionStarted() {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
 }
 
-/**
- * Check if user is logged in
- * @return bool
- */
+// Kiểm tra xem user đã đăng nhập chưa
+// return bool
 function isUserLoggedIn() {
     ensureSessionStarted();
     return isset($_SESSION['user_id']);
 }
 
-/**
- * Require user to be logged in, redirect to login if not
- * @param string|null $returnUrl URL to return to after login
- */
+// Yêu cầu user phải đăng nhập, redirect đến login nếu chưa
+// string|null $returnUrl - URL để quay lại sau khi đăng nhập
 function requireLogin($returnUrl = null) {
     ensureSessionStarted();
     
@@ -39,18 +31,14 @@ function requireLogin($returnUrl = null) {
     }
 }
 
-/**
- * Check if admin is logged in
- * @return bool
- */
+// Kiểm tra xem admin đã đăng nhập chưa
+// return bool
 function isAdminLoggedIn() {
     ensureSessionStarted();
     return isset($_SESSION['admin_id']);
 }
 
-/**
- * Require admin to be logged in, redirect to admin login if not
- */
+// Yêu cầu admin phải đăng nhập, redirect đến admin login nếu chưa
 function requireAdminLogin() {
     ensureSessionStarted();
     
@@ -60,11 +48,9 @@ function requireAdminLogin() {
     }
 }
 
-/**
- * Check if user has specific admin role
- * @param string|array $allowedRoles Single role or array of allowed roles
- * @return bool
- */
+// Kiểm tra xem user có role admin cụ thể không
+// string|array $allowedRoles - Role đơn hoặc mảng các role được phép
+// return bool
 function hasAdminRole($allowedRoles) {
     ensureSessionStarted();
     
@@ -81,10 +67,8 @@ function hasAdminRole($allowedRoles) {
     return $currentRole === $allowedRoles;
 }
 
-/**
- * Require specific admin role, redirect if not authorized
- * @param string|array $allowedRoles
- */
+// Yêu cầu admin role cụ thể, redirect nếu không có quyền
+// string|array $allowedRoles - Role được phép
 function requireAdminRole($allowedRoles) {
     requireAdminLogin();
     
@@ -161,27 +145,21 @@ function requireHost() {
     exit;
 }
 
-/**
- * Get current logged in user ID
- * @return int|null
- */
+// Lấy user ID hiện đang đăng nhập
+// return int|null
 function getCurrentUserId() {
     ensureSessionStarted();
     return $_SESSION['user_id'] ?? null;
 }
 
-/**
- * Get current logged in admin ID
- * @return int|null
- */
+// Lấy admin ID hiện đang đăng nhập
+// return int|null
 function getCurrentAdminId() {
     ensureSessionStarted();
     return $_SESSION['admin_id'] ?? null;
 }
 
-/**
- * Logout user
- */
+// Đăng xuất user
 function logoutUser() {
     ensureSessionStarted();
     
@@ -197,9 +175,7 @@ function logoutUser() {
     }
 }
 
-/**
- * Logout admin
- */
+// Đăng xuất admin
 function logoutAdmin() {
     ensureSessionStarted();
     
@@ -210,20 +186,16 @@ function logoutAdmin() {
     session_destroy();
 }
 
-/**
- * Check if user's email is verified
- * @return bool
- */
+// Kiểm tra xem email của user đã verified chưa
+// return bool
 function isEmailVerified() {
     ensureSessionStarted();
     return isset($_SESSION['email_verified']) && $_SESSION['email_verified'] === true;
 }
 
-/**
- * Set flash message in session
- * @param string $message
- * @param string $type success|error|warning|info
- */
+// Đặt flash message trong session
+// string $message - Nội dung message
+// string $type - Loại message: success|error|warning|info
 function setFlashMessage($message, $type = 'info') {
     ensureSessionStarted();
     $_SESSION['flash_message'] = [
@@ -232,10 +204,8 @@ function setFlashMessage($message, $type = 'info') {
     ];
 }
 
-/**
- * Get and clear flash message
- * @return array|null ['message' => string, 'type' => string]
- */
+// Lấy và xóa flash message
+// return array|null - ['message' => string, 'type' => string]
 function getFlashMessage() {
     ensureSessionStarted();
     
@@ -248,9 +218,7 @@ function getFlashMessage() {
     return null;
 }
 
-/**
- * Regenerate session ID for security
- */
+// Regenerate session ID để bảo mật
 function regenerateSession() {
     ensureSessionStarted();
     session_regenerate_id(true);

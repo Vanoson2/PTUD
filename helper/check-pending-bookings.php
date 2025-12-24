@@ -1,4 +1,7 @@
 <?php
+// Kiểm tra pending bookings cho user
+
+require_once(__DIR__ . '/../model/mBooking.php');
 /**
  * Check pending bookings for user
  */

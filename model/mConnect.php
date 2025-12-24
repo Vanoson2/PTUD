@@ -2,8 +2,8 @@
     class mConnect{
         public function mMoKetNoi(){
             $host="localhost";
-            $name="admin";
-            $pass="124";
+            $name="root";
+            $pass="";
             $db="we_go";
             return mysqli_connect($host,$name,$pass,$db);
         }
