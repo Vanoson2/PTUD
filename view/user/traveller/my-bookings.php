@@ -126,6 +126,7 @@ if ($bookingsResult && $bookingsResult->num_rows > 0) {
         
         <div class="booking-info">
           <h3 class="booking-title"><?php echo htmlspecialchars($booking['listing_title']); ?></h3>
+          <p class="booking-code"><strong>Mã đơn:</strong> <?php echo htmlspecialchars($booking['code']); ?></p>
           
           <div class="booking-details">
             <div class="detail-item">
