@@ -371,7 +371,8 @@ class mAdmin {
         $email = $conn->real_escape_string($email);
         $phone = $conn->real_escape_string($phone);
         $fullName = $conn->real_escape_string($fullName);
-        $passwordHash = md5($password);
+        // Hash password với bcrypt (giống đăng ký thông thường)
+        $passwordHash = password_hash($password, PASSWORD_BCRYPT);
         
         // Check email exists
         $checkSql = "SELECT user_id FROM user WHERE email = '$email' LIMIT 1";
@@ -447,7 +448,8 @@ class mAdmin {
                     full_name = '$fullName'";
         
         if ($password !== null && !empty($password)) {
-            $passwordHash = md5($password);
+            // Hash password với bcrypt (giống đăng ký thông thường)
+            $passwordHash = password_hash($password, PASSWORD_BCRYPT);
             $sql .= ", password_hash = '$passwordHash'";
         }
         
