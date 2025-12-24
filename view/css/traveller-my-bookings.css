@@ -123,6 +123,17 @@
   margin: 0;
 }
 
+.booking-code {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 6px 0 0 0;
+}
+
+.booking-code strong {
+  color: #374151;
+  font-weight: 600;
+}
+
 .booking-details {
   display: flex;
   gap: 24px;
