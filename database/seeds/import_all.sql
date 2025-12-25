@@ -10,7 +10,6 @@ SET NAMES utf8mb4;
 SET time_zone='+07:00';
 SET FOREIGN_KEY_CHECKS=0;
 
-USE we_go;
 
 -- =====================================================
 -- Step 1: Fix payment_status for bookings

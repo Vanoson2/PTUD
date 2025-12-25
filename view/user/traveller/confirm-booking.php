@@ -59,11 +59,6 @@ $conflictingBooking = null;
 if ($userConflictResult && $userConflictResult->num_rows > 0) {
   $hasUserConflict = true;
   $conflictingBooking = $userConflictResult->fetch_assoc();
-  
-  // THÔNG BÁO cho user về booking pending và redirect đến my-bookings
-  $_SESSION['warning'] = 'Bạn đã có đơn đặt chỗ đang chờ thanh toán trong khoảng thời gian này. Vui lòng hoàn tất thanh toán hoặc hủy đơn trước khi đặt chỗ mới.';
-  header('Location: my-bookings.php');
-  exit;
 }
 
 // Check: Listing còn trống không?
@@ -126,6 +121,15 @@ $subtotal = $listing['price'] * $nights;
       <i class="fa-solid fa-exclamation-circle"></i>
       <strong>Lỗi!</strong> <?php echo htmlspecialchars($_SESSION['error']); ?>
       <?php unset($_SESSION['error']); ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['warning'])): ?>
+    <div class="alert alert-warning">
+      <i class="fa-solid fa-exclamation-triangle"></i>
+      <strong>Cảnh báo!</strong> <?php echo htmlspecialchars($_SESSION['warning']); ?>
+      <a href="my-bookings.php" class="alert-link">Xem đơn đặt của tôi</a>
+      <?php unset($_SESSION['warning']); ?>
     </div>
     <?php endif; ?>
 
@@ -222,9 +226,11 @@ $subtotal = $listing['price'] * $nights;
 
           <button type="submit" 
                   class="btn btn-primary w-100 py-3 fw-bold"
-                  <?php echo !$isListingAvailable ? 'disabled' : ''; ?>>
+                  <?php echo (!$isListingAvailable || $hasUserConflict) ? 'disabled' : ''; ?>>
             <?php if (!$isListingAvailable): ?>
               Chỗ ở đã được đặt
+            <?php elseif ($hasUserConflict): ?>
+              Bạn đã có đơn đặt trong thời gian này
             <?php else: ?>
               XÁC NHẬN
             <?php endif; ?>
