@@ -88,7 +88,7 @@ Add screenshots of:
 
 ## Team
 
-- Team size: [Number of members]
+- Team size: 2
 - Role: System Analysis & Full-stack Contributor
 
 ## Notes
